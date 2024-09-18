@@ -1,0 +1,58 @@
+services:
+
+  # nginx:
+  #   build: ./nginx
+  #   image: brecheisen/mosamatic-nginx:latest
+  #   container_name: mosamatic_nginx
+  #   ports:
+  #     - "8002:8000"
+  #   volumes:
+  #     - data:/data
+  #   depends_on:
+  #     - web
+
+  db:
+    image: postgres:10.5-alpine
+    container_name: mosamatic3_postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    image: brecheisen/mosamatic3-web:latest
+    container_name: mosamatic3_web
+    environment:
+      - DATA_DIR
+      - SECRET_KEY
+      - POSTGRES_HOST
+      - TEMP_DIR
+    volumes:
+      - ./src/mosamatic3:/src
+      - ./requirements.txt:/requirements.txt
+      - data:/data
+    depends_on:
+      - db
+
+volumes:
+
+  data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      # pointing specifically to /mnt/localscratch because space in HOME is limited
+      # device: /mnt/localscratch/docker/mosamatic/data
+      device: ${TEMP_DIR}/data
+
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      # see comments above
+      # device: /mnt/localscratch/docker/mosamatic/postgres_data
+      device: ${TEMP_DIR}/postgres_data
