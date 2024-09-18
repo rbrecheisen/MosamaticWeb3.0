@@ -1,58 +1,45 @@
 services:
 
-  # nginx:
-  #   build: ./nginx
-  #   image: brecheisen/mosamatic-nginx:latest
-  #   container_name: mosamatic_nginx
-  #   ports:
-  #     - "8002:8000"
-  #   volumes:
-  #     - data:/data
-  #   depends_on:
-  #     - web
-
   db:
-    image: postgres:10.5-alpine
+    image: postgres:16-alpine
     container_name: mosamatic3_postgres
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=foobar
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d db"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    expose:
+      - 5432
+    ports:
+      - 5432:5432  # Required for running Django outside Docker but using PostgreSQL
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    expose:
-      - "5432"
-    ports:
-      - "5432:5432"
 
   web:
     build: .
     image: brecheisen/mosamatic3-web:latest
     container_name: mosamatic3_web
     environment:
-      - DATA_DIR
-      - SECRET_KEY
-      - POSTGRES_HOST
-      - TEMP_DIR
+      - POSTGRES_DB=db
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=foobar
+      - POSTGRES_HOST=localhost
+      - POSTGRES_PORT=5432
     volumes:
       - ./src/mosamatic3:/src
       - ./requirements.txt:/requirements.txt
       - data:/data
+    ports:
+      - 8000:8000
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
 
   data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      # pointing specifically to /mnt/localscratch because space in HOME is limited
-      # device: /mnt/localscratch/docker/mosamatic/data
-      device: ${TEMP_DIR}/data
-
   postgres_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      # see comments above
-      # device: /mnt/localscratch/docker/mosamatic/postgres_data
-      device: ${TEMP_DIR}/postgres_data
