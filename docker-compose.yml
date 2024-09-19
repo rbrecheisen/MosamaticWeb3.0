@@ -27,12 +27,12 @@ services:
       - POSTGRES_DB=db
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=foobar
-      - POSTGRES_HOST=localhost
+      - POSTGRES_HOST # Will be defined by environment
       - POSTGRES_PORT=5432
     volumes:
-      - ./src/mosamatic3:/src
-      - ./requirements.txt:/requirements.txt
       - data:/data
+    expose:
+      - 8000
     ports:
       - 8000:8000
     depends_on:

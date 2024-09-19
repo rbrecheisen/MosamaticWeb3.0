@@ -11,7 +11,9 @@ numpy
 pandas
 openpyxl
 tensorflow
-torch
-torchvision
-totalsegmentator
-nibabel
+uwsgi
+gunicorn
+# torch
+# torchvision
+# totalsegmentator
+# nibabel
