@@ -19,6 +19,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  nginx:
+    build: ./nginx
+    image: brecheisen/mosamatic3-nginx:latest
+    container_name: mosamatic3_nginx
+    ports:
+      - "8001:80"
+    volumes:
+      - data:/data
+    depends_on:
+      - web
+
   web:
     build: .
     image: brecheisen/mosamatic3-web:latest
