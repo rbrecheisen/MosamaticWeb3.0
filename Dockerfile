@@ -4,9 +4,6 @@ COPY src/mosamatic3 /src
 COPY requirements.txt /requirements.txt
 COPY nvidia-public-key.txt /nvidia-public-key.txt
 
-# Run these steps separately, otherwise the large RUN will execute always
-RUN pip install --upgrade pip setuptools wheel && pip install -r /requirements.txt --verbose
-
 RUN apt-key add /nvidia-public-key.txt
 RUN apt-get update -y && \
     apt-get install -y vim libpq-dev pkg-config cmake openssl wget git dos2unix && \
@@ -18,6 +15,9 @@ RUN apt-get update -y && \
     mkdir -p /data/uploads/{0..9} && chmod 777 -R /data/uploads
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
+
+# Run these steps separately, otherwise the large RUN will execute always
+RUN pip install --upgrade pip setuptools wheel && pip install -r /requirements.txt --verbose
 RUN dos2unix /docker-entrypoint.sh
 
 WORKDIR /src
