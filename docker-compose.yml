@@ -24,7 +24,7 @@ services:
     image: brecheisen/mosamatic3-nginx:latest
     container_name: mosamatic3_nginx
     ports:
-      - "8001:80"
+      - "8000:8000"
     volumes:
       - data:/data
     depends_on:
@@ -42,10 +42,6 @@ services:
       - POSTGRES_PORT=5432
     volumes:
       - data:/data
-    expose:
-      - 8000
-    ports:
-      - 8000:8000
     depends_on:
       db:
         condition: service_healthy
