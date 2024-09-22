@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-10">
+            <div class="card" style="margin-top: 10px;">
+                <div class="card-header">Dataset {{ dataset.name }}, Fileset {{ fileset.name }}</div>
+                <div class="card-header">Files</div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>Name</th>
+                            <th>Owner</th>
+                            <th>Uploaded</th>
+                        </tr>
+                        {% for file in fileset.files %}
+                            <tr>
+                                <td><a href="/datasets/{{ dataset.id }}/filesets/{{ fileset.id }}/file/{{ file.id }}">{{ fileset.name }}</a></td>
+                                <td>{{ file.owner }}</td>
+                                <td>{{ file.created }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
