@@ -1,10 +1,14 @@
 import os
+import tempfile
 
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR_LOCAL = os.path.join(tempfile.gettempdir(), 'mosamatic/data')
+DATA_DIR = os.environ.get('DATA_DIR', DATA_DIR_LOCAL)
 
+os.makedirs(DATA_DIR, exist_ok=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -15,7 +19,7 @@ SECRET_KEY = 'django-insecure-za8p@28)jn#aen98q0azmiqwbi+&x_%h@5!kpw5=9kvoy(4(#*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -32,6 +36,11 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'app',
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -149,10 +158,22 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(DATA_DIR, 'static')
+
+MEDIA_URL = '/datasets/'
+MEDIA_ROOT = os.path.join(DATA_DIR, 'datasets')
+
+UPLOAD_ROOT = os.path.join(DATA_DIR, 'uploads')
+
+SESSION_SECURITY_WARN_AFTER = 840
+SESSION_SECURITY_EXPIRE_AFTER = 3600
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+DATA_UPLOAD_MAX_NUMBER_FILES = None
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
