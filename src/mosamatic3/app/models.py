@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 
 
+# General purpose objects
 class FileSetModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=1024, editable=True, null=False)
@@ -31,6 +32,41 @@ class FileModel(models.Model):
         return os.path.split(str(self.path))[1]
     
 
+# DICOM objects
+class PatientCohortModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    name = models.CharField(max_length=1024, unique=True, null=False)
+    cohort_id = models.CharField(max_length=1024, unique=True, null=False)
+
+
+class PatientModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    patient_id = models.CharField(max_length=1024, unique=False, null=False)
+    cohort = models.ForeignKey(PatientCohortModel, on_delete=models.CASCADE)
+
+
+class DicomStudyModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    name = models.CharField(max_length=1024, unique=False, null=False)
+    study_instance_uid = models.CharField(max_length=1024, unique=True, null=False)
+    patient = models.ForeignKey(PatientModel, on_delete=models.CASCADE)
+
+
+class DicomSeriesModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    name = models.CharField(max_length=1024, unique=False, null=False)
+    series_instance_uid = models.CharField(max_length=1024, unique=True, null=False)
+    study = models.ForeignKey(DicomStudyModel, on_delete=models.CASCADE)
+
+
+class DicomInstanceModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    instance_uid = models.CharField(max_length=1024, unique=True, null=False)
+    series = models.ForeignKey(DicomSeriesModel, on_delete=models.CASCADE)
+    file = models.ForeignKey(FileModel, on_delete=models.CASCADE)
+    
+
+# Miscellaneous
 class LogOutputModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     timestamp = models.DateTimeField()

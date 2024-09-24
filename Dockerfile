@@ -1,7 +1,5 @@
 FROM tensorflow/tensorflow:2.3.0-gpu
 
-COPY src/mosamatic3 /src
-COPY requirements.txt /requirements.txt
 COPY nvidia-public-key.txt /nvidia-public-key.txt
 
 RUN apt-key add /nvidia-public-key.txt
@@ -14,11 +12,14 @@ RUN apt-get update -y && \
     mkdir -p /data/datasets && \
     mkdir -p /data/uploads/{0..9} && chmod 777 -R /data/uploads
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-
 # Run these steps separately, otherwise the large RUN will execute always
+COPY requirements.txt /requirements.txt
 RUN pip install --upgrade pip setuptools wheel && pip install -r /requirements.txt --verbose
+
+COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN dos2unix /docker-entrypoint.sh
+
+COPY src/mosamatic3 /src
 
 WORKDIR /src
 
