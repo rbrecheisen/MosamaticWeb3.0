@@ -1,8 +1,11 @@
 import os
 import uuid
+import shutil
 
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.dispatch import receiver
 
 
 class DataSetModel(models.Model):
@@ -42,3 +45,17 @@ class FileModel(models.Model):
 
     def __str__(self):
         return os.path.split(str(self.path))[1]
+
+
+@receiver(models.signals.post_save, sender=DataSetModel)
+def dataset_post_save(sender, instance, **kwargs):
+    if not instance.path:
+        instance.path = os.path.join(settings.MEDIA_ROOT, str(instance.id))
+        os.makedirs(instance.path, exist_ok=False)
+        instance.save()
+
+
+@receiver(models.signals.post_delete, sender=DataSetModel)
+def dataset_post_delete(sender, instance, **kwargs):
+    if os.path.isdir(instance.path):
+        shutil.rmtree(instance.path)

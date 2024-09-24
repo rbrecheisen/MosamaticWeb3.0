@@ -22,9 +22,9 @@ from .models import DataSetModel, FileSetModel, FileModel
 def process_uploaded_files(request):
     file_paths = []
     file_names = []
-    files = request.POST.getlist('files.path')
+    files = request.POST.getlist('files.path') # Files parameter from NGINX
     if files is None or len(files) == 0:
-        files = request.FILES.getlist('files')
+        files = request.FILES.getlist('files') # Files parameter from Django without NGINX
         if files is None or len(files) == 0:
             raise RuntimeError('File upload without files in either POST or FILES object')
         else:
@@ -55,7 +55,7 @@ def create_dataset(user, name=None):
     else:
         timestamp = timezone.now().strftime('%Y%m%d%H%M%S.%f')
         ds_name = 'dataset-{}'.format(timestamp)
-    dataset = DataSetModel.objects.create(name=ds_name, owner=user)
+    dataset = DataSetModel.objects.create(name=ds_name, owner=user) # dataset.path is set in post_save() for DataSetModel
     return dataset
 
 
@@ -67,7 +67,7 @@ def create_dataset_from_files(file_paths, file_names, user):
     for i in range(len(file_paths)):
         source_path = file_paths[i]
         target_name = file_names[i]
-        target_path = os.path.join(dataset.data_dir, target_name)
+        target_path = os.path.join(dataset.path, target_name)
         shutil.move(source_path, target_path)
         # create_file_path(path=target_path, dataset=dataset)
     return dataset

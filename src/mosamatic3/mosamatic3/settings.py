@@ -8,6 +8,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR_LOCAL = os.path.join(tempfile.gettempdir(), 'mosamatic/data')
 DATA_DIR = os.environ.get('DATA_DIR', DATA_DIR_LOCAL)
 
+print(f'DATA_DIR_LOCAL: {DATA_DIR_LOCAL}')
+
 os.makedirs(DATA_DIR, exist_ok=True)
 
 # Quick-start development settings - unsuitable for production

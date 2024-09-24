@@ -35,6 +35,7 @@ services:
     image: brecheisen/mosamatic3-web:latest
     container_name: mosamatic3_web
     environment:
+      - DATA_DIR=/data
       - POSTGRES_DB=db
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=foobar
