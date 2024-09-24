@@ -12,6 +12,7 @@ class DataSetModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(
         User, editable=False, related_name='+', on_delete=models.CASCADE)
+    public = models.BooleanField(default=False, editable=True)
 
     def __str__(self):
         return self.name
