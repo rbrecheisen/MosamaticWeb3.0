@@ -73,7 +73,10 @@ def create_fileset_from_files(file_paths, file_names, user):
         source_path = file_paths[i]
         target_name = file_names[i]
         target_path = os.path.join(fileset.path, target_name)
-        shutil.copy(source_path, target_path)
+        if not settings.DOCKER: # Hack: to deal with "file in use" error Windows
+            shutil.copy(source_path, target_path)
+        else:
+            shutil.move(source_path, target_path)
         create_file(path=target_path, fileset=fileset)
     return fileset
 

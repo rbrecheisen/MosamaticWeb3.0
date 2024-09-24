@@ -41,6 +41,7 @@ services:
       - POSTGRES_PASSWORD=foobar
       - POSTGRES_HOST=mosamatic3_postgres # When you run Django in Docker set the host
       - POSTGRES_PORT=5432
+      - DOCKER=true
     volumes:
       - data:/data
     depends_on:

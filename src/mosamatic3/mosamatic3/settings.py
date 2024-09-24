@@ -5,12 +5,8 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-# DATA_DIR_LOCAL = os.path.join(tempfile.gettempdir(), 'mosamatic/data')
-DATA_DIR_LOCAL = 'D:\\Mosamatic\\Web 3.0\\mosamatic\\data'
+DATA_DIR_LOCAL = os.path.join(tempfile.gettempdir(), 'mosamatic/data')
 DATA_DIR = os.environ.get('DATA_DIR', DATA_DIR_LOCAL)
-
-print(f'DATA_DIR_LOCAL: {DATA_DIR_LOCAL}')
-
 os.makedirs(DATA_DIR, exist_ok=True)
 
 # Quick-start development settings - unsuitable for production
@@ -23,6 +19,8 @@ SECRET_KEY = 'django-insecure-za8p@28)jn#aen98q0azmiqwbi+&x_%h@5!kpw5=9kvoy(4(#*
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+
+DOCKER = True if os.getenv('DOCKER') == 'true' else False
 
 
 # Application definition
