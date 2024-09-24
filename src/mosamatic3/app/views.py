@@ -16,6 +16,7 @@ from wsgiref.util import FileWrapper
 from zipfile import ZipFile
 
 from .models import DataSetModel, FileSetModel, FileModel
+from .data.dicomdatasetloader import DicomDataSetLoader
 
 
 # Move to separate file or class
@@ -80,6 +81,14 @@ def get_datasets(user):
     return DataSetModel.objects.all()
 
 
+def get_dataset(dataset_id, user):
+    return DataSetModel.objects.get(pk=dataset_id)
+
+
+def delete_dataset(dataset):
+    dataset.delete()
+
+
 @login_required
 def auth(_):
     return HttpResponse(status=200)
@@ -94,9 +103,16 @@ def progress(_):
 def datasets(request):
     if request.method == 'POST':
         file_paths, file_names = process_uploaded_files(request)
-        create_dataset_from_files(file_paths, file_names, request.user)
+        loader = DicomDataSetLoader()
+        loader.load(file_paths, file_names)
+        # create_dataset_from_files(file_paths, file_names, request.user)
     return render(request, 'datasets.html', context={'datasets': get_datasets(request.user)})
 
 @login_required
 def dataset(request, dataset_id):
-    return HttpResponse(status=200)
+    if request.method == 'GET':
+        ds = get_dataset(dataset_id, request.user)
+        action = request.GET.get('action', None)
+        if action == 'delete':
+            delete_dataset(ds)
+    return render(request, 'datasets.html', context={'datasets': get_datasets(request.user)})

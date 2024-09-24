@@ -45,8 +45,15 @@ class FileModel(models.Model):
 
     def __str__(self):
         return os.path.split(str(self.path))[1]
+    
+
+class LogOutputModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    timestamp = models.DateTimeField()
+    message = models.CharField(max_length=1024, editable=False, null=False)
 
 
+# Signals
 @receiver(models.signals.post_save, sender=DataSetModel)
 def dataset_post_save(sender, instance, **kwargs):
     if not instance.path:
