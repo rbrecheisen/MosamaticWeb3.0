@@ -1,22 +1,54 @@
 {% extends "base.html" %}
+{% load extra_filters %}
 {% block content %}
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-10">
             <div class="card" style="margin-top: 10px;">
-                <div class="card-header">Fileset {{ fileset.name }}</div>
-                <div class="card-header">Files</div>
+                <div class="card-header">
+                    Fileset <b>{{ fileset.name }}</b><br>
+                    <i style="font-size: small;">
+                        id: {{ fileset.id }}, owner: {{ fileset.owner }}, public: {{ fileset.public }}
+                    </i>
+                </div>
                 <div class="card-body">
-                    <table class="table">
-                        <tr>
-                            <th>Name</th>
-                        </tr>
-                        {% for file in fileset %}
-                            <tr>
-                                <td><a href="/filesets/{{ fileset.id }}/files/{{ file.id }}">{{ fileset.name }}</a></td>
-                            </tr>
+                    {% if user == fileset.owner or user.is_staff %}
+                        <form action="/filesets/{{ fileset.id }}" method="get">
+                            <input type="hidden" name="action" value="rename">
+                            <input type="text" class="form-control" placeholder="Enter new name" name="new_name"><br>
+                            <button class="btn btn-primary">Rename</button>
+                        </form>
+                        <p><a href="/filesets/{{ fileset.id }}?action=download">Download dataset</a></p>
+                        <p><a href="/filesets/{{ fileset.id }}?action=delete">Delete</a></p>
+                    {%  endif %}
+                    {%  if user == fileset.owner %}
+                        <p><a href="/filesets/{{ fileset.id }}?action=make-public">Make public for other users</a></p>
+                        <p><a href="/filesets/{{ fileset.id }}?action=make-private">Make private</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10">
+            <div class="card" style="margin-top: 10px;">
+                <div class="card-header">Files</b></div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for f in files %}
+                            <li class="list-group-item">
+                                {% if f.name|endswith:"png" %}
+                                    <a href="{{ f.path }}">{{ f.name }}</a>
+                                {% elif f.name|endswith:"txt" %}
+                                    <a href="{{ f.path }}">{{ f.name }}</a>
+                                {% elif f.name|endswith:"json" %}
+                                    <a href="{{ f.path }}">{{ f.name }}</a>
+                                {% else %}
+                                    {{ f.name }}
+                                {% endif %}
+                            </li>
                         {% endfor %}
-                    </table>
+                    </ul>
                 </div>
             </div>
         </div>
