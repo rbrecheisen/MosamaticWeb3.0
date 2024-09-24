@@ -38,11 +38,18 @@ class PatientCohortModel(models.Model):
     name = models.CharField(max_length=1024, unique=True, null=False)
     cohort_id = models.CharField(max_length=1024, unique=True, null=False)
 
+    def __str__(self):
+        return f'{self.name} ({self.cohort_id})'
+
 
 class PatientModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    name = models.CharField(max_length=1024, unique=True, null=False)
     patient_id = models.CharField(max_length=1024, unique=False, null=False)
     cohort = models.ForeignKey(PatientCohortModel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.name} ({self.patient_id})'
 
 
 class DicomStudyModel(models.Model):
@@ -51,12 +58,20 @@ class DicomStudyModel(models.Model):
     study_instance_uid = models.CharField(max_length=1024, unique=True, null=False)
     patient = models.ForeignKey(PatientModel, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.name} ({self.study_instance_uid})'
+
 
 class DicomSeriesModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=1024, unique=False, null=False)
+    modality = models.CharField(max_length=256, unique=False, null=False)
+    image_type = models.CharField(max_length=1024, unique=False, null=False) # CT, T1, T2, Dixon Water, Dixon Fat, etc.
     series_instance_uid = models.CharField(max_length=1024, unique=True, null=False)
     study = models.ForeignKey(DicomStudyModel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.name} ({self.modality}, {self.image_type}, {self.series_instance_uid})'
 
 
 class DicomInstanceModel(models.Model):
@@ -64,6 +79,9 @@ class DicomInstanceModel(models.Model):
     instance_uid = models.CharField(max_length=1024, unique=True, null=False)
     series = models.ForeignKey(DicomSeriesModel, on_delete=models.CASCADE)
     file = models.ForeignKey(FileModel, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.file.path} ({self.instance_uid})'
     
 
 # Miscellaneous
@@ -71,6 +89,9 @@ class LogOutputModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     timestamp = models.DateTimeField()
     message = models.CharField(max_length=1024, editable=False, null=False)
+
+    def __str__(self):
+        return f'[{self.timestamp}] {self.message}'
 
 
 # Signals
