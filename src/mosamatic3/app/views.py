@@ -96,3 +96,7 @@ def datasets(request):
         file_paths, file_names = process_uploaded_files(request)
         create_dataset_from_files(file_paths, file_names, request.user)
     return render(request, 'datasets.html', context={'datasets': get_datasets(request.user)})
+
+@login_required
+def dataset(request, dataset_id):
+    return HttpResponse(status=200)
