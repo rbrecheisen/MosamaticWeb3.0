@@ -5,7 +5,8 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR_LOCAL = os.path.join(tempfile.gettempdir(), 'mosamatic/data')
+# DATA_DIR_LOCAL = os.path.join(tempfile.gettempdir(), 'mosamatic/data')
+DATA_DIR_LOCAL = 'D:\\Mosamatic\\Web 3.0\\mosamatic\\data'
 DATA_DIR = os.environ.get('DATA_DIR', DATA_DIR_LOCAL)
 
 print(f'DATA_DIR_LOCAL: {DATA_DIR_LOCAL}')
@@ -78,12 +79,6 @@ WSGI_APPLICATION = 'mosamatic3.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -166,8 +161,8 @@ LOGOUT_REDIRECT_URL = '/'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(DATA_DIR, 'static')
 
-MEDIA_URL = '/datasets/'
-MEDIA_ROOT = os.path.join(DATA_DIR, 'datasets')
+MEDIA_URL = '/filesets/'
+MEDIA_ROOT = os.path.join(DATA_DIR, 'filesets')
 
 UPLOAD_ROOT = os.path.join(DATA_DIR, 'uploads')
 

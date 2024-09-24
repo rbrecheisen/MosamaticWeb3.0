@@ -15,8 +15,7 @@ from django.conf import settings
 from wsgiref.util import FileWrapper
 from zipfile import ZipFile
 
-from .models import DataSetModel, FileSetModel, FileModel
-from .data.dicomdatasetloader import DicomDataSetLoader
+from .models import FileSetModel, FileModel
 
 
 # Move to separate file or class
@@ -50,43 +49,48 @@ def process_uploaded_files(request):
 
 
 # Move to data manager class
-def create_dataset(user, name=None):
+def create_fileset(user, name=None):
     if name:
-        ds_name = name
+        fs_name = name
     else:
         timestamp = timezone.now().strftime('%Y%m%d%H%M%S.%f')
-        ds_name = 'dataset-{}'.format(timestamp)
-    dataset = DataSetModel.objects.create(name=ds_name, owner=user) # dataset.path is set in post_save() for DataSetModel
-    return dataset
+        fs_name = 'fileset-{}'.format(timestamp)
+    fileset = FileSetModel.objects.create(name=fs_name, owner=user) # fileset.path is set in post_save() for FileSetModel
+    return fileset
+
+
+def create_file(path, fileset):
+    return FileModel.objects.create(
+        name=os.path.split(path)[1], path=path, fileset=fileset)
 
 
 # Move to data manager class. Loading files by inspecting DICOM header should be another class
-def create_dataset_from_files(file_paths, file_names, user):
+def create_fileset_from_files(file_paths, file_names, user):
     if len(file_paths) == 0 or len(file_names) == 0:
         return None
-    dataset = create_dataset(user)
+    fileset = create_fileset(user)
     for i in range(len(file_paths)):
         source_path = file_paths[i]
         target_name = file_names[i]
-        target_path = os.path.join(dataset.path, target_name)
-        shutil.move(source_path, target_path)
-        # create_file_path(path=target_path, dataset=dataset)
-    return dataset
+        target_path = os.path.join(fileset.path, target_name)
+        shutil.copy(source_path, target_path)
+        create_file(path=target_path, fileset=fileset)
+    return fileset
 
 
 # Move to data manager class
-def get_datasets(user):
+def get_filesets(user):
     if not user.is_staff:
-        return DataSetModel.objects.filter(Q(owner=user) | Q(public=True))
-    return DataSetModel.objects.all()
+        return FileSetModel.objects.filter(Q(owner=user) | Q(public=True))
+    return FileSetModel.objects.all()
 
 
-def get_dataset(dataset_id, user):
-    return DataSetModel.objects.get(pk=dataset_id)
+def get_fileset(fileset_id, user):
+    return FileSetModel.objects.get(pk=fileset_id)
 
 
-def delete_dataset(dataset):
-    dataset.delete()
+def delete_fileset(fileset):
+    fileset.delete()
 
 
 @login_required
@@ -100,19 +104,18 @@ def progress(_):
 
 
 @login_required
-def datasets(request):
+def filesets(request):
     if request.method == 'POST':
         file_paths, file_names = process_uploaded_files(request)
-        loader = DicomDataSetLoader()
-        loader.load(file_paths, file_names)
-        # create_dataset_from_files(file_paths, file_names, request.user)
-    return render(request, 'datasets.html', context={'datasets': get_datasets(request.user)})
+        create_fileset_from_files(file_paths, file_names, request.user)
+    return render(request, 'filesets.html', context={'filesets': get_filesets(request.user)})
+
 
 @login_required
-def dataset(request, dataset_id):
+def fileset(request, fileset_id):
     if request.method == 'GET':
-        ds = get_dataset(dataset_id, request.user)
+        fs = get_fileset(fileset_id, request.user)
         action = request.GET.get('action', None)
         if action == 'delete':
-            delete_dataset(ds)
-    return render(request, 'datasets.html', context={'datasets': get_datasets(request.user)})
+            delete_fileset(fs)
+    return render(request, 'filesets.html', context={'filesets': get_filesets(request.user)})

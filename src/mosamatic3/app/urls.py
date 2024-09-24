@@ -3,9 +3,9 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.datasets),
+    path('', views.filesets),
     path('auth', views.auth),
     path('progress', views.progress),
-    path('datasets/', views.datasets),
-    path('datasets/<str:dataset_id>', views.dataset),
+    path('filesets/', views.filesets),
+    path('filesets/<str:fileset_id>', views.fileset),
 ]

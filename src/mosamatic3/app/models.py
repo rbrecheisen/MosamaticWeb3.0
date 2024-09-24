@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 
 
-class DataSetModel(models.Model):
+class FileSetModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=1024, editable=True, null=False)
     path = models.CharField(max_length=2048, editable=False, null=True, unique=True)
@@ -21,26 +21,10 @@ class DataSetModel(models.Model):
         return self.name
 
 
-class FileSetModel(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    name = models.CharField(max_length=1024, editable=True, null=False)
-    path = models.CharField(max_length=2048, editable=False, null=True, unique=True)
-    created = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey(
-        User, editable=False, related_name='+', on_delete=models.CASCADE)
-    dataset = models.ForeignKey(DataSetModel, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-
-
 class FileModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=256, editable=False, null=False)
     path = models.CharField(max_length=2048, editable=False, null=False, unique=True)
-    created = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey(
-        User, editable=False, related_name='+', on_delete=models.CASCADE)
     fileset = models.ForeignKey(FileSetModel, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -54,7 +38,7 @@ class LogOutputModel(models.Model):
 
 
 # Signals
-@receiver(models.signals.post_save, sender=DataSetModel)
+@receiver(models.signals.post_save, sender=FileSetModel)
 def dataset_post_save(sender, instance, **kwargs):
     if not instance.path:
         instance.path = os.path.join(settings.MEDIA_ROOT, str(instance.id))
@@ -62,7 +46,7 @@ def dataset_post_save(sender, instance, **kwargs):
         instance.save()
 
 
-@receiver(models.signals.post_delete, sender=DataSetModel)
+@receiver(models.signals.post_delete, sender=FileSetModel)
 def dataset_post_delete(sender, instance, **kwargs):
     if os.path.isdir(instance.path):
         shutil.rmtree(instance.path)
