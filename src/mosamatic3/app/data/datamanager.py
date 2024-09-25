@@ -7,7 +7,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.db.models import Q
 
-from ..models import FileModel, FileSetModel
+from ..models import FileModel, FileSetModel, PatientCohortModel, PatientModel, DicomStudyModel, DicomSeriesModel, DicomImageModel
 
 
 class DataManager:
@@ -87,25 +87,25 @@ class DataManager:
     # DICOM objects
 
     def get_cohort_for_fileset(self, fileset): # There can be only one cohort for each fileset
-        pass
+        return PatientCohortModel.objects.filter(fileset=fileset).first()
 
     def get_patients_for_cohort(self, cohort):
-        pass
+        return PatientModel.objects.filter(cohort=cohort).all()
 
     def get_studies(self):
-        pass
+        return DicomStudyModel.objects.all() # Filter for user?
 
     def get_studies_for_patient(self, patient):
-        pass
+        return DicomStudyModel.objects.filter(patient=patient).all()
 
     def get_series(self):
-        pass
+        return DicomSeriesModel.objects.all() # Filter for user?
 
     def get_series_for_study(self, study):
-        pass
+        return DicomSeriesModel.objects.filter(study=study).all()
 
     def get_images(self):
-        pass
+        return DicomImageModel.objects.all()
 
     def get_images_for_series(self, series):
-        pass
+        return DicomImageModel.objects.filter(series=series).all()

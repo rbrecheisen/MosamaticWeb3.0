@@ -45,10 +45,20 @@ def fileset(request, fileset_id):
             fs = manager.make_fileset_public(fs)
         elif action == 'make-private':
             fs = manager.make_fileset_public(fs, public=False)
+        elif action == 'view-dicom-structure':
+            cohort = manager.get_cohort_for_fileset(fs)
+            patients = manager.get_patients_for_cohort(cohort)
+            return render(request, 'dicomstructure.html', context={
+                'fileset': fs, 'cohort': cohort, 'patients': patients, 'studies': [], 'series': [], 'images': [],
+            })
         elif action == 'analyze-dicom-structure':
             analyzer = DicomStructureAnalyzer()
             analyzer.execute(fs)
-            return render(request, 'dicomstructure.html', context={'fileset': fs})
+            cohort = manager.get_cohort_for_fileset(fs)
+            patients = manager.get_patients_for_cohort(cohort)
+            return render(request, 'dicomstructure.html', context={
+                'fileset': fs, 'cohort': cohort, 'patients': patients, 'studies': [], 'series': [], 'images': [],
+            })
         else:
             pass
         return render(request, 'fileset.html', context={'fileset': fs, 'files': manager.get_files(fs)})

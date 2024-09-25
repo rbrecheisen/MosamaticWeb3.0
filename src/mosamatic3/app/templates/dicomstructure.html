@@ -27,7 +27,7 @@
                     <ul class="list-group">
                         {% for patient in patients %}
                             <li class="list-group-item">
-                                X
+                                {{ patient.name}}
                             </li>
                         {% endfor %}
                     </ul>
@@ -43,7 +43,7 @@
                     <ul class="list-group">
                         {% for study in studies %}
                             <li class="list-group-item">
-                                X
+                                {{ study.name }}
                             </li>
                         {% endfor %}
                     </ul>
@@ -59,7 +59,7 @@
                     <ul class="list-group">
                         {% for serie in series %}
                             <li class="list-group-item">
-                                X
+                                {{ serie.name }}
                             </li>
                         {% endfor %}
                     </ul>
