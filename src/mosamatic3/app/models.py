@@ -18,6 +18,10 @@ class FileSetModel(models.Model):
         User, editable=False, related_name='+', on_delete=models.CASCADE)
     public = models.BooleanField(default=False, editable=True)
 
+    @property
+    def size(self):
+        return FileModel.objects.filter(fileset=self).count()
+
     def __str__(self):
         return self.name
 

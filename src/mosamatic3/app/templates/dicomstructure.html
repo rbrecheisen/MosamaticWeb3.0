@@ -28,7 +28,11 @@
                         <input type="hidden" name="action" value="select-patient">
                         <select class="form-select" name="patient_id">
                             {% for patient in patients %}
-                                <option value="{{ patient.id }}">{{ patient.name }}</option>
+                                {% if patient == selected_patient %}
+                                    <option selected value="{{ patient.id }}">{{ patient.name }}</option>
+                                {% else %}
+                                    <option value="{{ patient.id }}">{{ patient.name }}</option>
+                                {% endif %}
                             {% endfor %}
                         </select>
                         <br>
@@ -48,7 +52,11 @@
                         <input type="hidden" name="patient_id" value="{{ patients.0.id }}">
                         <select class="form-select" name="study_id">
                             {% for study in studies %}
-                                <option value="{{ study.id }}">{{ study.name }}</option>
+                                {% if study == selected_study %}
+                                    <option selected value="{{ study.id }}">{{ study.name }}</option>
+                                {% else %}
+                                    <option value="{{ study.id }}">{{ study.name }}</option>
+                                {% endif %}
                             {% endfor %}
                         </select>
                         <br>
@@ -69,7 +77,11 @@
                         <input type="hidden" name="study_id" value="{{ studies.0.id }}">
                         <select class="form-select" name="series_id">
                             {% for serie in series %}
-                                <option value="{{ serie.id }}">{{ serie.name }}</option>
+                                {% if serie == selected_series %}
+                                    <option selected value="{{ serie.id }}">{{ serie.name }}</option>
+                                {% else %}
+                                    <option value="{{ serie.id }}">{{ serie.name }}</option>
+                                {% endif %}
                             {% endfor %}
                         </select>
                         <br>

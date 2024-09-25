@@ -33,7 +33,7 @@ class DicomStructureAnalyzer:
             study_instance_uids = []
             for f in files:
                 p = self.get_dicom_object_for_file(f)
-                if p:
+                if p and patient_id == p.PatientID:
                     study_instance_uid = p.StudyInstanceUID
                     if study_instance_uid not in study_instance_uids:
                         study_instance_uids.append(study_instance_uid)
@@ -45,7 +45,7 @@ class DicomStructureAnalyzer:
                 image_types = []
                 for f in files:
                     p = self.get_dicom_object_for_file(f)
-                    if p and study_instance_uid == p.StudyInstanceUID:
+                    if p and patient_id == p.PatientID and study_instance_uid == p.StudyInstanceUID:
                         series_instance_uid = p.SeriesInstanceUID
                         if series_instance_uid not in series_instance_uids:
                             series_instance_uids.append(series_instance_uid)
@@ -60,7 +60,6 @@ class DicomStructureAnalyzer:
                     print(f'Created {series.name} for {study.name} and {patient.name}')
                     for f in files:
                         p = self.get_dicom_object_for_file(f)
-                        if p and study_instance_uid == p.StudyInstanceUID and series_instance_uid == p.SeriesInstanceUID:
+                        if p and patient_id == p.PatientID and study_instance_uid == p.StudyInstanceUID and series_instance_uid == p.SeriesInstanceUID:
                             instance_uid = p.SOPInstanceUID
-                            image = DicomImageModel.objects.create(instance_uid=instance_uid, series=series, file=f)
-                            print(f'Created image {image.file.name} for {series.name}')
+                            DicomImageModel.objects.create(instance_uid=instance_uid, series=series, file=f)
