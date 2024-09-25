@@ -15,6 +15,11 @@ def auth(_):
 
 
 @login_required
+def custom_logout(request):
+    logout(request)
+    return redirect('/')
+
+@login_required
 def filesets(request):
     manager = DataManager()
     if request.method == 'POST':
@@ -102,6 +107,5 @@ def dicomstructure(request, fileset_id):
 
 
 @login_required
-def custom_logout(request):
-    logout(request)
-    return redirect('/')
+def tasks(request):
+    return render(request, 'tasks.html', context={})
