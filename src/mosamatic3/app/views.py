@@ -45,16 +45,12 @@ def fileset(request, fileset_id):
             fs = manager.make_fileset_public(fs)
         elif action == 'make-private':
             fs = manager.make_fileset_public(fs, public=False)
-        elif action == 'view-dicom-structure':
+        elif action == 'view-dicom-structure':            
             cohort = manager.get_cohort_for_fileset(fs)
-            patients = manager.get_patients_for_cohort(cohort)
-            return render(request, 'dicomstructure.html', context={
-                'fileset': fs, 'cohort': cohort, 'patients': patients, 'studies': [], 'series': [], 'images': [],
-            })
-        elif action == 'analyze-dicom-structure':
-            analyzer = DicomStructureAnalyzer()
-            analyzer.execute(fs)
-            cohort = manager.get_cohort_for_fileset(fs)
+            if cohort is None:
+                analyzer = DicomStructureAnalyzer()
+                analyzer.execute(fs)
+                cohort = manager.get_cohort_for_fileset(fs)
             patients = manager.get_patients_for_cohort(cohort)
             return render(request, 'dicomstructure.html', context={
                 'fileset': fs, 'cohort': cohort, 'patients': patients, 'studies': [], 'series': [], 'images': [],
@@ -89,7 +85,17 @@ def dicomstructure(request, fileset_id):
             return render(request, 'dicomstructure.html', context={
                 'fileset': fs, 'cohort': cohort, 'patients': [patient], 'studies': [study], 'series': series, 'images': [],
             })
-        elif 
+        elif action == 'select-series':
+            patient_id = request.GET.get('patient_id', None)
+            patient = manager.get_patient(patient_id)
+            study_id = request.GET.get('study_id', None)
+            study = manager.get_study(study_id)
+            series_id = request.GET.get('series_id', None)
+            series = manager.get_series(series_id)
+            images = manager.get_images_for_series(series)
+            return render(request, 'dicomstructure.html', context={
+                'fileset': fs, 'cohort': cohort, 'patients': [patient], 'studies': [study], 'series': [series], 'images': images,
+            })
         else:
             pass
     return HttpResponseForbidden(f'Wrong method ({request.method}) or action ({action})')

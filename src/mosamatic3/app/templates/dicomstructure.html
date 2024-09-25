@@ -90,7 +90,7 @@
                         <input type="hidden" name="study_id" value="{{ studies.0.id }}">
                         <input type="hidden" name="series_id" value="{{ series.0.id }}">
                         {% for image in images %}
-                            {{ image.file.name }}
+                            {{ image.file.name }}<br>
                         {% endfor %}
                     </form>
                 </div>

@@ -95,23 +95,20 @@ class DataManager:
     def get_patient(self, patient_id):
         return PatientModel.objects.get(pk=patient_id)
 
-    def get_studies(self):
-        return DicomStudyModel.objects.all() # Filter for user?
-
     def get_studies_for_patient(self, patient):
         return DicomStudyModel.objects.filter(patient=patient).all()
     
     def get_study(self, study_id):
         return DicomStudyModel.objects.get(pk=study_id)
 
-    def get_series(self):
-        return DicomSeriesModel.objects.all() # Filter for user?
+    def get_series(self, series_id):
+        return DicomSeriesModel.objects.get(pk=series_id)
 
     def get_series_for_study(self, study):
         return DicomSeriesModel.objects.filter(study=study).all()
-
-    def get_images(self):
-        return DicomImageModel.objects.all()
+    
+    def get_image(self, image_id):
+        return DicomImageModel.objects.get(pk=image_id)
 
     def get_images_for_series(self, series):
         return DicomImageModel.objects.filter(series=series).all()

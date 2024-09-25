@@ -19,10 +19,6 @@
                             <input type="text" class="form-control" placeholder="Enter new name" name="new_name"><br>
                             <button class="btn btn-primary">Rename</button>
                         </form>
-                        <form action="/filesets/{{ fileset.id }}" method="get">
-                            <input type="hidden" name="action" value="analyze-dicom-structure">
-                            <button class="btn btn-primary">Analyze DICOM Structure</button>
-                        </form>
                         <p><a href="/filesets/{{ fileset.id }}?action=view-dicom-structure">View DICOM structure</a></p>
                         <p><a href="/filesets/{{ fileset.id }}?action=download">Download dataset</a></p>
                         <p><a href="/filesets/{{ fileset.id }}?action=delete">Delete</a></p>
