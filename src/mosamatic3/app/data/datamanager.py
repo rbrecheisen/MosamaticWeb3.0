@@ -91,12 +91,18 @@ class DataManager:
 
     def get_patients_for_cohort(self, cohort):
         return PatientModel.objects.filter(cohort=cohort).all()
+    
+    def get_patient(self, patient_id):
+        return PatientModel.objects.get(pk=patient_id)
 
     def get_studies(self):
         return DicomStudyModel.objects.all() # Filter for user?
 
     def get_studies_for_patient(self, patient):
         return DicomStudyModel.objects.filter(patient=patient).all()
+    
+    def get_study(self, study_id):
+        return DicomStudyModel.objects.get(pk=study_id)
 
     def get_series(self):
         return DicomSeriesModel.objects.all() # Filter for user?

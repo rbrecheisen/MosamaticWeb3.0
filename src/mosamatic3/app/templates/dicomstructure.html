@@ -24,13 +24,16 @@
             <div class="card" style="margin-top: 10px;">
                 <div class="card-header">Patients</b></div>
                 <div class="card-body">
-                    <ul class="list-group">
-                        {% for patient in patients %}
-                            <li class="list-group-item">
-                                {{ patient.name}}
-                            </li>
-                        {% endfor %}
-                    </ul>
+                    <form action="/filesets/{{ fileset.id }}/dicomstructure/" method="get">
+                        <input type="hidden" name="action" value="select-patient">
+                        <select class="form-select" name="patient_id">
+                            {% for patient in patients %}
+                                <option value="{{ patient.id }}">{{ patient.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <br>
+                        <button type="submit" class="btn btn-primary">Select patient</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -40,13 +43,17 @@
             <div class="card" style="margin-top: 10px;">
                 <div class="card-header">DICOM studies</b></div>
                 <div class="card-body">
-                    <ul class="list-group">
-                        {% for study in studies %}
-                            <li class="list-group-item">
-                                {{ study.name }}
-                            </li>
-                        {% endfor %}
-                    </ul>
+                    <form action="/filesets/{{ fileset.id }}/dicomstructure/" method="get">
+                        <input type="hidden" name="action" value="select-study">
+                        <input type="hidden" name="patient_id" value="{{ patients.0.id }}">
+                        <select class="form-select" name="study_id">
+                            {% for study in studies %}
+                                <option value="{{ study.id }}">{{ study.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <br>
+                        <button type="submit" class="btn btn-primary">Select study</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -56,13 +63,18 @@
             <div class="card" style="margin-top: 10px;">
                 <div class="card-header">DICOM series</b></div>
                 <div class="card-body">
-                    <ul class="list-group">
-                        {% for serie in series %}
-                            <li class="list-group-item">
-                                {{ serie.name }}
-                            </li>
-                        {% endfor %}
-                    </ul>
+                    <form action="/filesets/{{ fileset.id }}/dicomstructure/" method="get">
+                        <input type="hidden" name="action" value="select-series">
+                        <input type="hidden" name="patient_id" value="{{ patients.0.id }}">
+                        <input type="hidden" name="study_id" value="{{ studies.0.id }}">
+                        <select class="form-select" name="series_id">
+                            {% for serie in series %}
+                                <option value="{{ serie.id }}">{{ serie.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <br>
+                        <button type="submit" class="btn btn-primary">Select series</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -72,13 +84,15 @@
             <div class="card" style="margin-top: 10px;">
                 <div class="card-header">DICOM images</b></div>
                 <div class="card-body">
-                    <ul class="list-group">
+                    <form action="/filesets/{{ fileset.id }}/dicomstructure/" method="get">
+                        <input type="hidden" name="action" value="select-image">
+                        <input type="hidden" name="patient_id" value="{{ patients.0.id }}">
+                        <input type="hidden" name="study_id" value="{{ studies.0.id }}">
+                        <input type="hidden" name="series_id" value="{{ series.0.id }}">
                         {% for image in images %}
-                            <li class="list-group-item">
-                                X
-                            </li>
+                            {{ image.file.name }}
                         {% endfor %}
-                    </ul>
+                    </form>
                 </div>
             </div>
         </div>

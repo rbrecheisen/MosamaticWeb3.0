@@ -71,7 +71,27 @@ def dicomstructure(request, fileset_id):
     action = None
     if request.method == 'GET':
         fs = manager.get_fileset(fileset_id)
-        pass
+        cohort = manager.get_cohort_for_fileset(fs)
+        action = request.GET.get('action', None)
+        if action == 'select-patient':
+            patient_id = request.GET.get('patient_id', None)
+            patient = manager.get_patient(patient_id)
+            studies = manager.get_studies_for_patient(patient)
+            return render(request, 'dicomstructure.html', context={
+                'fileset': fs, 'cohort': cohort, 'patients': [patient], 'studies': studies, 'series': [], 'images': [],
+            })
+        elif action == 'select-study':
+            patient_id = request.GET.get('patient_id', None)
+            patient = manager.get_patient(patient_id)
+            study_id = request.GET.get('study_id', None)
+            study = manager.get_study(study_id)
+            series = manager.get_series_for_study(study)
+            return render(request, 'dicomstructure.html', context={
+                'fileset': fs, 'cohort': cohort, 'patients': [patient], 'studies': [study], 'series': series, 'images': [],
+            })
+        elif 
+        else:
+            pass
     return HttpResponseForbidden(f'Wrong method ({request.method}) or action ({action})')
 
 
