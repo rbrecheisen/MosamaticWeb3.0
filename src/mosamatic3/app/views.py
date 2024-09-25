@@ -1,10 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden
 from wsgiref.util import FileWrapper
 
 from .data.fileuploadprocessor import FileUploadProcessor
 from .data.datamanager import DataManager
+from .data.dicomstructureanalyzer import DicomStructureAnalyzer
 
 
 @login_required
@@ -24,6 +26,7 @@ def filesets(request):
 @login_required
 def fileset(request, fileset_id):
     manager = DataManager()
+    action = None
     if request.method == 'GET':
         fs = manager.get_fileset(fileset_id)
         action = request.GET.get('action', None)
@@ -42,7 +45,27 @@ def fileset(request, fileset_id):
             fs = manager.make_fileset_public(fs)
         elif action == 'make-private':
             fs = manager.make_fileset_public(fs, public=False)
+        elif action == 'analyze-dicom-structure':
+            analyzer = DicomStructureAnalyzer()
+            analyzer.execute(fs)
+            return render(request, 'dicomstructure.html', context={'fileset': fs})
         else:
             pass
         return render(request, 'fileset.html', context={'fileset': fs, 'files': manager.get_files(fs)})
-    return HttpResponseForbidden('Wrong method')
+    return HttpResponseForbidden(f'Wrong method ({request.method}) or action ({action})')
+
+
+@login_required
+def dicomstructure(request, fileset_id):
+    manager = DataManager()
+    action = None
+    if request.method == 'GET':
+        fs = manager.get_fileset(fileset_id)
+        pass
+    return HttpResponseForbidden(f'Wrong method ({request.method}) or action ({action})')
+
+
+@login_required
+def custom_logout(request):
+    logout(request)
+    return redirect('/')

@@ -35,16 +35,16 @@ class FileModel(models.Model):
 # DICOM objects
 class PatientCohortModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    name = models.CharField(max_length=1024, unique=True, null=False)
-    cohort_id = models.CharField(max_length=1024, unique=True, null=False)
+    name = models.CharField(max_length=1024, unique=False, null=False)
+    fileset = models.ForeignKey(FileSetModel, on_delete=models.CASCADE) # We want to re-analyze DICOM structure for this fileset so do not delete
 
     def __str__(self):
-        return f'{self.name} ({self.cohort_id})'
+        return f'{self.name}'
 
 
 class PatientModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    name = models.CharField(max_length=1024, unique=True, null=False)
+    name = models.CharField(max_length=1024, unique=False, null=False) # "patient"
     patient_id = models.CharField(max_length=1024, unique=False, null=False)
     cohort = models.ForeignKey(PatientCohortModel, on_delete=models.CASCADE)
 
@@ -54,7 +54,7 @@ class PatientModel(models.Model):
 
 class DicomStudyModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    name = models.CharField(max_length=1024, unique=False, null=False)
+    name = models.CharField(max_length=1024, unique=False, null=False) # "study"
     study_instance_uid = models.CharField(max_length=1024, unique=True, null=False)
     patient = models.ForeignKey(PatientModel, on_delete=models.CASCADE)
 
@@ -71,17 +71,17 @@ class DicomSeriesModel(models.Model):
     study = models.ForeignKey(DicomStudyModel, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.name} ({self.modality}, {self.image_type}, {self.series_instance_uid})'
+        return f'{self.name}-{self.series_instance_uid} ({self.modality}, {self.image_type})'
 
 
-class DicomInstanceModel(models.Model):
+class DicomImageModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     instance_uid = models.CharField(max_length=1024, unique=True, null=False)
     series = models.ForeignKey(DicomSeriesModel, on_delete=models.CASCADE)
-    file = models.ForeignKey(FileModel, on_delete=models.CASCADE)
+    file = models.ForeignKey(FileModel, on_delete=models.CASCADE) # We want to re-analyze DICOM structure for this image so do not delete
 
     def __str__(self):
-        return f'{self.file.path} ({self.instance_uid})'
+        return f'{self.file.name} ({self.instance_uid})'
     
 
 # Miscellaneous

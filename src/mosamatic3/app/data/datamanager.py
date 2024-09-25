@@ -14,6 +14,8 @@ class DataManager:
     def __init__(self):
         pass
 
+    # Filesets and files
+
     @staticmethod
     def create_file(path, fileset):
         return FileModel.objects.create(
@@ -81,3 +83,29 @@ class DataManager:
             for f in files:
                 zip_obj.write(f.path, arcname=basename(f.path))
         return zip_file_path
+    
+    # DICOM objects
+
+    def get_cohort_for_fileset(self, fileset): # There can be only one cohort for each fileset
+        pass
+
+    def get_patients_for_cohort(self, cohort):
+        pass
+
+    def get_studies(self):
+        pass
+
+    def get_studies_for_patient(self, patient):
+        pass
+
+    def get_series(self):
+        pass
+
+    def get_series_for_study(self, study):
+        pass
+
+    def get_images(self):
+        pass
+
+    def get_images_for_series(self, series):
+        pass
