@@ -1,7 +1,7 @@
 import pydicom
 import pydicom.errors
 
-from ..models import FileSetModel, FileModel, PatientCohortModel, PatientModel, DicomStudyModel, DicomSeriesModel, DicomImageModel
+from ..models import FileModel, PatientCohortModel, PatientModel, DicomStudyModel, DicomSeriesModel, DicomImageModel
 
 
 class DicomStructureAnalyzer:
@@ -19,7 +19,6 @@ class DicomStructureAnalyzer:
     def execute(self, fileset):
         cohort = PatientCohortModel.objects.create(name=f'cohort-{fileset.id}', fileset=fileset)
         files = FileModel.objects.filter(fileset=fileset).all()
-        # Find patient IDs
         patient_ids = []
         for f in files:
             p = self.get_dicom_object_for_file(f)
@@ -39,7 +38,7 @@ class DicomStructureAnalyzer:
                         study_instance_uids.append(study_instance_uid)
             for study_instance_uid in study_instance_uids:
                 study = DicomStudyModel.objects.create(name='study', study_instance_uid=study_instance_uid, patient=patient)
-                print(f'Created study study-{study.study_instance_uid} for patient-{patient.patient_id}')
+                print(f'Created study-{study.study_instance_uid} for patient-{patient.patient_id}')
                 series_instance_uids = []
                 modalities = []
                 image_types = []
@@ -57,7 +56,7 @@ class DicomStructureAnalyzer:
                     image_type = image_types[i]
                     series = DicomSeriesModel.objects.create(
                         name='series', series_instance_uid=series_instance_uid, modality=modality, image_type=image_type, study=study)
-                    print(f'Created series series-{series.series_instance_uid} for study-{study.study_instance_uid} and patient-{patient.patient_id}')
+                    print(f'Created series-{series.series_instance_uid} for study-{study.study_instance_uid} and patient-{patient.patient_id}')
                     for f in files:
                         p = self.get_dicom_object_for_file(f)
                         if p and study_instance_uid == p.StudyInstanceUID and series_instance_uid == p.SeriesInstanceUID:
