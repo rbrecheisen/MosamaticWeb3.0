@@ -7,7 +7,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.db.models import Q
 
-from ..models import FileModel, FileSetModel, PatientCohortModel, PatientModel, DicomStudyModel, DicomSeriesModel, DicomImageModel
+from ..models import FileModel, FileSetModel
 
 
 class DataManager:
@@ -83,38 +83,3 @@ class DataManager:
             for f in files:
                 zip_obj.write(f.path, arcname=basename(f.path))
         return zip_file_path
-    
-    # DICOM objects
-
-    def get_cohorts(self):
-        return PatientCohortModel.objects.all()
-    
-    def get_cohort(self, cohort_id):
-        return PatientCohortModel.objects.get(pk=cohort_id)
-
-    def get_cohort_for_fileset(self, fileset): # There can be only one cohort for each fileset
-        return PatientCohortModel.objects.filter(fileset=fileset).first()
-
-    def get_patients_for_cohort(self, cohort):
-        return PatientModel.objects.filter(cohort=cohort).all()
-    
-    def get_patient(self, patient_id):
-        return PatientModel.objects.get(pk=patient_id)
-
-    def get_studies_for_patient(self, patient):
-        return DicomStudyModel.objects.filter(patient=patient).all()
-    
-    def get_study(self, study_id):
-        return DicomStudyModel.objects.get(pk=study_id)
-
-    def get_series(self, series_id):
-        return DicomSeriesModel.objects.get(pk=series_id)
-
-    def get_series_for_study(self, study):
-        return DicomSeriesModel.objects.filter(study=study).all()
-    
-    def get_image(self, image_id):
-        return DicomImageModel.objects.get(pk=image_id)
-
-    def get_images_for_series(self, series):
-        return DicomImageModel.objects.filter(series=series).all()
