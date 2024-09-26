@@ -86,6 +86,12 @@ class DataManager:
     
     # DICOM objects
 
+    def get_cohorts(self):
+        return PatientCohortModel.objects.all()
+    
+    def get_cohort(self, cohort_id):
+        return PatientCohortModel.objects.get(pk=cohort_id)
+
     def get_cohort_for_fileset(self, fileset): # There can be only one cohort for each fileset
         return PatientCohortModel.objects.filter(fileset=fileset).first()
 
