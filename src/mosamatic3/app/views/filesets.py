@@ -1,23 +1,12 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import logout
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden
 from wsgiref.util import FileWrapper
 
-from .data.fileuploadprocessor import FileUploadProcessor
-from .data.datamanager import DataManager
-from .data.dicomstructureanalyzer import DicomStructureAnalyzer
+from ..data.fileuploadprocessor import FileUploadProcessor
+from ..data.datamanager import DataManager
+from ..data.dicomstructureanalyzer import DicomStructureAnalyzer
 
-
-@login_required
-def auth(_):
-    return HttpResponse(status=200)
-
-
-@login_required
-def custom_logout(request):
-    logout(request)
-    return redirect('/')
 
 @login_required
 def filesets(request):
@@ -113,8 +102,3 @@ def dicomstructure(request, fileset_id):
         else:
             pass
     return HttpResponseForbidden(f'Wrong method ({request.method}) or action ({action})')
-
-
-@login_required
-def tasks(request):
-    return render(request, 'tasks.html', context={})
