@@ -46,7 +46,7 @@ class TaskModel(models.Model):
         return f'{self.name} (status: {self.status})'
     
 
-# Miscellaneous
+# Logging
 class LogOutputModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     timestamp = models.DateTimeField()
