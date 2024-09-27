@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class Command(BaseCommand):
@@ -9,7 +10,7 @@ class Command(BaseCommand):
         user = User.objects.filter(username='admin').first()
         if user is None:
             User.objects.create_superuser(
-                username='admin', email='', password='Arturo4ever', first_name='', last_name='')
+                username=settings.ADMIN_USER, email='', password=settings.ADMIN_USER, first_name='', last_name='')
             self.stdout.write(self.style.SUCCESS('Successfully created admin user'))
         else:
             self.stdout.write(self.style.SUCCESS('Admin user already exists'))

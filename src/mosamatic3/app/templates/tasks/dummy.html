@@ -1,0 +1,18 @@
+{% extends "./base.html" %}
+{% block task %}
+<div class="row">
+    <div class="col-sm-10">
+        <div class="card" style="margin-top: 10px;">
+            <div class="card-header">Dummy</div>
+            <div class="card-body">
+                <form action="/tasks/dummy/" method="get">
+                    <input type="hidden" name="action" value="execute">
+                    <input type="hidden" name="auto_refresh" value="{{ auto_refresh }}">
+                    <button class="btn btn-primary">Execute task</button>
+                </form>
+                Progress: {{ progress }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -36,6 +36,16 @@ class FileModel(models.Model):
         return os.path.split(str(self.path))[1]
     
 
+# Tasks
+class TaskModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    name = models.CharField(max_length=1024, editable=False, unique=True, null=False)
+    status = models.CharField(max_length=16, unique=False, null=False)
+
+    def __str__(self):
+        return f'{self.name} (status: {self.status})'
+    
+
 # Miscellaneous
 class LogOutputModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)

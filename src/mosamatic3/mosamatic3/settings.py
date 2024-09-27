@@ -9,11 +9,14 @@ DATA_DIR_LOCAL = os.path.join(tempfile.gettempdir(), 'mosamatic/data')
 DATA_DIR = os.environ.get('DATA_DIR', DATA_DIR_LOCAL)
 os.makedirs(DATA_DIR, exist_ok=True)
 
+ADMIN_USER = os.getenv('ADMIN_USER', 'admin')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'admin')
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-za8p@28)jn#aen98q0azmiqwbi+&x_%h@5!kpw5=9kvoy(4(#*'
+SECRET_KEY = os.getenv('SECRET_KEY', '1234')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

@@ -4,6 +4,7 @@ django-session-security
 django-guardian
 django-crispy-forms
 django-minio-backend
+django-q
 crispy-bootstrap5
 psycopg2-binary
 pydicom
@@ -13,6 +14,7 @@ openpyxl
 tensorflow
 uwsgi
 gunicorn
+pendulum
 # torch
 # torchvision
 # totalsegmentator
