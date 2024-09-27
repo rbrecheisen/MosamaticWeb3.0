@@ -37,39 +37,6 @@ services:
     ports:
       - 6379:6379
 
-  celery:
-    build: .
-    command: celery --app mosamatic3 worker --loglevel=info -n celery@%h
-    environment:
-      - POSTGRES_DB=db
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=foobar
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - REDIS_HOST=redis
-    healthcheck:
-      test: ["CMD", "celery", "--app", "mosamatic3", "inspect", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    depends_on:
-      web:
-        condition: service_healthy
-
-  celerybeat:
-    build: .
-    command: celery --app mosamatic3 beat --loglevel=info
-    environment:
-      - POSTGRES_DB=db
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=foobar
-      - POSTGRES_HOST=db
-      - POSTGRES_PORT=5432
-      - REDIS_HOST=redis
-    depends_on:
-      celery:
-        condition: service_healthy
-
   web:
     build: .
     image: brecheisen/mosamatic3-web:latest
@@ -87,11 +54,6 @@ services:
       - SECRET_KEY=1234
     volumes:
       - data:/data
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000/health/ || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
     depends_on:
       db:
         condition: service_healthy
