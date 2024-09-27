@@ -11,8 +11,7 @@ def dummy(request):
     action = request.GET.get('action', None)
     if request.method == 'GET':
         if action == 'execute':
-            result = dummy_task()
-            print(f'{result}')
+            print(f'{dummy_task()}')
             return render(request, 'tasks/dummy.html', context={'auto_refresh': auto_refresh})
         else:
             pass
