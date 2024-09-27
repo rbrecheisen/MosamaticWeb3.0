@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django_celery_beat',
     'session_security',
     'crispy_forms',
     'crispy_bootstrap5',
@@ -92,6 +93,17 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:6379/0'
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERYD_HIJACK_ROOT_LOGGER = False
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Amsterdam'
 
 
 # Password validation

@@ -4,7 +4,7 @@ django-session-security
 django-guardian
 django-crispy-forms
 django-minio-backend
-django-q
+django-celery-beat
 crispy-bootstrap5
 psycopg2-binary
 pydicom
@@ -12,10 +12,7 @@ numpy
 pandas
 openpyxl
 tensorflow
-uwsgi
 gunicorn
 pendulum
-# torch
-# torchvision
-# totalsegmentator
-# nibabel
+celery
+redis

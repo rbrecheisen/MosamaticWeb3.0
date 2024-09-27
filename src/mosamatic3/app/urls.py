@@ -8,6 +8,7 @@ from .views.tasks.filterdicom import filterdicom
 from .views.tasks.transformdicom import transformdicom
 from .views.tasks.musclefatsegmentation import musclefatsegmentation
 from .views.tasks.calculatebodycompositionmetrics import calculatebodycompositionmetrics
+from .views.healthcheck import HealthCheck
 
 
 urlpatterns = [
@@ -22,4 +23,5 @@ urlpatterns = [
     path('tasks/transformdicom/', transformdicom),
     path('tasks/musclefatsegmentation/', musclefatsegmentation),
     path('tasks/calculatebodycompositionmetrics/', calculatebodycompositionmetrics),
+    path('health/', HealthCheck.as_view()),
 ]
