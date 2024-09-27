@@ -4,7 +4,6 @@ from .views.base import auth, custom_logout
 from .views.filesets import fileset, filesets
 from .views.tasks.tasks import tasks
 from .views.tasks.dummy import dummy
-from .views.healthcheck import HealthCheck
 
 
 urlpatterns = [
@@ -15,5 +14,4 @@ urlpatterns = [
     path('accounts/logout/', custom_logout, name='logout'),
     path('tasks/', tasks),
     path('tasks/dummy/', dummy),
-    path('health/', HealthCheck.as_view()),
 ]
