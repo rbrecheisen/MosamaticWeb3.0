@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 
+from ...tasks.dummytask import dummy_task
+
 
 @login_required
 def dummy(request):
@@ -9,6 +11,8 @@ def dummy(request):
     action = request.GET.get('action', None)
     if request.method == 'GET':
         if action == 'execute':
+            result = dummy_task()
+            print(f'{result}')
             return render(request, 'tasks/dummy.html', context={'auto_refresh': auto_refresh})
         else:
             pass

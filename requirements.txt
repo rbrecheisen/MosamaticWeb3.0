@@ -3,7 +3,7 @@ django-jinja
 django-session-security
 django-guardian
 django-crispy-forms
-django-minio-backend
+django-huey
 crispy-bootstrap5
 psycopg2-binary
 pydicom
@@ -13,3 +13,4 @@ openpyxl
 tensorflow
 gunicorn
 pendulum
+redis

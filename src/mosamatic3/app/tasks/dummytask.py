@@ -1,11 +1,11 @@
 import time
 
-from celery import shared_task
+from huey.contrib.djhuey import task
 
 
-@shared_task
+@task()
 def dummy_task():
     for i in range(5):
         print('Running dummy task...')
-        time.sleep()
+        time.sleep(1)
     print('Finished')
