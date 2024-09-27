@@ -146,7 +146,7 @@ HUEY = {
     'utc': True,  # Use UTC for all times internally.
     'blocking': True,  # Perform blocking pop rather than poll Redis.
     'connection': {
-        'host': 'localhost',
+        'host': os.getenv('REDIS_HOST', 'localhost'),
         'port': 6379,
         'db': 0,
         'connection_pool': None,  # Definitely you should use pooling!
