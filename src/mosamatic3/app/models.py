@@ -39,6 +39,9 @@ class FileModel(models.Model):
 # Tasks
 class TaskModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    task_id = models.CharField(max_length=1024, editable=False, unique=True, null=False)
+    progress = models.IntegerField(default=0)
+    nr_steps = models.IntegerField(default=0)
     name = models.CharField(max_length=1024, editable=False, unique=True, null=False)
     status = models.CharField(max_length=16, unique=False, null=False)
 

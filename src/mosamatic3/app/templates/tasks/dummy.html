@@ -1,18 +1,41 @@
-{% extends "./base.html" %}
-{% block task %}
-<div class="row">
-    <div class="col-sm-10">
-        <div class="card" style="margin-top: 10px;">
-            <div class="card-header">Dummy</div>
-            <div class="card-body">
-                <form action="/tasks/dummy/" method="get">
-                    <input type="hidden" name="action" value="execute">
-                    <input type="hidden" name="auto_refresh" value="{{ auto_refresh }}">
-                    <button class="btn btn-primary">Execute task</button>
-                </form>
-                Progress: {{ progress }} %
+{% extends "../base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row"><p style="margin-top: 10px"><a href="/tasks/">Back</a></p></div>
+    <div class="row">
+        <div class="col-sm-10">
+            <div class="card" style="margin-top: 10px;">
+                <div class="card-header">Dummy</div>
+                <div class="card-body">
+                    <button onclick="executeTask()" class="btn btn-primary">Execute task</button>
+                </div>
+                <div id="task-status"></div>
             </div>
         </div>
     </div>
+    <script>
+        function executeTask() {
+            fetch(`/tasks/dummy/`, {method: "POST"})
+                .then(response => response.json())
+                .then(data => {
+                    const taskId = data.task_id;
+                    checkTaskStatus(taskId);
+                })
+                .catch(error => console.error("Error: " + error));
+        }
+
+        function checkTaskStatus(taskId) {
+            fetch(`/tasks/%{taskId}/status`, {method: "GET"})
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("task-status").innerText = data.task_status;
+                    if(data.task_status !== "finished") {
+                        setTimeout(function() {
+                            checkTaskStatus(taskId);
+                        }, 1000);
+                    }
+                });
+        }
+    </script>
 </div>
 {% endblock %}
