@@ -15,7 +15,7 @@
     </div>
 </div>
 <script>
-    document.getElementById('my-form').addEventListener('submit', function(event) {
+    document.getElementById('my-form').addEventListener('submit', function(event){
         event.preventDefault();
         const formData = new FormData(this);
         fetch('/tasks/dummy/', {
@@ -24,7 +24,7 @@
         })
         .then(response => response.json())
         .then(data => {
-            document.getElementById("task-progress").innerText = "Status: " + data.task_status + ", progress: " + data.task_progress;
+            document.getElementById("task-progress").innerText = "Status: " + data.task_status;
             const taskResultId = data.task_result_id;
             checkTaskStatus(taskResultId);
         })
@@ -42,7 +42,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById("task-progress").innerText = "Status: " + data.task_status + ", progress: " + data.task_progress; 
+                document.getElementById("task-progress").innerText = "Status: " + data.task_status; 
                 if (data.task_status === 'completed') {
                     clearInterval(interval);
                 }

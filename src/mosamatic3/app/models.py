@@ -39,7 +39,7 @@ class FileModel(models.Model):
 # Tasks
 class TaskProgressModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    task_result_id = models.CharField(max_length=1024, unique=False, null=True)
+    task_result_id = models.CharField(max_length=1024, unique=True, null=True)
     status = models.CharField(max_length=16, unique=False, null=False, default='running')
     progress = models.IntegerField(default=0)
     
@@ -47,7 +47,7 @@ class TaskProgressModel(models.Model):
 # Logging
 class LogOutputModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(auto_now_add=True)
     message = models.CharField(max_length=1024, editable=False, null=False)
 
     def __str__(self):
