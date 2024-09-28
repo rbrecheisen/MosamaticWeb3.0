@@ -4,8 +4,6 @@ import redis
 from django.conf import settings
 from huey.contrib.djhuey import task
 
-# from ..models import TaskProgressModel
-
 r = redis.Redis(host=settings.REDIS_HOST, port=6379, db=0)
 
 
@@ -20,23 +18,3 @@ def dummy_task():
         r.set(redis_key, progress)
     r.delete(redis_key)
     return True
-
-
-# @task()
-# def dummy_task(task_progress_id):
-#     try:
-#         task_progress = TaskProgressModel.objects.get(pk=task_progress_id)
-#         nr_steps = 5
-#         for step in range(nr_steps):
-#             print('Running dummy task...')
-#             time.sleep(1)
-#             task_progress.progress = int(((step + 1) / (nr_steps)) * 100)
-#             task_progress.status = 'running'
-#             task_progress.save()
-#         task_progress.progress = 100
-#         task_progress.status = 'completed'
-#         task_progress.save()
-#     except TaskProgressModel.DoesNotExist:
-#         print(f'TaskProgressModel does not exist')
-#         return False
-#     return True
