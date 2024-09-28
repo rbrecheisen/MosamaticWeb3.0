@@ -1,0 +1,54 @@
+{% extends "../base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row"><p style="margin-top: 10px"><a href="/tasks/">Back</a></p></div>
+    {% block task %}{% endblock %}
+    <div class="row">
+        <div class="col-sm-10">
+            <div class="card" style="margin-top: 10px;">
+                <div class="card-header">Task status</div>
+                <div class="card-body">
+                    <div id="task-progress"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('my-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        fetch('/tasks/dummy/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("task-progress").innerText = "Status: " + data.task_status + ", progress: " + data.task_progress;
+            const taskResultId = data.task_result_id;
+            checkTaskStatus(taskResultId);
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    function checkTaskStatus(taskResultId) {
+        const statusUrl = '/tasks/dummy/?task_result_id=' + taskResultId;
+        const interval = setInterval(() => {
+            fetch(statusUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("task-progress").innerText = "Status: " + data.task_status + ", progress: " + data.task_progress; 
+                if (data.task_status === 'completed') {
+                    clearInterval(interval);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }, 1000);
+    }
+</script>
+{% endblock %}
