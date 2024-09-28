@@ -40,7 +40,7 @@ class FileModel(models.Model):
 class TaskProgressModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     task_result_id = models.CharField(max_length=1024, unique=True, null=True)
-    status = models.CharField(max_length=16, unique=False, null=False, default='running')
+    status = models.CharField(max_length=16, unique=False, null=False, default='unknown')
     progress = models.IntegerField(default=0)
     
 

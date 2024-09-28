@@ -95,6 +95,8 @@ DATABASES = {
     }
 }
 
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -146,7 +148,7 @@ HUEY = {
     'utc': True,  # Use UTC for all times internally.
     'blocking': True,  # Perform blocking pop rather than poll Redis.
     'connection': {
-        'host': os.getenv('REDIS_HOST', 'localhost'),
+        'host': REDIS_HOST,
         'port': 6379,
         'db': 0,
         'connection_pool': None,  # Definitely you should use pooling!
