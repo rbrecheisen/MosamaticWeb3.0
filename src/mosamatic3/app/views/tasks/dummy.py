@@ -1,25 +1,24 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from huey.contrib.djhuey import HUEY
 
-from ...tasks.dummytask import dummy_task
+from ...tasks.taskmanager import TaskManager
 
 
 @login_required
 def dummy(request):
-    # Use TaskModel to also keep track of task progress!!!
+    manager = TaskManager()
     if request.method == 'GET':
-        task_id = request.GET.get('task_id', None)
-        if task_id:
-            # Use TaskManager to handle task creation and retrieval
-            task_result = HUEY.result(task_id)
-            if task_result is None:
-                return JsonResponse({'task_id': task_id, 'task_status': 'running'})
-            return JsonResponse({'task_id': task_id, 'task_status': 'complete'})
+        task_result_id = request.GET.get('task_result_id', None)
+        print(f'GET: task_result_id = {task_result_id}')
+        if task_result_id:
+            task_progress = manager.get_task_progress(task_result_id)
+            if task_progress:
+                return JsonResponse({'task_result_id': task_result_id, 'task_status': task_progress.status, 'task_progress': task_progress.progress})
     elif request.method == 'POST':
-        task_result = dummy_task()
-        return JsonResponse({'task_id': task_result.id, 'task_status': 'running'})
+        task_result = manager.start_dummy_task()
+        print(f'POST: task_result_id = {task_result.id}')
+        return JsonResponse({'task_result_id': task_result.id, 'task_status': 'unknown', 'task_progress': 0})
     else:
         pass
     return render(request, 'tasks/dummy.html')

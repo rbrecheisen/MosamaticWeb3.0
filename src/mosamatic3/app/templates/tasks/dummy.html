@@ -20,7 +20,7 @@
             <div class="card" style="margin-top: 10px;">
                 <div class="card-header">Task status</div>
                 <div class="card-body">
-                    <div id="task-status"></div>
+                    <div id="task-progress"></div>
                 </div>
             </div>
         </div>
@@ -36,15 +36,15 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById("task-status").innerText = data.task_status;
-                const taskId = data.task_id;
-                checkTaskStatus(taskId);
+                document.getElementById("task-progress").innerText = "Status: " + data.task_status + ", progress: " + data.task_progress;
+                const taskResultId = data.task_result_id;
+                checkTaskStatus(taskResultId);
             })
             .catch(error => console.error('Error:', error));
         });
     
-        function checkTaskStatus(taskId) {
-            const statusUrl = '/tasks/dummy/?task_id=' + taskId;
+        function checkTaskStatus(taskResultId) {
+            const statusUrl = '/tasks/dummy/?task_result_id=' + taskResultId;
             const interval = setInterval(() => {
                 fetch(statusUrl, {
                     method: 'GET',
@@ -54,8 +54,8 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("task-status").innerText = data.task_status; 
-                    if (data.task_status === 'complete') {
+                    document.getElementById("task-progress").innerText = "Status: " + data.task_status + ", progress: " + data.task_progress; 
+                    if (data.task_status === 'completed') {
                         clearInterval(interval);
                     }
                 })

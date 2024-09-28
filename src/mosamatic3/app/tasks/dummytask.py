@@ -2,14 +2,23 @@ import time
 
 from huey.contrib.djhuey import task
 
-from ..models import TaskModel
-from ..utils import create_name_with_timestamp
+from ..models import TaskProgressModel
 
 
 @task()
-def dummy_task():
-    for step in range(5):
-        print('Running dummy task...')
-        time.sleep(1)
-    # Return True if task finished successfully, False otherwise
-    return 'Finished'
+def dummy_task(task_progress_id):
+    try:
+        task_progress = TaskProgressModel.objects.get(pk=task_progress_id)
+        nr_steps = 5
+        for step in range(nr_steps):
+            print('Running dummy task...')
+            time.sleep(1)
+            task_progress.progress = int(((step + 1) / (nr_steps)) * 100)
+            task_progress.status = 'running'
+            task_progress.save()
+        task_progress.progress = 100
+        task_progress.status = 'completed'
+        task_progress.save()
+    except TaskProgressModel.DoesNotExist:
+        return False
+    return True

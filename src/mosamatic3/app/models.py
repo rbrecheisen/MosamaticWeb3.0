@@ -37,16 +37,11 @@ class FileModel(models.Model):
     
 
 # Tasks
-class TaskModel(models.Model):
+class TaskProgressModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    name = models.CharField(max_length=1024, editable=False, unique=True, null=False)
-    task_id = models.CharField(max_length=1024, editable=False, unique=True, null=False)
+    task_result_id = models.CharField(max_length=1024, unique=False, null=True)
+    status = models.CharField(max_length=16, unique=False, null=False, default='running')
     progress = models.IntegerField(default=0)
-    nr_steps = models.IntegerField(default=0)
-    status = models.CharField(max_length=16, unique=False, null=False)
-
-    def __str__(self):
-        return f'{self.name} (status: {self.status})'
     
 
 # Logging
