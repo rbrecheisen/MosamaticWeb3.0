@@ -1,25 +1,23 @@
 import time
-import redis
-
-from django.conf import settings
 from huey.contrib.djhuey import task
+from .task import Task
 
-r = redis.Redis(host=settings.REDIS_HOST, port=6379, db=0)
 
-
-@task()
-def dummy_task(task_progress_id):
-    nr_steps = 5
-    failed_step = 3
-    redis_key = f'dummy_task.{task_progress_id}.progress'
-    for step in range(nr_steps):
-        if step == failed_step:
-            print(f'Dummy task failed at ({step})...')
-            r.delete(redis_key)
-            return False
-        print(f'Running dummy task ({step})...')
-        time.sleep(1)
-        progress = int(((step + 1) / (nr_steps)) * 100)
-        r.set(redis_key, progress)
-    r.delete(redis_key)
-    return True
+class DummyTask(Task):
+    @task()
+    @staticmethod
+    def run(task_progress_id, *args):
+        name = 'dummytask'
+        nr_steps = 5
+        failed_step = 3
+        for step in range(nr_steps):
+            if step == failed_step:
+                print(f'Task {name} failed at ({step})...')
+                Task.delete_progress(name, task_progress_id)
+                return False
+            print(f'Running {name} ({step})...')
+            time.sleep(1)
+            progress = int(((step + 1) / (nr_steps)) * 100)
+            Task.set_progress(name, task_progress_id, progress)
+        Task.delete_progress(name, task_progress_id)
+        return True
