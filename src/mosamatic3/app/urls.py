@@ -4,6 +4,7 @@ from .views.base import auth, custom_logout
 from .views.filesets import fileset, filesets
 from .views.tasks.tasks import tasks
 from .views.tasks.dummy import dummy
+from .views.tasks.dummyparams import dummyparams
 
 
 urlpatterns = [
@@ -14,4 +15,5 @@ urlpatterns = [
     path('accounts/logout/', custom_logout, name='logout'),
     path('tasks/', tasks),
     path('tasks/dummy/', dummy),
+    path('tasks/dummyparams/', dummyparams),
 ]
