@@ -38,7 +38,7 @@
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("task-progress").innerText = "Status: " + data.task_status + ", progress: " + data.progress; 
-                    if (data.task_status === 'completed') {
+                    if (data.task_status === 'completed' || data.task_status === 'failed') {
                         document.getElementById("task-button").disabled = false;
                         clearInterval(interval);
                     }

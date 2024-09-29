@@ -30,6 +30,8 @@ def dummy(request):
             task_result = HUEY.result(task_result_id)
             if task_result is None:
                 return JsonResponse({'task_result_id': task_result_id, 'task_progress_id': task_progress_id, 'task_status': 'running', 'progress': progress})
+            elif not task_result:
+                return JsonResponse({'task_result_id': task_result_id, 'task_progress_id': task_progress_id, 'task_status': 'failed', 'progress': 0})
             else:
                 return JsonResponse({'task_result_id': task_result_id, 'task_progress_id': task_progress_id, 'task_status': 'completed', 'progress': 100})
     else:
