@@ -1,4 +1,3 @@
-import time
 import pydicom
 import pydicom.errors
 
@@ -27,6 +26,20 @@ def process_file(f, rows, cols, rows_equals, cols_equals):
 
 @task()
 def filterdicomtask(task_progress_id, fileset_id, user, rows, cols, rows_equals, cols_equals):
+    """
+    Filters DICOM images based on their dimensions. 
+
+    Arguments:
+    - task_progress_id: ID of Redis item containing progress
+    - fileset_id: ID of fileset to work on
+    - user: Current request user
+    - rows: Nr. of rows in image
+    - cols: Nr. of columns in image
+    - rows_equals: Whether nr. rows in image should be equal or unequal to specified nr. rows
+    - cols_equals: Whether nr. columns in image should be equal or unequal to specified nr. columns
+
+    Returns: True or False
+    """
     name = 'filterdicomtask'
     print(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, rows: {rows}, cols: {cols}, rows_equals: {rows_equals}, cols_equals: {cols_equals}')
     data_manager = DataManager()
