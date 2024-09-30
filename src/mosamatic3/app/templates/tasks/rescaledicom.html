@@ -1,0 +1,25 @@
+{% extends "./base.html" %}
+{% block task %}
+<div class="row">
+    <div class="col-sm-10">
+        <div class="card" style="margin-top: 10px;">
+            <div class="card-header">Rescale DICOM</div>
+            <div class="card-body">
+                <form action="/tasks/rescaledicom/" method="post" id="my-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="baseUrl" value="/tasks/rescaledicom/">
+
+                    <select class="form-select" name="fileset_id">
+                        <option selected>Please select a fileset</option>
+                        {% for fileset in filesets %}
+                        <option value="{{ fileset.id }}">{{ fileset.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <button id="task-button" class="btn btn-primary">Execute task</button>
+                </form>                    
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

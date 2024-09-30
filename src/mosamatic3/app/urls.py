@@ -6,6 +6,7 @@ from .views.tasks.tasks import tasks
 from .views.tasks.dummy import dummy
 from .views.tasks.dummyparams import dummyparams
 from .views.tasks.filterdicom import filterdicom
+from .views.tasks.rescaledicom import rescaledicom
 
 
 urlpatterns = [
@@ -20,4 +21,5 @@ urlpatterns = [
     path('tasks/dummy/', dummy),
     path('tasks/dummyparams/', dummyparams),
     path('tasks/filterdicom/', filterdicom),
+    path('tasks/rescaledicom/', rescaledicom),
 ]
