@@ -17,3 +17,11 @@ Filesets can correspond to different DICOM entities, e.g., one or more CT scans,
 - Dixon MRI water
 - Dixon MRI fat
 
+# Creating new tasks
+To create a new task do the following:
+
+- Create new task in app\tasks, e.g., "dosomethingtask.py". The implementation should be a function ""dosomethingtask" decorated with "@task()" so Huey can find it.
+- Create new task view in app\views\tasks, e.g., "dosomething.py". Look in "dummy.py" for the template and make sure the task is called with the correct HTML parameters.
+- Create new task HTLM page in app\templates\tasks, e.g., "dosomething.html". Look in "dummy.html" for the template and make sure the right form fields are present for submitting the task parameters.
+
+Rerun Huey to have it pick up the new task.
