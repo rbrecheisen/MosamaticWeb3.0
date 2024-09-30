@@ -5,13 +5,20 @@ import numpy as np
 
 from huey.contrib.djhuey import task
 from .utils import set_task_progress, delete_task_progress
+from pydicom.uid import ExplicitVRLittleEndian, ImplicitVRLittleEndian, ExplicitVRBigEndian
 
 from ..data.datamanager import DataManager
+
+
+def is_compressed(p):
+    return p.file_meta.TransferSyntaxUID not in [ExplicitVRLittleEndian, ImplicitVRLittleEndian, ExplicitVRBigEndian]
 
 
 def process_file(f, data_manager, fileset):
     try:
         p = pydicom.dcmread(f.path)
+        if is_compressed(p):
+            p.decompress()
         pixel_array = p.pixel_array
         hu_array = pixel_array * p.RescaleSlope + p.RescaleIntercept
         hu_air = -1000
@@ -25,6 +32,7 @@ def process_file(f, data_manager, fileset):
         p.Rows = new_rows
         p.Columns = new_rows
         new_file_path = os.path.join(fileset.path, os.path.split(f.path)[1])
+        p.save_as(new_file_path)
         data_manager.create_file(new_file_path, fileset)
     except pydicom.errors.InvalidDicomError:
         pass
