@@ -3,7 +3,7 @@ import logging
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from ...tasks.dummyparamstask import DummyParamsTask
+from ...tasks.dummyparamstask import dummyparamstask
 from ...tasks.taskmanager import TaskManager
 
 
@@ -15,7 +15,7 @@ def dummyparams(request):
     manager = TaskManager()
     if request.method == 'POST':
         some_param = request.POST.get('some_param', None)
-        return manager.run_task_and_get_response(DummyParamsTask, some_param)
+        return manager.run_task_and_get_response(dummyparamstask, some_param)
     elif request.method == 'GET':
         response = manager.get_response('dummyparamstask', request)
         if response:
