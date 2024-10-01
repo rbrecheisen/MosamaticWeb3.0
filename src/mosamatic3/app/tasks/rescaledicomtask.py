@@ -6,17 +6,12 @@ import numpy as np
 from scipy.ndimage import zoom
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
-from pydicom.uid import ExplicitVRLittleEndian, ImplicitVRLittleEndian, ExplicitVRBigEndian
-from .utils import set_task_progress, delete_task_progress
+from ..utils import set_task_progress, delete_task_progress, is_compressed
 from ..models import FileSetModel
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
 
 LOG = LogManager()
-
-
-def is_compressed(p: pydicom.FileDataset) -> bool:
-    return p.file_meta.TransferSyntaxUID not in [ExplicitVRLittleEndian, ImplicitVRLittleEndian, ExplicitVRBigEndian]
 
 
 def rescale_image_to_512x512(f, data_manager: DataManager, fileset: FileSetModel) -> bool:
@@ -59,6 +54,7 @@ def rescaledicomtask(task_progress_id: str, fileset_id: str, output_fileset_name
     files = data_manager.get_files(fileset)
     new_fileset = data_manager.create_fileset(user, output_fileset_name)
     nr_steps = len(files)
+    set_task_progress(name, task_progress_id, 0)
     for step in range(nr_steps):
         if rescale_image_to_512x512(files[step], data_manager, new_fileset):
             progress = int(((step + 1) / (nr_steps)) * 100)

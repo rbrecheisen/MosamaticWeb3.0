@@ -9,6 +9,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR_LOCAL = os.path.join(tempfile.gettempdir(), 'mosamatic/data')
 DATA_DIR = os.environ.get('DATA_DIR', DATA_DIR_LOCAL)
 os.makedirs(DATA_DIR, exist_ok=True)
+DATA_DIR_TF_MODEL = os.path.join(DATA_DIR, 'tf_model')
+os.makedirs(DATA_DIR_TF_MODEL, exist_ok=True)
 
 ADMIN_USER = os.getenv('ADMIN_USER', 'admin')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'admin')

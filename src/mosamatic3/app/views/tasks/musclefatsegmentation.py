@@ -21,15 +21,19 @@ def musclefatsegmentation(request):
             model_fileset_id = request.POST.get('model_fileset_id', None)
             if model_fileset_id:
                 output_fileset_name = request.POST.get('output_fileset_name', None)
-                return task_manager.run_task_and_get_response(musclefatsegmentationtask, fileset_id, output_fileset_name, request.user)
+                # return task_manager.run_task_and_get_response(musclefatsegmentationtask, fileset_id, model_fileset_id, output_fileset_name, request.user)
+                import uuid
+                task_progress_id = str(uuid.uuid4())
+                musclefatsegmentationtask(task_progress_id, fileset_id, model_fileset_id, output_fileset_name, request.user)
             else:
                 LOG.warning(f'views.tasks.musclefatsegmentation: no model fileset ID selected')
         else:
             LOG.warning(f'views.tasks.musclefatsegmentation: no fileset ID selected')
     elif request.method == 'GET':
-        response = task_manager.get_response('musclefatsegmentationtask', request)
-        if response:
-            return response
+        # response = task_manager.get_response('musclefatsegmentationtask', request)
+        # if response:
+        #     return response
+        pass
     else:
         pass
     filesets = data_manager.get_filesets(request.user)

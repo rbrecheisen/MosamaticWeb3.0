@@ -1,6 +1,15 @@
 import pendulum
+import redis
 import math
 import time
+import pydicom
+import numpy as np
+
+from django.conf import settings
+from pydicom.uid import ExplicitVRLittleEndian, ImplicitVRLittleEndian, ExplicitVRBigEndian
+
+
+r = redis.Redis(host=settings.REDIS_HOST, port=6379, db=0)
 
 
 def create_name_with_timestamp(prefix: str='') -> str:
@@ -35,3 +44,61 @@ def duration(seconds: int) -> str:
     remainder = remainder - m * 60
     s = int(math.floor(remainder))
     return '{} hours, {} minutes, {} seconds'.format(h, m, s)
+
+
+def get_task_progress(name, task_progress_id: str) -> int:
+    progress = r.get(f'{name}.{task_progress_id}.progress')
+    if progress:
+        return int(progress)
+    return -1
+
+
+def set_task_progress(name, task_progress_id: str, progress: int) -> None:
+    r.set(f'{name}.{task_progress_id}.progress', progress)
+
+
+def delete_task_progress(name, task_progress_id: str) -> None:
+    r.delete(f'{name}.{task_progress_id}.progress')
+
+
+def is_compressed(p):
+    return p.file_meta.TransferSyntaxUID not in [ExplicitVRLittleEndian, ImplicitVRLittleEndian, ExplicitVRBigEndian]
+
+
+def get_pixels_from_dicom_object(p: pydicom.FileDataset, normalize: bool=False) -> np.array:
+    pixels = p.pixel_array
+    if not normalize:
+        return pixels
+    if normalize is True:
+        return p.RescaleSlope * pixels + p.RescaleIntercept
+    if isinstance(normalize, int):
+        return (pixels + np.min(pixels)) / (np.max(pixels) - np.min(pixels)) * normalize
+    if isinstance(normalize, list):
+        return (pixels + np.min(pixels)) / (np.max(pixels) - np.min(pixels)) * normalize[1] + normalize[0]
+    return pixels
+
+
+def convert_labels_to_157(label_image: np.array) -> np.array:
+    label_image157 = np.copy(label_image)
+    label_image157[label_image157 == 1] = 1
+    label_image157[label_image157 == 2] = 5
+    label_image157[label_image157 == 3] = 7
+    return label_image157
+
+
+def normalize_between(img: np.array, min_bound: int, max_bound: int) -> np.array:
+    img = (img - min_bound) / (max_bound - min_bound)
+    img[img > 1] = 0
+    img[img < 0] = 0
+    c = (img - np.min(img))
+    d = (np.max(img) - np.min(img))
+    img = np.divide(c, d, np.zeros_like(c), where=d != 0)
+    return img
+
+
+def apply_window_center_and_width(image: np.array, center: int, width: int) -> np.array:
+    image_min = center - width // 2
+    image_max = center + width // 2
+    windowed_image = np.clip(image, image_min, image_max)
+    windowed_image = ((windowed_image - image_min) / (image_max - image_min)) * 255.0
+    return windowed_image.astype(np.uint8)

@@ -32,6 +32,7 @@ def filterdicomtask(task_progress_id: str, fileset_id: str, output_fileset_name:
     files = data_manager.get_files(fileset)
     new_files = []
     nr_steps = len(files)
+    set_task_progress(name, task_progress_id, 0)
     for step in range(nr_steps):
         if not process_file(files[step], rows, cols, rows_equals, cols_equals):
             continue
