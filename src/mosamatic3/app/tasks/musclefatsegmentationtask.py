@@ -7,30 +7,25 @@ from .utils import set_task_progress, delete_task_progress
 from ..data.datamanager import DataManager
 
 
-def process_file(f, rows: int, cols: int, rows_equals: bool, cols_equals: bool) -> bool:
+def process_file(f) -> bool:
     try:
-        p = pydicom.dcmread(f.path, stop_before_pixels=True)
-        ok = True
-        if p.Rows == rows and not rows_equals:
-            ok = False
-        if p.Columns == cols and not cols_equals:
-            ok = False
-        return ok
+        p = pydicom.dcmread(f.path)
+        return True
     except pydicom.errors.InvalidDicomError:
         return False
 
 
 @task()
-def filterdicomtask(task_progress_id: str, fileset_id: str, output_fileset_name: str, user :User, rows: int, cols: int, rows_equals: bool, cols_equals: bool) -> bool:
-    name = 'filterdicomtask'
-    print(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}, rows: {rows}, cols: {cols}, rows_equals: {rows_equals}, cols_equals: {cols_equals}')
+def musclefatsegmentationtask(task_progress_id: str, fileset_id: str, output_fileset_name: str, user :User) -> bool:
+    name = 'musclefatsegmentationtask'
+    print(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}')
     data_manager = DataManager()
     fileset = data_manager.get_fileset(fileset_id)
     files = data_manager.get_files(fileset)
     new_files = []
     nr_steps = len(files)
     for step in range(nr_steps):
-        if not process_file(files[step], rows, cols, rows_equals, cols_equals):
+        if not process_file(files[step]):
             continue
         else:
             new_files.append(files[step])        

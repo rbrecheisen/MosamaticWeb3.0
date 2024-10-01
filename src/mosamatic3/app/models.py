@@ -47,6 +47,7 @@ class TaskProgressModel(models.Model):
 # Logging
 class LogOutputModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    mode = models.CharField(max_length=8, editable=False, null=False, choices=['info', 'warning', 'error'], default='info')
     timestamp = models.DateTimeField(auto_now_add=True)
     message = models.CharField(max_length=1024, editable=False, null=False)
 

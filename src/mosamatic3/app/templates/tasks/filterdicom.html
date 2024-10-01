@@ -3,12 +3,14 @@
 <div class="row">
     <div class="col-sm-10">
         <div class="card" style="margin-top: 10px;">
-            <div class="card-header">Filter DICOM</div>
+            <div class="card-header">
+                <b>Filter DICOM</b><br>
+                <i>This task filters DICOM images based on their dimensions (rows and columns). You can specify the number of rows or columns the images should have, or not have.</i>
+            </div>
             <div class="card-body">
                 <form action="/tasks/filterdicom/" method="post" id="my-form">
                     {% csrf_token %}
                     <input type="hidden" name="baseUrl" value="/tasks/filterdicom/">
-
                     <select class="form-select" name="fileset_id">
                         <option selected>Please select a fileset</option>
                         {% for fileset in filesets %}

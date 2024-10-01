@@ -49,17 +49,6 @@ def rescale_image_to_512x512(f, data_manager: DataManager, fileset: FileSetModel
 # https://chatgpt.com/c/66fa806e-1a08-800b-81dd-6fd260753341
 @task()
 def rescaledicomtask(task_progress_id: str, fileset_id: str, output_fileset_name: str, user: User) -> bool:
-    """
-    Transforms non-square DICOM image to square image by zero-padding along short axis and scaling down to 512 x 512.
-
-    Parameters:
-    task_progress_id (str): ID of Redis item containing progress.
-    fileset_id (str): ID of fileset to work on.
-    user (User): Current request user.
-    
-    Returns:
-    bool: Whether task has completed or failed.
-    """
     name = 'rescaledicomtask'
     print(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}')
     data_manager = DataManager()
