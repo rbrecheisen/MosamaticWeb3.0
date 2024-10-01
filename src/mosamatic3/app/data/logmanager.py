@@ -15,8 +15,9 @@ class LogManager:
     def error(self, message) -> None:
         LogOutputModel.objects.create(message=message, mode='error')
 
-    def get_messages(self) -> List[str]:
-        messages = []
+    def get_messages(self) -> List[LogOutputModel]:
+        return LogOutputModel.objects.all()
+    
+    def delete_messages(self):
         for model in LogOutputModel.objects.all():
-            messages.append(model.message)
-        return messages
+            model.delete()
