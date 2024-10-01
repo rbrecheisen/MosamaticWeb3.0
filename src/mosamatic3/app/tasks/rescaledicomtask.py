@@ -10,6 +10,9 @@ from pydicom.uid import ExplicitVRLittleEndian, ImplicitVRLittleEndian, Explicit
 from .utils import set_task_progress, delete_task_progress
 from ..models import FileSetModel
 from ..data.datamanager import DataManager
+from ..data.logmanager import LogManager
+
+LOG = LogManager()
 
 
 def is_compressed(p: pydicom.FileDataset) -> bool:
@@ -50,7 +53,7 @@ def rescale_image_to_512x512(f, data_manager: DataManager, fileset: FileSetModel
 @task()
 def rescaledicomtask(task_progress_id: str, fileset_id: str, output_fileset_name: str, user: User) -> bool:
     name = 'rescaledicomtask'
-    print(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}')
+    LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}')
     data_manager = DataManager()
     fileset = data_manager.get_fileset(fileset_id)
     files = data_manager.get_files(fileset)
@@ -61,6 +64,6 @@ def rescaledicomtask(task_progress_id: str, fileset_id: str, output_fileset_name
             progress = int(((step + 1) / (nr_steps)) * 100)
             set_task_progress(name, task_progress_id, progress)
         else:
-            print(f'Could not rescale image {files[step].path}, skipping...')
+            LOG.warning(f'Could not rescale image {files[step].path}, skipping...')
     delete_task_progress(name, task_progress_id)
     return True

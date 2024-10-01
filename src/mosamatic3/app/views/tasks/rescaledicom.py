@@ -6,9 +6,9 @@ from django.contrib.auth.decorators import login_required
 from ...tasks.rescaledicomtask import rescaledicomtask
 from ...tasks.taskmanager import TaskManager
 from ...data.datamanager import DataManager
+from ...data.logmanager import LogManager
 
-
-LOG = logging.getLogger('mosamatic3')
+LOG = LogManager()
 
 
 @login_required
@@ -21,7 +21,7 @@ def rescaledicom(request):
             output_fileset_name = request.POST.get('output_fileset_name', None)
             return task_manager.run_task_and_get_response(rescaledicomtask, fileset_id, output_fileset_name, request.user)
         else:
-            print(f'No fileset ID in POST request')
+            LOG.warning(f'views.tasks.rescaledicom: no fileset ID selected')
             pass
     elif request.method == 'GET':
         response = task_manager.get_response('rescaledicomtask', request)

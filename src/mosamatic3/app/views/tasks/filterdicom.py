@@ -6,9 +6,9 @@ from django.contrib.auth.decorators import login_required
 from ...tasks.filterdicomtask import filterdicomtask
 from ...tasks.taskmanager import TaskManager
 from ...data.datamanager import DataManager
+from ...data.logmanager import LogManager
 
-
-LOG = logging.getLogger('mosamatic3')
+LOG = LogManager()
 
 
 @login_required
@@ -25,7 +25,7 @@ def filterdicom(request):
             cols_equals = True if request.POST.get('cols_equals', '0') == '1' else False
             return task_manager.run_task_and_get_response(filterdicomtask, fileset_id, output_fileset_name, request.user, rows, cols, rows_equals, cols_equals)
         else:
-            print(f'No fileset ID in POST request')
+            LOG.warning(f'views.tasks.filterdicom: no fileset ID in POST request')
             pass
     elif request.method == 'GET':
         response = task_manager.get_response('filterdicomtask', request)

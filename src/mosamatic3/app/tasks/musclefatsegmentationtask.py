@@ -5,6 +5,9 @@ from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
 from .utils import set_task_progress, delete_task_progress
 from ..data.datamanager import DataManager
+from ..data.logmanager import LogManager
+
+LOG = LogManager()
 
 
 def process_file(f) -> bool:
@@ -18,7 +21,7 @@ def process_file(f) -> bool:
 @task()
 def musclefatsegmentationtask(task_progress_id: str, fileset_id: str, output_fileset_name: str, user :User) -> bool:
     name = 'musclefatsegmentationtask'
-    print(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}')
+    LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}')
     data_manager = DataManager()
     fileset = data_manager.get_fileset(fileset_id)
     files = data_manager.get_files(fileset)
@@ -36,6 +39,6 @@ def musclefatsegmentationtask(task_progress_id: str, fileset_id: str, output_fil
         for f in new_files:
             data_manager.create_file(f.path, new_fileset)
     else:
-        print(f'New fileset is empty')
+        LOG.warning(f'New fileset is empty')
     delete_task_progress(name, task_progress_id)
     return True

@@ -6,9 +6,9 @@ from django.contrib.auth.decorators import login_required
 from ...tasks.musclefatsegmentationtask import musclefatsegmentationtask
 from ...tasks.taskmanager import TaskManager
 from ...data.datamanager import DataManager
+from ...data.logmanager import LogManager
 
-
-LOG = logging.getLogger('mosamatic3')
+LOG = LogManager()
 
 
 @login_required
@@ -23,9 +23,9 @@ def musclefatsegmentation(request):
                 output_fileset_name = request.POST.get('output_fileset_name', None)
                 return task_manager.run_task_and_get_response(musclefatsegmentationtask, fileset_id, output_fileset_name, request.user)
             else:
-                print(f'No model fileset ID selected')
+                LOG.warning(f'views.tasks.musclefatsegmentation: no model fileset ID selected')
         else:
-            print(f'No fileset ID selected')
+            LOG.warning(f'views.tasks.musclefatsegmentation: no fileset ID selected')
     elif request.method == 'GET':
         response = task_manager.get_response('musclefatsegmentationtask', request)
         if response:
