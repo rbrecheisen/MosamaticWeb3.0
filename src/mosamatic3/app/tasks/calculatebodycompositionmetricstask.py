@@ -136,7 +136,6 @@ def calculatebodycompositionmetricstask(task_progress_id: str, fileset_id: str, 
         df.to_csv(csv_file_path, index=False)
         delete_task_progress(name, task_progress_id)
         return True
-
     except TaskException as e:
         LOG.error(f'musclefatsegmentation() exception occurred while processing files ({e})')
         return False
