@@ -18,9 +18,12 @@ class TaskManager:
             progress = get_task_progress(task_name, task_progress_id)
             task_result = HUEY.result(task_result_id)
             if task_result is None:
-                return JsonResponse({'task_result_id': task_result_id, 'task_progress_id': task_progress_id, 'task_status': 'running', 'progress': progress})
+                if progress == 0:
+                    return JsonResponse({'task_result_id': task_result_id, 'task_progress_id': task_progress_id, 'task_status': 'initializing', 'progress': progress})
+                else:
+                    return JsonResponse({'task_result_id': task_result_id, 'task_progress_id': task_progress_id, 'task_status': 'running', 'progress': progress})
             elif not task_result:
-                return JsonResponse({'task_result_id': task_result_id, 'task_progress_id': task_progress_id, 'task_status': 'failed', 'progress': 0})
+                return JsonResponse({'task_result_id': task_result_id, 'task_progress_id': task_progress_id, 'task_status': 'failed', 'progress': -1})
             else:
                 return JsonResponse({'task_result_id': task_result_id, 'task_progress_id': task_progress_id, 'task_status': 'completed', 'progress': 100})
         return None

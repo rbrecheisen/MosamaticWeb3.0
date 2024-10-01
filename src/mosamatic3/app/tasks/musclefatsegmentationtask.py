@@ -9,6 +9,7 @@ from typing import List, Any
 from huey.contrib.djhuey import task
 from django.conf import settings
 from django.contrib.auth.models import User
+from .taskexception import TaskException
 from ..utils import set_task_progress, delete_task_progress, normalize_between, is_compressed, get_pixels_from_dicom_object, convert_labels_to_157
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
@@ -107,31 +108,42 @@ def process_file(f: FileModel, output_fileset_path: str, model, contour_model, p
         return None
 
 
-# @task()
+@task()
 def musclefatsegmentationtask(task_progress_id: str, fileset_id: str, model_fileset_id: str, output_fileset_name: str, user :User) -> bool:
     name = 'musclefatsegmentationtask'
     LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, model_fileset_id: {model_fileset_id}, output_fileset_name: {output_fileset_name}')
     data_manager = DataManager()
-    fileset = data_manager.get_fileset(fileset_id)
-    model_fileset = data_manager.get_fileset(model_fileset_id)
-    output_fileset = data_manager.create_fileset(user, output_fileset_name)
-    files = data_manager.get_files(fileset)
-    model_files = data_manager.get_files(model_fileset)
-    segmentation_file_paths = []
-    nr_steps = len(files)
-    model, contour_model, parameters = load_model_files(files=model_files)
-    if model and parameters:
-        set_task_progress(name, task_progress_id, 0)
-        for step in range(nr_steps):
-            segmentation_file_path = process_file(files[step], output_fileset.path, model, contour_model, parameters) # skipping "mode=argmax"
-            if segmentation_file_path:
-                segmentation_file_paths.append(segmentation_file_path)
-            progress = int(((step + 1) / (nr_steps)) * 100)
-            set_task_progress(name, task_progress_id, progress)
-            LOG.info(f'musclefatsegmentationtask() processed file {files[step].path}')
-    else:
-        LOG.error(f'musclefatsegmentationtask() model and/or parameters are None')
-    for f in segmentation_file_paths:
-        data_manager.create_file(f, output_fileset)
-    delete_task_progress(name, task_progress_id)
-    return True
+    try:
+        fileset = data_manager.get_fileset(fileset_id)
+        if fileset is None:
+            raise TaskException('musclefatsegmentationtask() fileset is None')
+        model_fileset = data_manager.get_fileset(model_fileset_id)
+        if model_fileset is None:
+            raise TaskException('musclefatsegmentationtask() model_fileset is None')
+        output_fileset = data_manager.create_fileset(user, output_fileset_name)
+        files = data_manager.get_files(fileset)
+        model_files = data_manager.get_files(model_fileset)
+        segmentation_file_paths = []
+        nr_steps = len(files)
+        model, contour_model, parameters = load_model_files(files=model_files)
+        if model is None or parameters is None:
+            raise TaskException('musclefatsegmentationtask() model or parameters are None')
+        if model and parameters:
+            set_task_progress(name, task_progress_id, 0)
+            for step in range(nr_steps):
+                segmentation_file_path = process_file(files[step], output_fileset.path, model, contour_model, parameters) # skipping "mode=argmax"
+                if segmentation_file_path:
+                    segmentation_file_paths.append(segmentation_file_path)
+                    LOG.info(f'musclefatsegmentationtask() processed file {files[step].path}')
+                else:
+                    LOG.warning(f'musclefatsegmentationtask() could not process file {files[step].path}')
+                progress = int(((step + 1) / (nr_steps)) * 100)
+                set_task_progress(name, task_progress_id, progress)
+        else:
+            LOG.error(f'musclefatsegmentationtask() model and/or parameters are None')
+        for f in segmentation_file_paths:
+            data_manager.create_file(f, output_fileset)
+        delete_task_progress(name, task_progress_id)
+        return True
+    except TaskException as e:
+        LOG.error(f'musclefatsegmentation() exception occurred while processing files ({e})')

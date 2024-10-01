@@ -50,7 +50,7 @@ def get_task_progress(name, task_progress_id: str) -> int:
     progress = r.get(f'{name}.{task_progress_id}.progress')
     if progress:
         return int(progress)
-    return -1
+    return 0
 
 
 def set_task_progress(name, task_progress_id: str, progress: int) -> None:
