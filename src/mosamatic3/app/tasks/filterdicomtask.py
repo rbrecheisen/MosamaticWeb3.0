@@ -3,7 +3,7 @@ import pydicom.errors
 
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
-from .utils import set_task_progress, delete_task_progress
+from ..utils import set_task_progress, delete_task_progress
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
 

@@ -2,7 +2,7 @@ import uuid
 
 from django.http import JsonResponse, HttpRequest
 from huey.contrib.djhuey import HUEY
-from .utils import get_task_progress
+from ..utils import get_task_progress
 
 
 class TaskManager:

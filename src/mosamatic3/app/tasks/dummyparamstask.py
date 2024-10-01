@@ -1,7 +1,7 @@
 import time
 
 from huey.contrib.djhuey import task
-from .utils import set_task_progress, delete_task_progress
+from ..utils import set_task_progress, delete_task_progress
 
 
 @task()

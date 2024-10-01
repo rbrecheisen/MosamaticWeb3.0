@@ -29,7 +29,7 @@ def get_segmentation_file_for_dicom_file(segmentation_files: List[FileModel], di
     return None
 
 
-def load_dicom_file(f: FileModel) -> Union[np.ndarray, List[float, float]]:
+def load_dicom_file(f: FileModel) -> Union[np.ndarray, List[float]]:
     try:
         p = pydicom.dcmread(f.path)
         if is_compressed(p):
@@ -44,7 +44,7 @@ def load_segmentation_file(f: FileModel):
     return np.load(f.path)
 
 
-def load_patient_heights(df: pd.DataFrame) -> List[str, float]:
+def load_patient_heights(df: pd.DataFrame) -> Dict[str, float]:
         data = {}
         for _, row in df.iterrows():
             data[row['file']] = float(row['height'])
