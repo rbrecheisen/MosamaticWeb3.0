@@ -1,9 +1,11 @@
 import os
 import shutil
 
+from typing import List
 from os.path import basename
 from zipfile import ZipFile
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db.models import Q
 
@@ -17,12 +19,12 @@ class DataManager:
     # Filesets and files
 
     @staticmethod
-    def create_file(path, fileset):
+    def create_file(path, fileset: FileSetModel) -> FileModel:
         return FileModel.objects.create(
             name=os.path.split(path)[1], path=path, fileset=fileset)
     
     @staticmethod
-    def create_fileset(user, name=None):
+    def create_fileset(user: User, name: str=None) -> FileSetModel:
         if name:
             fs_name = name
         else:
@@ -31,7 +33,7 @@ class DataManager:
         fileset = FileSetModel.objects.create(name=fs_name, owner=user) # fileset.path is set in post_save() for FileSetModel
         return fileset
         
-    def create_fileset_from_files(self, file_paths, file_names, user):
+    def create_fileset_from_files(self, file_paths: List[str], file_names: List[str], user: User) -> FileSetModel:
         if len(file_paths) == 0 or len(file_names) == 0:
             return None
         fileset = self.create_fileset(user)
@@ -47,36 +49,36 @@ class DataManager:
         return fileset
     
     @staticmethod
-    def get_filesets(user):
+    def get_filesets(user: User) -> List[FileSetModel]:
         if not user.is_staff:
             return FileSetModel.objects.filter(Q(owner=user) | Q(public=True))
         return FileSetModel.objects.all()
 
     @staticmethod
-    def get_fileset(fileset_id):
+    def get_fileset(fileset_id: str) -> FileSetModel:
         return FileSetModel.objects.get(pk=fileset_id)
     
     @staticmethod
-    def get_files(fileset):
+    def get_files(fileset: FileSetModel) -> List[FileModel]:
         return FileModel.objects.filter(fileset=fileset).all()
 
     @staticmethod
-    def delete_fileset(fileset):
+    def delete_fileset(fileset: FileSetModel):
         fileset.delete()
 
     @staticmethod
-    def rename_fileset(fileset, new_name):
+    def rename_fileset(fileset: FileSetModel, new_name: str):
         fileset.name = new_name
         fileset.save()
         return fileset
 
     @staticmethod
-    def make_dataset_public(fileset, public=True):
+    def make_dataset_public(fileset: FileSetModel, public: bool=True) -> FileSetModel:
         fileset.public = public
         fileset.save()
         return fileset
     
-    def get_zip_file_from_fileset(self, fileset):
+    def get_zip_file_from_fileset(self, fileset: FileSetModel) -> str:
         files = self.get_files(fileset)
         zip_file_path = os.path.join(fileset.path, '{}.zip'.format(fileset.name))
         with ZipFile(zip_file_path, 'w') as zip_obj:

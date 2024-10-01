@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden, HttpRequest
 from wsgiref.util import FileWrapper
 
 from ..data.fileuploadprocessor import FileUploadProcessor
@@ -8,7 +8,7 @@ from ..data.datamanager import DataManager
 
 
 @login_required
-def filesets(request):
+def filesets(request: HttpRequest) -> HttpResponse:
     manager = DataManager()
     if request.method == 'POST':
         file_paths, file_names = FileUploadProcessor().process_upload(request)
@@ -17,7 +17,7 @@ def filesets(request):
 
 
 @login_required
-def fileset(request, fileset_id):
+def fileset(request: HttpRequest, fileset_id: str) -> HttpResponse:
     manager = DataManager()
     action = None
     if request.method == 'GET':

@@ -18,11 +18,12 @@ def filterdicom(request):
     if request.method == 'POST':
         fileset_id = request.POST.get('fileset_id', None)
         if fileset_id:
-            rows = request.POST.get('rows', None)
-            cols = request.POST.get('cols', None)
-            rows_equals = request.POST.get('rows_equals', '0')
-            cols_equals = request.POST.get('cols_equals', '0')
-            return task_manager.run_task_and_get_response(filterdicomtask, fileset_id, request.user, rows, cols, rows_equals, cols_equals)
+            output_fileset_name = request.POST.get('output_fileset_name', None)
+            rows = int(request.POST.get('rows', 0))
+            cols = int(request.POST.get('cols', 0))
+            rows_equals = True if request.POST.get('rows_equals', '0') == '1' else False
+            cols_equals = True if request.POST.get('cols_equals', '0') == '1' else False
+            return task_manager.run_task_and_get_response(filterdicomtask, fileset_id, output_fileset_name, request.user, rows, cols, rows_equals, cols_equals)
         else:
             print(f'No fileset ID in POST request')
             pass

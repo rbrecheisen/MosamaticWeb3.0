@@ -18,7 +18,8 @@ def rescaledicom(request):
     if request.method == 'POST':
         fileset_id = request.POST.get('fileset_id', None)
         if fileset_id:
-            return task_manager.run_task_and_get_response(rescaledicomtask, fileset_id, request.user)
+            output_fileset_name = request.POST.get('output_fileset_name', None)
+            return task_manager.run_task_and_get_response(rescaledicomtask, fileset_id, output_fileset_name, request.user)
         else:
             print(f'No fileset ID in POST request')
             pass

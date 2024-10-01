@@ -9,6 +9,7 @@ psycopg2-binary
 pydicom
 python-gdcm
 numpy
+scipy
 pandas
 openpyxl
 tensorflow

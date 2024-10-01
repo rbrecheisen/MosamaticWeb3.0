@@ -5,7 +5,7 @@ from .utils import set_task_progress, delete_task_progress
 
 
 @task()
-def dummytask(task_progress_id):
+def dummytask(task_progress_id: str) -> bool:
     name = 'dummytask'
     nr_steps = 5
     failed_step = 3

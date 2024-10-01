@@ -1,7 +1,9 @@
 import os
 import uuid
 
+from typing import Union, List
 from django.conf import settings
+from django.http import HttpRequest
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
@@ -11,7 +13,7 @@ class FileUploadProcessor:
     def __init__(self):
         pass
 
-    def process_upload(self, request):
+    def process_upload(self, request: HttpRequest) -> Union[List[str], List[str]]:
         file_paths = []
         file_names = []
         files = request.POST.getlist('files.path') # Files parameter from NGINX

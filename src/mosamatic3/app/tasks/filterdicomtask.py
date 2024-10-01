@@ -2,16 +2,12 @@ import pydicom
 import pydicom.errors
 
 from huey.contrib.djhuey import task
+from django.contrib.auth.models import User
 from .utils import set_task_progress, delete_task_progress
-
 from ..data.datamanager import DataManager
 
 
-def process_file(f, rows, cols, rows_equals, cols_equals):
-    rows = int(rows)
-    cols = int(cols)
-    rows_equals = True if rows_equals == '1' else False
-    cols_equals = True if cols_equals == '1' else False
+def process_file(f, rows: int, cols: int, rows_equals: bool, cols_equals: bool) -> bool:
     try:
         p = pydicom.dcmread(f.path, stop_before_pixels=True)
         ok = True
@@ -25,23 +21,23 @@ def process_file(f, rows, cols, rows_equals, cols_equals):
 
 
 @task()
-def filterdicomtask(task_progress_id, fileset_id, user, rows, cols, rows_equals, cols_equals):
+def filterdicomtask(task_progress_id: str, fileset_id: str, output_fileset_name: str, user :User, rows: int, cols: int, rows_equals: bool, cols_equals: bool) -> bool:
     """
     Filters DICOM images based on their dimensions. 
 
-    Arguments:
-    - task_progress_id: ID of Redis item containing progress
-    - fileset_id: ID of fileset to work on
-    - user: Current request user
-    - rows: Nr. of rows in image
-    - cols: Nr. of columns in image
-    - rows_equals: Whether nr. rows in image should be equal or unequal to specified nr. rows
-    - cols_equals: Whether nr. columns in image should be equal or unequal to specified nr. columns
+    Parameters:
+    task_progress_id (str): ID of Redis item containing progress
+    fileset_id (str): ID of fileset to work on
+    user (User): Current request user
+    rows (int): Nr. of rows in image
+    cols (int): Nr. of columns in image
+    rows_equals (bool): Whether nr. rows in image should be equal or unequal to specified nr. rows
+    cols_equals (bool): Whether nr. columns in image should be equal or unequal to specified nr. columns
 
     Returns: True or False
     """
     name = 'filterdicomtask'
-    print(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, rows: {rows}, cols: {cols}, rows_equals: {rows_equals}, cols_equals: {cols_equals}')
+    print(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}, rows: {rows}, cols: {cols}, rows_equals: {rows_equals}, cols_equals: {cols_equals}')
     data_manager = DataManager()
     fileset = data_manager.get_fileset(fileset_id)
     files = data_manager.get_files(fileset)
@@ -55,7 +51,7 @@ def filterdicomtask(task_progress_id, fileset_id, user, rows, cols, rows_equals,
         progress = int(((step + 1) / (nr_steps)) * 100)
         set_task_progress(name, task_progress_id, progress)
     if len(new_files) > 0:
-        new_fileset = data_manager.create_fileset(user)
+        new_fileset = data_manager.create_fileset(user, output_fileset_name)
         for f in new_files:
             data_manager.create_file(f.path, new_fileset)
     else:
