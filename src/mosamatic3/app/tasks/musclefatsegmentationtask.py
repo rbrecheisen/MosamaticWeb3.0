@@ -10,30 +10,13 @@ from huey.contrib.djhuey import task
 from django.conf import settings
 from django.contrib.auth.models import User
 from .taskexception import TaskException
-from ..utils import set_task_progress, delete_task_progress, normalize_between, is_compressed, get_pixels_from_dicom_object, convert_labels_to_157
+from ..utils import set_task_progress, delete_task_progress, normalize_between, is_compressed, \
+    get_pixels_from_dicom_object, convert_labels_to_157
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
 from ..models import FileModel
 
 LOG = LogManager()
-
-
-class TensorFlowModel:
-    def __init__(self) -> None:
-        self.model = None
-
-    def load(self, model_file_path: str) -> None:
-        import tensorflow as tf
-        try:
-            self.model = tf.keras.models.load_model(model_file_path, compile=False)
-        except:
-            LOG.error(f'TensorFlowModel.load() could not load model')
-
-    def predict(self, input: np.array) -> np.array:
-        if self.model:
-            return self.model.predict(input)
-        LOG.error(f'TensorFlowModel.predict() model not loaded yet')
-        return None
 
 
 def load_model_files(files: List[FileModel]) -> List[Any]:
@@ -47,8 +30,7 @@ def load_model_files(files: List[FileModel]) -> List[Any]:
             LOG.info(f'tf_model_dir: {tf_model_dir}')
             with zipfile.ZipFile(f.path) as zipObj:
                 zipObj.extractall(path=tf_model_dir)
-            tf_model = TensorFlowModel()
-            tf_model.load(model_file_path=tf_model_dir)
+            tf_model = tf.keras.models.load_model(tf_model_dir, compile=False)
         elif f.name == 'contour_model.zip':
             if not tf_loaded:
                 import tensorflow as tf # Only load TensorFlow package if necessary (takes some time)
@@ -56,8 +38,7 @@ def load_model_files(files: List[FileModel]) -> List[Any]:
             tf_model_dir = settings.DATA_DIR_TF_MODEL
             with zipfile.ZipFile(f.path) as zipObj:
                 zipObj.extractall(path=tf_model_dir)
-            tf_contour_model = TensorFlowModel()
-            tf_contour_model.load(model_file_path=tf_model_dir)
+            tf_contour_model = tf.keras.models.load_model(tf_model_dir, compile=False)
         elif f.name == 'params.json':
             with open(f.path, 'r') as obj:
                 parameters = json.load(obj)
@@ -147,3 +128,4 @@ def musclefatsegmentationtask(task_progress_id: str, fileset_id: str, model_file
         return True
     except TaskException as e:
         LOG.error(f'musclefatsegmentation() exception occurred while processing files ({e})')
+        return False

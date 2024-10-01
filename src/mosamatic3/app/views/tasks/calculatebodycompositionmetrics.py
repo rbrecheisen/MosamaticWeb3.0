@@ -21,7 +21,9 @@ def calculatebodycompositionmetrics(request):
             segmentation_fileset_id = request.POST.get('segmentation_fileset_id', None)
             if segmentation_fileset_id:
                 output_fileset_name = request.POST.get('output_fileset_name', None)
-                return task_manager.run_task_and_get_response(calculatebodycompositionmetricstask, fileset_id, segmentation_fileset_id, output_fileset_name, request.user)
+                patient_heights_fileset_id = request.POST.get('output_fileset_name', None)
+                return task_manager.run_task_and_get_response(
+                    calculatebodycompositionmetricstask, fileset_id, segmentation_fileset_id, patient_heights_fileset_id, output_fileset_name, request.user)
             else:
                 LOG.warning(f'views.tasks.calculatebodycompositionmetrics: no model fileset ID selected')
         else:

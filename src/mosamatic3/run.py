@@ -12,7 +12,7 @@ def runserver():
     os.environ.setdefault('OAUTHLIB_INSECURE_TRANSPORT', '1')
     os.chdir(appPath)
     print('##############################################################################')
-    print('#                     M O S A M A T I C  3.0                                 #')
+    print('#                   M O S A M A T I C   W E B  3.0                           #')
     print('##############################################################################')
     execute_from_command_line(['manage.py', 'makemigrations'])
     execute_from_command_line(['manage.py', 'migrate'])

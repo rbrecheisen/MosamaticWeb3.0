@@ -102,3 +102,41 @@ def apply_window_center_and_width(image: np.array, center: int, width: int) -> n
     windowed_image = np.clip(image, image_min, image_max)
     windowed_image = ((windowed_image - image_min) / (image_max - image_min)) * 255.0
     return windowed_image.astype(np.uint8)
+
+
+def calculate_area(labels, label, pixel_spacing):
+    mask = np.copy(labels)
+    mask[mask != label] = 0
+    mask[mask == label] = 1
+    area = np.sum(mask) * (pixel_spacing[0] * pixel_spacing[1]) / 100.0
+    return area
+
+
+def calculate_index(area: float, height: float):
+    return area / (height * height)
+
+
+def calculate_mean_radiation_attenuation(image, labels, label):
+    mask = np.copy(labels)
+    mask[mask != label] = 0
+    mask[mask == label] = 1
+    subtracted = image * mask
+    mask_sum = np.sum(mask)
+    if mask_sum > 0.0:
+        mean_radiation_attenuation = np.sum(subtracted) / np.sum(mask)
+    else:
+        # print('Sum of mask pixels is zero, return zero radiation attenuation')
+        mean_radiation_attenuation = 0.0
+    return mean_radiation_attenuation
+
+
+def calculate_dice_score(ground_truth, prediction, label):
+    numerator = prediction[ground_truth == label]
+    numerator[numerator != label] = 0
+    n = ground_truth[prediction == label]
+    n[n != label] = 0
+    if np.sum(numerator) != np.sum(n):
+        raise RuntimeError('Mismatch in Dice score calculation!')
+    denominator = (np.sum(prediction[prediction == label]) + np.sum(ground_truth[ground_truth == label]))
+    dice_score = np.sum(numerator) * 2.0 / denominator
+    return dice_score
