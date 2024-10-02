@@ -12,14 +12,14 @@
                     {% csrf_token %}
                     <input type="hidden" name="baseUrl" value="/tasks/musclefatsegmentation/">
                     <select class="form-select" name="fileset_id">
-                        <option selected>L3 images</option>
+                        <option selected>Select L3 images</option>
                         {% for fileset in filesets %}
                         <option value="{{ fileset.id }}">{{ fileset.name }}</option>
                         {% endfor %}
                     </select>
                     <br>
                     <select class="form-select" name="model_fileset_id">
-                        <option selected>TensorFlow model files</option>
+                        <option selected>Select AI model files</option>
                         {% for fileset in filesets %}
                         <option value="{{ fileset.id }}">{{ fileset.name }}</option>
                         {% endfor %}

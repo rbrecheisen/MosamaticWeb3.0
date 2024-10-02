@@ -12,7 +12,7 @@
                     {% csrf_token %}
                     <input type="hidden" name="baseUrl" value="/tasks/filterdicom/">
                     <select class="form-select" name="fileset_id">
-                        <option selected>Fileset</option>
+                        <option selected>Select fileset</option>
                         {% for fileset in filesets %}
                         <option value="{{ fileset.id }}">{{ fileset.name }}</option>
                         {% endfor %}

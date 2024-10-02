@@ -11,8 +11,9 @@ from ..data.datamanager import DataManager
 def filesets(request: HttpRequest) -> HttpResponse:
     manager = DataManager()
     if request.method == 'POST':
+        fileset_name = request.POST.get('fileset_name', None)
         file_paths, file_names = FileUploadProcessor().process_upload(request)
-        manager.create_fileset_from_files(file_paths, file_names, request.user)
+        manager.create_fileset_from_files(file_paths, file_names, fileset_name, request.user)
     return render(request, 'filesets.html', context={'filesets': manager.get_filesets(request.user)})
 
 

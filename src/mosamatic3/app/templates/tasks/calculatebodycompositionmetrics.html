@@ -12,21 +12,21 @@
                     {% csrf_token %}
                     <input type="hidden" name="baseUrl" value="/tasks/calculatebodycompositionmetrics/">
                     <select class="form-select" name="fileset_id">
-                        <option selected>L3 images</option>
+                        <option selected>Select L3 images</option>
                         {% for fileset in filesets %}
                         <option value="{{ fileset.id }}">{{ fileset.name }}</option>
                         {% endfor %}
                     </select>
                     <br>
                     <select class="form-select" name="segmentation_fileset_id">
-                        <option selected>Segmentation files</option>
+                        <option selected>Select segmentation files</option>
                         {% for fileset in filesets %}
                         <option value="{{ fileset.id }}">{{ fileset.name }}</option>
                         {% endfor %}
                     </select>
                     <br>
                     <select class="form-select" name="patient_heights_fileset_id">
-                        <option selected>Patient heights file (.csv)</option>
+                        <option selected>Select patient heights file (.csv)</option>
                         {% for fileset in filesets %}
                         <option value="{{ fileset.id }}">{{ fileset.name }}</option>
                         {% endfor %}

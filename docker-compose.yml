@@ -55,6 +55,8 @@ services:
       - ADMIN_USER=admin
       - ADMIN_PASSWORD=admin
       - SECRET_KEY=1234
+    volumes:
+      - data:/data
     depends_on:
       - web
       

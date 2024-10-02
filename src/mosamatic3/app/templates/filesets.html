@@ -10,7 +10,11 @@
                     <form action="/filesets/" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <label for="files">Select files:</label>
-                        <input type="file" id="files" name="files" multiple/><br><br>
+                        <input type="file" id="files" name="files" multiple/><br>
+                        <br>
+                        <label for="fileset_name" class="form-label">Fileset name (optional)</label>
+                        <input type="text" class="form-control" id="fileset_name" name="fileset_name" placeholder="Enter name">
+                        <br>
                         <button type="submit" class="btn btn-primary">Upload</button>
                     </form>
                     <table class="table">
