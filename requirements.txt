@@ -10,6 +10,7 @@ pydicom
 python-gdcm
 numpy
 scipy
+pillow
 pandas
 openpyxl
 tensorflow==2.15.0

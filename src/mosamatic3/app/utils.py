@@ -1,3 +1,4 @@
+import os
 import pendulum
 import uuid
 import redis
@@ -6,6 +7,8 @@ import time
 import pydicom
 import numpy as np
 
+from typing import List
+from PIL import Image
 from django.conf import settings
 from pydicom.uid import ExplicitVRLittleEndian, ImplicitVRLittleEndian, ExplicitVRBigEndian
 
@@ -149,3 +152,78 @@ def calculate_dice_score(ground_truth, prediction, label):
     denominator = (np.sum(prediction[prediction == label]) + np.sum(ground_truth[ground_truth == label]))
     dice_score = np.sum(numerator) * 2.0 / denominator
     return dice_score
+
+
+def convert_dicom_to_numpy_array(dicom_file_path: str, window_level: int=50, window_width: int=400, normalize=True) -> np.array:
+    p = pydicom.dcmread(dicom_file_path)
+    pixels = p.pixel_array
+    pixels = pixels.reshape(p.Rows, p.Columns)
+    if normalize:
+        b = p.RescaleIntercept
+        m = p.RescaleSlope
+        pixels = m * pixels + b
+    pixels = apply_window_center_and_width(pixels, window_level, window_width)
+    return pixels
+
+
+class ColorMap:
+    def __init__(self, name: str) -> None:
+        self._name = name
+        self._values = []
+
+    def name(self) -> str:
+        return self._name
+    
+    def values(self) -> List[List[int]]:
+        return self._values
+    
+
+class GrayScaleColorMap(ColorMap):
+    def __init__(self) -> None:
+        super(GrayScaleColorMap, self).__init__(name='GrayScaleColorMap')
+        # Implement your own gray scale map or let NumPy do this more efficiently?
+        pass    
+
+class AlbertaColorMap(ColorMap):
+    def __init__(self) -> None:
+        super(AlbertaColorMap, self).__init__(name='AlbertaColorMap')
+        for i in range(256):
+            if i == 1:  # muscle
+                self.values().append([255, 0, 0])
+            elif i == 2:  # inter-muscular adipose tissue
+                self.values().append([0, 255, 0])
+            elif i == 5:  # visceral adipose tissue
+                self.values().append([255, 255, 0])
+            elif i == 7:  # subcutaneous adipose tissue
+                self.values().append([0, 255, 255])
+            elif i == 12:  # unknown
+                self.values().append([0, 0, 255])
+            else:
+                self.values().append([0, 0, 0])
+
+
+def apply_color_map(pixels: np.array, color_map: ColorMap) -> np.array:
+    pixels_new = np.zeros((*pixels.shape, 3), dtype=np.uint8)
+    np.take(color_map.values(), pixels, axis=0, out=pixels_new)
+    return pixels_new
+
+
+def convert_numpy_array_to_png_image(
+        numpy_array_file_path_or_object: str, output_dir_path: str, color_map: ColorMap=None, png_file_name: str=None, fig_width: int=10, fig_height: int=10) -> str:
+    if isinstance(numpy_array_file_path_or_object, str):
+        numpy_array = np.load(numpy_array_file_path_or_object)
+    else:
+        numpy_array = numpy_array_file_path_or_object
+        if not png_file_name:
+            raise RuntimeError('PNG file name required for NumPy array object')
+    if color_map:
+        numpy_array = apply_color_map(pixels=numpy_array, color_map=color_map)
+    image = Image.fromarray(numpy_array)
+    if not png_file_name:
+        numpy_array_file_name = os.path.split(numpy_array_file_path_or_object)[1]
+        png_file_name = numpy_array_file_name + '.png'      
+    elif not png_file_name.endswith('.png'):
+        png_file_name += '.png'
+    png_file_path = os.path.join(output_dir_path, png_file_name)
+    image.save(png_file_path)
+    return png_file_path

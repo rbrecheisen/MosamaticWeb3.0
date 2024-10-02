@@ -23,14 +23,14 @@ def bodycompositionmetrics(request):
                 return task_manager.run_task_and_get_response(
                     bodycompositionmetricstask, fileset_id, segmentation_fileset_id, patient_heights_fileset_id, output_fileset_name, request.user)
             else:
-                LOG.warning(f'views.tasks.calculatebodycompositionmetrics: no model fileset ID selected')
+                LOG.warning(f'views.tasks.bodycompositionmetrics: no model fileset ID selected')
         else:
-            LOG.warning(f'views.tasks.calculatebodycompositionmetrics: no fileset ID selected')
+            LOG.warning(f'views.tasks.bodycompositionmetrics: no fileset ID selected')
     elif request.method == 'GET':
-        response = task_manager.get_response('bodycompositionmetricstasktask', request)
+        response = task_manager.get_response('bodycompositionmetricstask', request)
         if response:
             return response
     else:
         pass
     filesets = data_manager.get_filesets(request.user)
-    return render(request, 'tasks/bodycompositionmetricstask.html', context={'filesets': filesets})
+    return render(request, 'tasks/bodycompositionmetrics.html', context={'filesets': filesets})

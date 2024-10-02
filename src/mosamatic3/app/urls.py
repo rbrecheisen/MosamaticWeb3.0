@@ -10,6 +10,7 @@ from .views.tasks.filterdicom import filterdicom
 from .views.tasks.rescaledicom import rescaledicom
 from .views.tasks.musclefatsegmentation import musclefatsegmentation
 from .views.tasks.bodycompositionmetrics import bodycompositionmetrics
+from .views.tasks.segmentationpng import segmentationpng
 
 
 urlpatterns = [
@@ -28,4 +29,5 @@ urlpatterns = [
     path('tasks/rescaledicom/', rescaledicom),
     path('tasks/musclefatsegmentation/', musclefatsegmentation),
     path('tasks/bodycompositionmetrics/', bodycompositionmetrics),
+    path('tasks/segmentationpng/', segmentationpng),
 ]
