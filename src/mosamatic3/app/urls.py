@@ -11,6 +11,7 @@ from .views.tasks.rescaledicom import rescaledicom
 from .views.tasks.musclefatsegmentation import musclefatsegmentation
 from .views.tasks.bodycompositionmetrics import bodycompositionmetrics
 from .views.tasks.segmentationpng import segmentationpng
+from .views.tasks.totalsegmentator import totalsegmentator
 
 
 urlpatterns = [
@@ -30,4 +31,5 @@ urlpatterns = [
     path('tasks/musclefatsegmentation/', musclefatsegmentation),
     path('tasks/bodycompositionmetrics/', bodycompositionmetrics),
     path('tasks/segmentationpng/', segmentationpng),
+    path('tasks/totalsegmentator/', totalsegmentator),
 ]

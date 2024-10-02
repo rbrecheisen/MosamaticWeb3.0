@@ -1,13 +1,14 @@
 import os
 import pendulum
 import uuid
+import pydicom.errors
 import redis
 import math
 import time
 import pydicom
 import numpy as np
 
-from typing import List
+from typing import List, Tuple
 from PIL import Image
 from django.conf import settings
 from pydicom.uid import ExplicitVRLittleEndian, ImplicitVRLittleEndian, ExplicitVRBigEndian
@@ -50,19 +51,27 @@ def duration(seconds: int) -> str:
     return '{} hours, {} minutes, {} seconds'.format(h, m, s)
 
 
-def get_task_progress(name, task_progress_id: str) -> int:
+def get_task_progress(name: str, task_progress_id: str) -> int:
     progress = r.get(f'{name}.{task_progress_id}.progress')
     if progress:
         return int(progress)
     return 0
 
 
-def set_task_progress(name, task_progress_id: str, progress: int) -> None:
+def set_task_progress(name: str, task_progress_id: str, progress: int) -> None:
     r.set(f'{name}.{task_progress_id}.progress', progress)
 
 
-def delete_task_progress(name, task_progress_id: str) -> None:
+def delete_task_progress(name: str, task_progress_id: str) -> None:
     r.delete(f'{name}.{task_progress_id}.progress')
+
+
+def is_dicom(f: str) -> bool:
+    try:
+        pydicom.dcmread(f, stop_before_pixels=True)
+        return True
+    except pydicom.errors.InvalidDicomError:
+        return False
 
 
 def is_uuid(id: str) -> bool:
@@ -73,7 +82,7 @@ def is_uuid(id: str) -> bool:
         return False
 
 
-def is_compressed(p):
+def is_compressed(p: pydicom.FileDataset):
     return p.file_meta.TransferSyntaxUID not in [ExplicitVRLittleEndian, ImplicitVRLittleEndian, ExplicitVRBigEndian]
 
 
@@ -116,7 +125,7 @@ def apply_window_center_and_width(image: np.array, center: int, width: int) -> n
     return windowed_image.astype(np.uint8)
 
 
-def calculate_area(labels, label, pixel_spacing):
+def calculate_area(labels: np.array, label: int, pixel_spacing: Tuple[float, float]) -> float:
     mask = np.copy(labels)
     mask[mask != label] = 0
     mask[mask == label] = 1
@@ -124,11 +133,11 @@ def calculate_area(labels, label, pixel_spacing):
     return area
 
 
-def calculate_index(area: float, height: float):
+def calculate_index(area: float, height: float) -> float:
     return area / (height * height)
 
 
-def calculate_mean_radiation_attenuation(image, labels, label):
+def calculate_mean_radiation_attenuation(image: np.array, labels: np.array, label: int) -> float:
     mask = np.copy(labels)
     mask[mask != label] = 0
     mask[mask == label] = 1
@@ -142,7 +151,7 @@ def calculate_mean_radiation_attenuation(image, labels, label):
     return mean_radiation_attenuation
 
 
-def calculate_dice_score(ground_truth, prediction, label):
+def calculate_dice_score(ground_truth: np.array, prediction: np.array, label: int) -> float:
     numerator = prediction[ground_truth == label]
     numerator[numerator != label] = 0
     n = ground_truth[prediction == label]
