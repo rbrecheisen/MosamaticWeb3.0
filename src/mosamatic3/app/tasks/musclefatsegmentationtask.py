@@ -11,7 +11,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from .taskexception import TaskException
 from ..utils import set_task_progress, delete_task_progress, normalize_between, is_compressed, \
-    get_pixels_from_dicom_object, convert_labels_to_157
+    get_pixels_from_dicom_object, convert_labels_to_157, is_uuid
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
 from ..models import FileModel
@@ -95,9 +95,13 @@ def musclefatsegmentationtask(task_progress_id: str, fileset_id: str, model_file
     LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, model_fileset_id: {model_fileset_id}, output_fileset_name: {output_fileset_name}')
     data_manager = DataManager()
     try:
+        if not is_uuid(fileset_id):
+            raise TaskException('musclefatsegmentationtask() fileset_id is not UUID')
         fileset = data_manager.get_fileset(fileset_id)
         if fileset is None:
             raise TaskException('musclefatsegmentationtask() fileset is None')
+        if not is_uuid(model_fileset_id):
+            raise TaskException('musclefatsegmentationtask() model_fileset_id is not UUID')
         model_fileset = data_manager.get_fileset(model_fileset_id)
         if model_fileset is None:
             raise TaskException('musclefatsegmentationtask() model_fileset is None')

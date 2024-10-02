@@ -1,4 +1,5 @@
 import pendulum
+import uuid
 import redis
 import math
 import time
@@ -61,15 +62,23 @@ def delete_task_progress(name, task_progress_id: str) -> None:
     r.delete(f'{name}.{task_progress_id}.progress')
 
 
+def is_uuid(id: str) -> bool:
+    try:
+        uuid.UUID(str(id))
+        return True
+    except ValueError:
+        return False
+
+
 def is_compressed(p):
     return p.file_meta.TransferSyntaxUID not in [ExplicitVRLittleEndian, ImplicitVRLittleEndian, ExplicitVRBigEndian]
 
 
-def get_pixels_from_dicom_object(p: pydicom.FileDataset, normalize: bool=False) -> np.array:
+def get_pixels_from_dicom_object(p: pydicom.FileDataset, normalize: bool=True) -> np.array:
     pixels = p.pixel_array
     if not normalize:
         return pixels
-    if normalize is True:
+    if normalize is True: # Map pixel values back to original HU values
         return p.RescaleSlope * pixels + p.RescaleIntercept
     if isinstance(normalize, int):
         return (pixels + np.min(pixels)) / (np.max(pixels) - np.min(pixels)) * normalize

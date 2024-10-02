@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:2.3.0-gpu
+FROM tensorflow/tensorflow:2.15.0-gpu
 
 COPY nvidia-public-key.txt /nvidia-public-key.txt
 

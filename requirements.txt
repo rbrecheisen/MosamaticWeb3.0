@@ -12,8 +12,8 @@ numpy
 scipy
 pandas
 openpyxl
-# tensorflow==2.15.0
-tensorflow
+tensorflow==2.15.0
+# tensorflow
 gunicorn
 pendulum
 redis

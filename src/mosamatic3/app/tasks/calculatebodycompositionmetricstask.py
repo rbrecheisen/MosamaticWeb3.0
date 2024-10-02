@@ -10,7 +10,7 @@ from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
 from .taskexception import TaskException
 from ..utils import set_task_progress, delete_task_progress, normalize_between, is_compressed, get_pixels_from_dicom_object, \
-    calculate_area, calculate_index, calculate_mean_radiation_attenuation, create_name_with_timestamp
+    calculate_area, calculate_index, calculate_mean_radiation_attenuation, create_name_with_timestamp, is_uuid
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
 from ..models import FileModel
@@ -34,7 +34,7 @@ def load_dicom_file(f: FileModel) -> Union[np.ndarray, List[float]]:
         p = pydicom.dcmread(f.path)
         if is_compressed(p):
             p.decompress()
-        pixels = get_pixels_from_dicom_object(p)
+        pixels = get_pixels_from_dicom_object(p, normalize=True)
         return pixels, p.PixelSpacing
     except pydicom.errors.InvalidDicomError:
         return None, None
@@ -51,7 +51,7 @@ def load_patient_heights(df: pd.DataFrame) -> Dict[str, float]:
         return data
 
 
-def output_metrics_to_string(self, output_metrics: Dict[str, float]) -> str:
+def output_metrics_to_string(output_metrics: Dict[str, float]) -> str:
     text = ''
     for metric, value in output_metrics.items():
         text += f'  - {metric}: {value}\n'
@@ -64,13 +64,18 @@ def calculatebodycompositionmetricstask(task_progress_id: str, fileset_id: str, 
     LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, segmentation_fileset_id: {segmentation_fileset_id}, patient_heights_fileset_id: {patient_heights_fileset_id}, output_fileset_name: {output_fileset_name}')
     data_manager = DataManager()
     try:
+        if not is_uuid(fileset_id):
+            raise TaskException('musclefatsegmentationtask() fileset_id is not UUID')
         fileset = data_manager.get_fileset(fileset_id)
         if fileset is None:
             raise TaskException('musclefatsegmentationtask() fileset is None')
+        if not is_uuid(segmentation_fileset_id):
+            raise TaskException('musclefatsegmentationtask() segmentation_fileset_id is not UUID')
         segmentation_fileset = data_manager.get_fileset(segmentation_fileset_id)
         if segmentation_fileset is None:
             raise TaskException('musclefatsegmentationtask() segmentation_fileset is None')
-        if patient_heights_fileset_id:
+        patient_heights = None
+        if patient_heights_fileset_id and is_uuid(patient_heights_fileset_id):
             patient_heights_fileset = data_manager.get_fileset(patient_heights_fileset_id)
             if patient_heights_fileset is None:
                 raise TaskException('musclefatsegmentationtask() patient_heights_fileset is None')
@@ -134,6 +139,7 @@ def calculatebodycompositionmetricstask(task_progress_id: str, fileset_id: str, 
         csv_file_path = os.path.join(output_fileset.path, create_name_with_timestamp('scores') + '.csv')
         df = pd.DataFrame(data=data)
         df.to_csv(csv_file_path, index=False)
+        data_manager.create_file(csv_file_path, output_fileset)
         delete_task_progress(name, task_progress_id)
         return True
     except TaskException as e:

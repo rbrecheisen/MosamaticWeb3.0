@@ -6,10 +6,11 @@ import numpy as np
 from scipy.ndimage import zoom
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
-from ..utils import set_task_progress, delete_task_progress, is_compressed
+from ..utils import set_task_progress, delete_task_progress, is_compressed, is_uuid
 from ..models import FileSetModel
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
+from .taskexception import TaskException
 
 LOG = LogManager()
 
@@ -50,6 +51,8 @@ def rescaledicomtask(task_progress_id: str, fileset_id: str, output_fileset_name
     name = 'rescaledicomtask'
     LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}')
     data_manager = DataManager()
+    if not is_uuid(fileset_id):
+        raise TaskException('musclefatsegmentationtask() fileset_id is not UUID')
     fileset = data_manager.get_fileset(fileset_id)
     files = data_manager.get_files(fileset)
     new_fileset = data_manager.create_fileset(user, output_fileset_name)

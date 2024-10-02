@@ -3,9 +3,10 @@ import pydicom.errors
 
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
-from ..utils import set_task_progress, delete_task_progress
+from ..utils import set_task_progress, delete_task_progress, is_uuid
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
+from .taskexception import TaskException
 
 LOG = LogManager()
 
@@ -28,6 +29,8 @@ def filterdicomtask(task_progress_id: str, fileset_id: str, output_fileset_name:
     name = 'filterdicomtask'
     LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}, rows: {rows}, cols: {cols}, rows_equals: {rows_equals}, cols_equals: {cols_equals}')
     data_manager = DataManager()
+    if not is_uuid(fileset_id):
+        raise TaskException('musclefatsegmentationtask() fileset_id is not UUID')
     fileset = data_manager.get_fileset(fileset_id)
     files = data_manager.get_files(fileset)
     new_files = []
