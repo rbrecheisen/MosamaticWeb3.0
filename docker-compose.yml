@@ -57,6 +57,12 @@ services:
       - SECRET_KEY=1234
     volumes:
       - data:/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
     depends_on:
       - web
       
@@ -78,11 +84,16 @@ services:
       - SECRET_KEY=1234
     volumes:
       - data:/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
     depends_on:
       db:
         condition: service_healthy
 
 volumes:
-
   data:
   postgres_data:
