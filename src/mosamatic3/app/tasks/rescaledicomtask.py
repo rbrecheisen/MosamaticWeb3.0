@@ -15,7 +15,7 @@ from .taskexception import TaskException
 LOG = LogManager()
 
 
-def rescale_image_to_512x512(f, data_manager: DataManager, fileset: FileSetModel) -> bool:
+def rescale_image(f, data_manager: DataManager, fileset: FileSetModel, target_size: int) -> bool:
     try:
         p = pydicom.dcmread(f.path)
         if is_compressed(p):
@@ -29,14 +29,14 @@ def rescale_image_to_512x512(f, data_manager: DataManager, fileset: FileSetModel
         padded_hu_array[:pixel_array.shape[0], :pixel_array.shape[1]] = hu_array
         pixel_array_padded = (padded_hu_array - p.RescaleIntercept) / p.RescaleSlope
         pixel_array_padded = pixel_array_padded.astype(pixel_array.dtype) # Image now has largest dimensions
-        pixel_array_rescaled = zoom(pixel_array_padded, zoom=(512 / new_rows), order=3) # Cubic interpolation
+        pixel_array_rescaled = zoom(pixel_array_padded, zoom=(target_size / new_rows), order=3) # Cubic interpolation
         pixel_array_rescaled = pixel_array_rescaled.astype(pixel_array.dtype)
         original_pixel_spacing = p.PixelSpacing
-        new_pixel_spacing = [ps * (new_rows / 512) for ps in original_pixel_spacing]
+        new_pixel_spacing = [ps * (new_rows / target_size) for ps in original_pixel_spacing]
         p.PixelSpacing = new_pixel_spacing
         p.PixelData = pixel_array_rescaled.tobytes()
-        p.Rows = 512
-        p.Columns = 512
+        p.Rows = target_size
+        p.Columns = target_size
         new_file_path = os.path.join(fileset.path, os.path.split(f.path)[1])
         p.save_as(new_file_path)
         data_manager.create_file(new_file_path, fileset)
@@ -47,9 +47,9 @@ def rescale_image_to_512x512(f, data_manager: DataManager, fileset: FileSetModel
 
 # https://chatgpt.com/c/66fa806e-1a08-800b-81dd-6fd260753341
 @task()
-def rescaledicomtask(task_progress_id: str, fileset_id: str, output_fileset_name: str, user: User) -> bool:
+def rescaledicomtask(task_progress_id: str, fileset_id: str, output_fileset_name: str, user: User, target_size: int=512) -> bool:
     name = 'rescaledicomtask'
-    LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}')
+    LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}, target_size: {target_size}')
     data_manager = DataManager()
     if not is_uuid(fileset_id):
         raise TaskException('musclefatsegmentationtask() fileset_id is not UUID')
@@ -59,7 +59,7 @@ def rescaledicomtask(task_progress_id: str, fileset_id: str, output_fileset_name
     nr_steps = len(files)
     set_task_progress(name, task_progress_id, 0)
     for step in range(nr_steps):
-        if rescale_image_to_512x512(files[step], data_manager, new_fileset):
+        if rescale_image(files[step], data_manager, new_fileset, target_size):
             progress = int(((step + 1) / (nr_steps)) * 100)
             set_task_progress(name, task_progress_id, progress)
         else:
