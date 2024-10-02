@@ -59,26 +59,26 @@ def output_metrics_to_string(output_metrics: Dict[str, float]) -> str:
 
 
 @task()
-def calculatebodycompositionmetricstask(task_progress_id: str, fileset_id: str, segmentation_fileset_id: str, patient_heights_fileset_id: str, output_fileset_name: str, user :User) -> bool:
-    name = 'calculatebodycompositionmetricstask'
+def bodycompositionmetricstask(task_progress_id: str, fileset_id: str, segmentation_fileset_id: str, patient_heights_fileset_id: str, output_fileset_name: str, user :User) -> bool:
+    name = 'bodycompositionmetricstask'
     LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, segmentation_fileset_id: {segmentation_fileset_id}, patient_heights_fileset_id: {patient_heights_fileset_id}, output_fileset_name: {output_fileset_name}')
     data_manager = DataManager()
     try:
         if not is_uuid(fileset_id):
-            raise TaskException('musclefatsegmentationtask() fileset_id is not UUID')
+            raise TaskException('bodycompositionmetricstask() fileset_id is not UUID')
         fileset = data_manager.get_fileset(fileset_id)
         if fileset is None:
-            raise TaskException('musclefatsegmentationtask() fileset is None')
+            raise TaskException('bodycompositionmetricstask() fileset is None')
         if not is_uuid(segmentation_fileset_id):
-            raise TaskException('musclefatsegmentationtask() segmentation_fileset_id is not UUID')
+            raise TaskException('bodycompositionmetricstask() segmentation_fileset_id is not UUID')
         segmentation_fileset = data_manager.get_fileset(segmentation_fileset_id)
         if segmentation_fileset is None:
-            raise TaskException('musclefatsegmentationtask() segmentation_fileset is None')
+            raise TaskException('bodycompositionmetricstask() segmentation_fileset is None')
         patient_heights = None
         if patient_heights_fileset_id and is_uuid(patient_heights_fileset_id):
             patient_heights_fileset = data_manager.get_fileset(patient_heights_fileset_id)
             if patient_heights_fileset is None:
-                raise TaskException('musclefatsegmentationtask() patient_heights_fileset is None')
+                raise TaskException('bodycompositionmetricstask() patient_heights_fileset is None')
             else:
                 patient_heights_file = data_manager.get_files(patient_heights_fileset)[0]
                 patient_heights_dataframe = pd.read_csv(patient_heights_file.path, sep='[,;]+', dtype=str)
@@ -143,5 +143,5 @@ def calculatebodycompositionmetricstask(task_progress_id: str, fileset_id: str, 
         delete_task_progress(name, task_progress_id)
         return True
     except TaskException as e:
-        LOG.error(f'musclefatsegmentation() exception occurred while processing files ({e})')
+        LOG.error(f'bodycompositionmetricstask() exception occurred while processing files ({e})')
         return False

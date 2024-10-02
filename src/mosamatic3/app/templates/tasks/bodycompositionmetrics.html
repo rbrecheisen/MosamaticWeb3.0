@@ -4,13 +4,13 @@
     <div class="col-sm-10">
         <div class="card" style="margin-top: 10px;">
             <div class="card-header">
-                <b>Calculate body composition metrics</b><br>
+                <b>Body composition metrics</b><br>
                 <i>This task calculates body composition metrics from L3 images and corresponding muscle and fat segmentations</i>
             </div>
             <div class="card-body">
-                <form action="/tasks/calculatebodycompositionmetrics/" method="post" id="my-form">
+                <form action="/tasks/bodycompositionmetrics/" method="post" id="my-form">
                     {% csrf_token %}
-                    <input type="hidden" name="baseUrl" value="/tasks/calculatebodycompositionmetrics/">
+                    <input type="hidden" name="baseUrl" value="/tasks/bodycompositionmetrics/">
                     <select class="form-select" name="fileset_id">
                         <option selected>Select L3 images</option>
                         {% for fileset in filesets %}
