@@ -8,15 +8,6 @@ A file is a single DICOM file. A fileset is a collection of DICOM files, either 
 - fileset.html - Shows fileset details and a list of files
 - file.html - Shows file details
 
-# Fileset and file filters
-Filesets can correspond to different DICOM entities, e.g., one or more CT scans, or one or more Dixon MRI scans. By activating a fileset filter you can search for specific types of DICOM scans. Mosamatic Web 3.0 supports the following fileset filters:
-
-- CT
-- T1 MRI
-- T2 MRI
-- Dixon MRI water
-- Dixon MRI fat
-
 # Creating new tasks
 To create a new task do the following:
 
@@ -25,3 +16,5 @@ To create a new task do the following:
 - Create new task HTLM page in app\templates\tasks, e.g., "dosomething.html". Look in "dummy.html" for the template and make sure the right form fields are present for submitting the task parameters.
 
 Rerun Huey to have it pick up the new task.
+
+# Running Mosamatic Web 3.0 on linux/arm64 architectures
