@@ -1,0 +1,1 @@
+docker-compose -f docker-compose-arm64.yml up -d $1 && docker-compose logs -f web huey
