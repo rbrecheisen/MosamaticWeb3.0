@@ -18,3 +18,6 @@ To create a new task do the following:
 Rerun Huey to have it pick up the new task.
 
 # Running Mosamatic Web 3.0 on linux/arm64 architectures
+- Set tensorflow-aarch64 in requirements.txt and build without specification of platform
+- Set tensorflow-aarch64 in requirements.txt and build with arm64 platform (buildx)
+- Use PyTorch instead of TF
