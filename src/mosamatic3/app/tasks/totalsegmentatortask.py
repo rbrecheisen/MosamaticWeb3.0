@@ -1,15 +1,11 @@
-import os
 import pydicom
 import pydicom.errors
-import numpy as np
-import pandas as pd
 
-from typing import List, Dict, Union
+from typing import List, Dict
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
 from .taskexception import TaskException
-from ..utils import set_task_progress, delete_task_progress, is_compressed, get_pixels_from_dicom_object, \
-    is_uuid, convert_numpy_array_to_png_image, AlbertaColorMap, is_dicom
+from ..utils import set_task_progress, delete_task_progress, is_uuid
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
 from ..models import FileModel, FileSetModel
