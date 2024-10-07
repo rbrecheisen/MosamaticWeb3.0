@@ -21,7 +21,7 @@ services:
 
   nginx:
     build: ./nginx
-    image: brecheisen/mosamatic3-nginx-amd64:latest
+    image: brecheisen/mosamatic3-nginx-amd64:${TAG}
     platform: linux/amd64
     container_name: mosamatic3_nginx
     ports:
@@ -41,7 +41,7 @@ services:
 
   huey:
     build: .
-    image: brecheisen/mosamatic3-huey-amd64:latest
+    image: brecheisen/mosamatic3-huey-amd64:${TAG}
     platform: linux/amd64
     command: python manage.py run_huey
     container_name: mosamatic3_huey
@@ -64,7 +64,7 @@ services:
       
   web:
     build: .
-    image: brecheisen/mosamatic3-web-amd64:latest
+    image: brecheisen/mosamatic3-web-amd64:${TAG}
     platform: linux/amd64
     container_name: mosamatic3_web
     environment:

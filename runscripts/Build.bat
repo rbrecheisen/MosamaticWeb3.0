@@ -1,2 +1,4 @@
+@echo off
 call runscripts\Shutdown.bat
-docker-compose build %1
+set TAG=%1
+docker-compose build --no-cache
