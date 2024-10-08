@@ -16,9 +16,10 @@ def totalsegmentator(request):
     if request.method == 'POST':
         fileset_id = request.POST.get('fileset_id', None)
         if fileset_id:
+            mask_name = request.POST.get('mask_name', None)
             output_fileset_name = request.POST.get('output_fileset_name', None)
             return task_manager.run_task_and_get_response(
-                totalsegmentatortask, fileset_id, output_fileset_name, request.user)
+                totalsegmentatortask, fileset_id, output_fileset_name, request.user, mask_name)
         else:
             LOG.warning(f'views.tasks.totalsegmentator: no segmentation fileset ID selected')
     elif request.method == 'GET':

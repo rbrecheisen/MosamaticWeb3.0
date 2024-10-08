@@ -14,8 +14,18 @@
                     <select class="form-select" name="fileset_id">
                         <option selected>Select fileset with CT or MRI scans</option>
                         {% for fileset in filesets %}
-                        <option value="{{ fileset.id }}">{{ fileset.name }}</option>
+                            <option value="{{ fileset.id }}">{{ fileset.name }}</option>
                         {% endfor %}
+                    </select>
+                    <br>
+                    <select class="form-select" name="mask_name">
+                        <option selected>Select organ/structure</option>
+                        <option value="vertebrae_L1">vertebrae_L1</option>
+                        <option value="vertebrae_L2">vertebrae_L2</option>
+                        <option value="vertebrae_L3">vertebrae_L3</option>
+                        <option value="vertebrae_L4">vertebrae_L4</option>
+                        <option value="vertebrae_L5">vertebrae_L5</option>
+                        <option value="liver">liver</option>
                     </select>
                     <br>
                     <label for="output_fileset_name" class="form-label">Output fileset name (optional)</label>
