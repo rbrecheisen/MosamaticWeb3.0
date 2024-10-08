@@ -13,7 +13,7 @@ from ..models import FileModel, FileSetModel
 LOG = LogManager()
 
 
-def find_scans_in_fileset(fileset: FileSetModel, data_manager: DataManager) -> Dict[str, FileModel]:
+def find_series_in_fileset(fileset: FileSetModel, data_manager: DataManager) -> Dict[str, FileModel]:
     scans = {}
     files = data_manager.get_files(fileset)
     for f in files:
@@ -24,8 +24,8 @@ def find_scans_in_fileset(fileset: FileSetModel, data_manager: DataManager) -> D
     return scans
 
 
-def run_totalsegmentator_on_series(series_instance_uid: str, scan_files: List[FileModel]) -> bool:
-    LOG.info(f'Running Total Segmentator on series {series_instance_uid} with {len(scan_files)} scan files...')
+def run_totalsegmentator_on_series(series_instance_uid: str, series_files: List[FileModel]) -> bool:
+    LOG.info(f'Running Total Segmentator on series {series_instance_uid} with {len(series_files)} scan files...')
     return True
 
 
@@ -42,16 +42,16 @@ def totalsegmentatortask(task_progress_id: str, fileset_id: str, output_fileset_
             raise TaskException('totalsegmentatortask() fileset is None')
         files = data_manager.get_files(fileset)
 
-        # Search for CT scans within the fileset files
-        scans = find_scans_in_fileset(fileset, data_manager)
-        scans_keys = list(scans.keys())
-        scans_values = list(scans.values())
-        nr_steps = len(scans_keys)
+        # Search for CT series within the fileset files
+        series = find_series_in_fileset(fileset, data_manager)
+        series_keys = list(series.keys())
+        series_values = list(series.values())
+        nr_steps = len(series_keys)
         set_task_progress(name, task_progress_id, 0)
-        for step in range(len(scans_keys)):
-            series_instance_uid, scan_files = scans_keys[step], scans_values[step]
-            if len(scan_files) > 0:
-                if not run_totalsegmentator_on_series(series_instance_uid, scan_files):
+        for step in range(len(series_keys)):
+            series_instance_uid, series_files = series_keys[step], series_values[step]
+            if len(series_files) > 0:
+                if not run_totalsegmentator_on_series(series_instance_uid, series_files):
                     raise TaskException(f'Could not run Total Segmentator on series {series_instance_uid}')
             else:
                 raise TaskException(f'Empty series {series_instance_uid}')
@@ -59,6 +59,7 @@ def totalsegmentatortask(task_progress_id: str, fileset_id: str, output_fileset_
             set_task_progress(name, task_progress_id, progress)
 
         # output_fileset = data_manager.create_fileset(user, output_fileset_name)
+        # create separate FileModel objects
         delete_task_progress(name, task_progress_id)
         return True
     except TaskException as e:
