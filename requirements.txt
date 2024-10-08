@@ -13,8 +13,8 @@ scipy
 pillow
 pandas
 openpyxl
-# tensorflow==2.15.0
-tensorflow-aarch64
+tensorflow==2.15.0
+# tensorflow-aarch64
 # tensorflow
 gunicorn
 pendulum
