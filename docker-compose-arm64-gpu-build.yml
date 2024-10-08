@@ -20,7 +20,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   nginx:
-    # build: ./nginx
+    build: ./nginx
     image: brecheisen/mosamatic3-nginx-arm64:latest
     platform: linux/arm64
     container_name: mosamatic3_nginx
@@ -40,8 +40,8 @@ services:
       - 6379:6379
 
   huey:
-    # build: .
-    image: brecheisen/mosamatic3-huey-arm64:latest
+    build: .
+    image: brecheisen/mosamatic3-huey-arm64-gpu:latest
     platform: linux/arm64
     command: python manage.py run_huey
     container_name: mosamatic3_huey
@@ -59,13 +59,19 @@ services:
       - SECRET_KEY=1234
     volumes:
       - data:/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
     depends_on:
       - web
       
   web:
-    # build: .
-    image: brecheisen/mosamatic3-web-arm64:latest
-    platform: linux/arm64
+    build: .
+    image: brecheisen/mosamatic3-web-arm64-gpu:latest
+    platform: linux/amd64
     container_name: mosamatic3_web
     environment:
       - DATA_DIR=/data
@@ -81,6 +87,12 @@ services:
       - SECRET_KEY=1234
     volumes:
       - data:/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
     depends_on:
       db:
         condition: service_healthy
