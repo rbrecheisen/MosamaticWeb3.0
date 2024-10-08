@@ -5,7 +5,7 @@ django-guardian
 django-crispy-forms
 django-huey
 crispy-bootstrap5
-psycopg2
+psycopg2 # arm64 version is built from source
 pydicom
 python-gdcm
 numpy==1.26.4
@@ -13,10 +13,7 @@ scipy
 pillow
 pandas
 openpyxl
-# tensorflow-macos
-# tensorflow-metal
-tensorflow-aarch64
-# tensorflow
+tensorflow-aarch64 # arm64 version
 gunicorn
 pendulum
 redis

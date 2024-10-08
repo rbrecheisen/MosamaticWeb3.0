@@ -13,9 +13,6 @@ scipy
 pillow
 pandas
 openpyxl
-# tensorflow-macos
-# tensorflow-metal
-# tensorflow-aarch64
 tensorflow
 gunicorn
 pendulum
