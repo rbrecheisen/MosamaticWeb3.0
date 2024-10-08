@@ -21,9 +21,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   nginx:
-    build: 
-      context: ./nginx
-      dockerfile: Dockerfile-arm64    
+    build: ./nginx # No need for arm64 Dockerfile
     image: brecheisen/mosamatic3-nginx-arm64:latest
     platform: linux/arm64
     container_name: mosamatic3_nginx
