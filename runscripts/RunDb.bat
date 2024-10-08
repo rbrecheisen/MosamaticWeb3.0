@@ -1,1 +1,1 @@
-docker-compose up -d %1 db redis
+docker-compose up -d db redis

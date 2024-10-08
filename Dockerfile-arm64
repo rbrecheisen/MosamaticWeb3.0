@@ -1,6 +1,5 @@
 FROM python:3.9
 
-# Install dependencies needed for TensorFlow GPU support
 RUN apt-get update && apt-get install -y --no-install-recommends \
     vim libpq-dev pkg-config cmake openssl wget git dos2unix \
     libgl1-mesa-glx libxrender1 libffi-dev libssl-dev build-essential pigz dcm2niix \
@@ -11,44 +10,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-# # Add NVIDIA's package repository for CUDA and cuDNN
-# RUN curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub | apt-key add - && \
-#     echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /" > /etc/apt/sources.list.d/cuda.list && \
-#     apt-get update && \
-#     apt-get install -y --no-install-recommends \
-#     cuda-command-line-tools-11-2 \
-#     libcudnn8=8.1.0.77-1+cuda11.2 \
-#     libnccl2=2.8.4-1+cuda11.2 && \
-#     apt-mark hold libcudnn8 && \
-#     rm -rf /var/lib/apt/lists/*
-
-# # Set environment variables for CUDA and cuDNN
-# ENV LD_LIBRARY_PATH /usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
-# ENV CUDA_HOME /usr/local/cuda
-
-# Install TensorFlow and other Python dependencies
 COPY requirements-arm64.txt /requirements.txt
 RUN pip install --upgrade pip setuptools wheel && \
     pip install -r /requirements.txt --verbose
 
-# Create necessary directories and set permissions
 RUN mkdir -p /data/static && \
     mkdir -p /data/datasets && \
     mkdir -p /data/uploads/{0..9} && chmod 777 -R /data/uploads
 
-# Copy entrypoint and source files
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN dos2unix /docker-entrypoint.sh
 
 COPY src/mosamatic3 /src
 
-# Set the working directory
 WORKDIR /src
 
-# Clean up unnecessary packages to reduce image size
 RUN apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Set the entry point for the container
 CMD ["/docker-entrypoint.sh"]
