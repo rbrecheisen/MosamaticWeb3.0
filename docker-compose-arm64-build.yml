@@ -2,6 +2,7 @@ services:
 
   db:
     image: postgres:16-alpine
+    platform: linux/arm64
     container_name: mosamatic3_postgres
     environment:
       - POSTGRES_DB=db
@@ -20,7 +21,9 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   nginx:
-    build: ./nginx
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile-arm64    
     image: brecheisen/mosamatic3-nginx-arm64:latest
     platform: linux/arm64
     container_name: mosamatic3_nginx
@@ -33,6 +36,7 @@ services:
 
   redis:
     image: redis:alpine
+    platform: linux/arm64
     container_name: mosamatic3_redis
     expose:
       - 6379
@@ -40,7 +44,9 @@ services:
       - 6379:6379
 
   huey:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile-arm64
     image: brecheisen/mosamatic3-huey-arm64:latest
     platform: linux/arm64
     command: python manage.py run_huey
@@ -63,7 +69,9 @@ services:
       - web
       
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile-arm64
     image: brecheisen/mosamatic3-web-arm64:latest
     platform: linux/arm64
     container_name: mosamatic3_web

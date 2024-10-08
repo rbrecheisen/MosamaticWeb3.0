@@ -5,7 +5,7 @@ django-guardian
 django-crispy-forms
 django-huey
 crispy-bootstrap5
-psycopg2-binary
+psycopg2
 pydicom
 python-gdcm
 numpy==1.26.4
@@ -15,8 +15,8 @@ pandas
 openpyxl
 # tensorflow-macos
 # tensorflow-metal
-# tensorflow-aarch64
-tensorflow
+tensorflow-aarch64
+# tensorflow
 gunicorn
 pendulum
 redis
