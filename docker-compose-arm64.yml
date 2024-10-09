@@ -87,6 +87,18 @@ services:
       db:
         condition: service_healthy
 
+  dicomserver:
+    # build: ./dicomserver
+    image: brecheisen/mosamatic3-dicomserver-arm64:latest
+    platform: linux/arm64
+    container_name: mosamatic3_dicomserver
+    ports:
+      - 104:104
+    environment:
+      - DOCKER=true
+    volumes:
+      - data:/data/dicomstorage
+
 volumes:
   data:
   postgres_data:

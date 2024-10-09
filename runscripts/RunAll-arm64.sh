@@ -1,1 +1,1 @@
-docker-compose -f docker-compose-arm64.yml up -d && docker-compose logs -f web huey
+docker-compose -f docker-compose-arm64.yml up -d && docker-compose -f docker-compose-arm64.yml logs -f web huey dicomserver
