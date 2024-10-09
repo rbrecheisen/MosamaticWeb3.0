@@ -91,7 +91,6 @@ services:
       db:
         condition: service_healthy
 
-
   dicomserver:
     build: 
       context: ./dicomserver
