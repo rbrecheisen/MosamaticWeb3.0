@@ -98,6 +98,7 @@ services:
       - 105:104
     environment:
       - DOCKER=true
+      - PORT=105
     volumes:
       - data:/data/dicomstorage
 
@@ -112,6 +113,7 @@ services:
       - 104:104
     environment:
       - DOCKER=true
+      - PORT=104
     volumes:
       - data:/data/dicomstorageclinical
 

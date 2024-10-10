@@ -4,8 +4,9 @@ import tempfile
 from pynetdicom import AE, evt
 from pynetdicom.sop_class import CTImageStorage, MRImageStorage
 
-DICOMSTORAGE = '/data/dicomstorage1' if os.getenv('DOCKER', None) == 'true' else os.path.join(tempfile.gettempdir(), 'mosamatic/data/dicomstorage1')
+DICOMSTORAGE = '/data/dicomstorageclinical' if os.getenv('DOCKER', None) == 'true' else os.path.join(tempfile.gettempdir(), 'mosamatic/data/dicomstorageclinical')
 os.makedirs(DICOMSTORAGE, exist_ok=True)
+PORT = int(os.getenv('PORT', '104'))
 
 storage_sop_classes = [CTImageStorage, MRImageStorage]
 
@@ -25,4 +26,4 @@ for sop_class in storage_sop_classes:
 handlers = [(evt.EVT_C_STORE, handle_store)]
 
 print('Starting Mosamatic Web 3.0 DICOM server...')
-ae.start_server(('', 104), block=True, evt_handlers=handlers)
+ae.start_server(('', PORT), block=True, evt_handlers=handlers)

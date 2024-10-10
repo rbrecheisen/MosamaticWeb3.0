@@ -108,6 +108,7 @@ services:
     container_name: mosamatic3_dicomserver
     ports:
       - 105:104
+      - PORT=105
     environment:
       - DOCKER=true
     volumes:
@@ -122,6 +123,7 @@ services:
     container_name: mosamatic3_dicomserverclinical
     ports:
       - 104:104
+      - PORT=104
     environment:
       - DOCKER=true
     volumes:
