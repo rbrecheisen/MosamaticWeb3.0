@@ -93,7 +93,7 @@ services:
     platform: linux/amd64
     container_name: mosamatic3_dicomserver
     ports:
-      - 104:104
+      - 105:104
     environment:
       - DOCKER=true
     volumes:
