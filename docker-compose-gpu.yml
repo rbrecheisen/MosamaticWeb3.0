@@ -100,8 +100,8 @@ services:
   dicomserver:
     # build: 
     #   context: ./dicomserver
-    #   dockerfile: Dockerfile-arm64
-    image: brecheisen/mosamatic3-dicomserver-arm64:latest
+    #   dockerfile: Dockerfile
+    image: brecheisen/mosamatic3-dicomserver-amd64:latest
     platform: linux/amd64
     container_name: mosamatic3_dicomserver
     ports:
@@ -110,6 +110,20 @@ services:
       - DOCKER=true
     volumes:
       - data:/data/dicomstorage
+
+  dicomserverclinical:
+    # build: 
+    #   context: ./dicomserverclinical
+    #   dockerfile: Dockerfile
+    image: brecheisen/mosamatic3-dicomserverclinical-amd64:latest
+    platform: linux/amd64
+    container_name: mosamatic3_dicomserverclinical
+    ports:
+      - 104:104
+    environment:
+      - DOCKER=true
+    volumes:
+      - data:/data/dicomstorageclinical
 
 volumes:
   data:
