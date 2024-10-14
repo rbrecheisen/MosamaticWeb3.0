@@ -14,11 +14,20 @@ LOG = LogManager()
 def process_file(f, rows: int, cols: int, rows_equals: bool, cols_equals: bool) -> bool:
     try:
         p = pydicom.dcmread(f.path, stop_before_pixels=True)
+        LOG.info(f'rows: {rows}, cols: {cols}, p.Rows: {p.Rows}, p.Columns: {p.Columns}')
         ok = True
-        if p.Rows == rows and not rows_equals:
-            ok = False
-        if p.Columns == cols and not cols_equals:
-            ok = False
+        if rows_equals:
+            if p.Rows != rows:
+                ok = False
+        else:
+            if p.Rows == rows:
+                ok = False
+        if cols_equals:
+            if p.Columns != cols:
+                ok = False
+        else:
+            if p.Columns == cols:
+                ok = False
         return ok
     except pydicom.errors.InvalidDicomError:
         return False
@@ -44,9 +53,7 @@ def filterdicomtask(task_progress_id: str, fileset_id: str, output_fileset_name:
         progress = int(((step + 1) / (nr_steps)) * 100)
         set_task_progress(name, task_progress_id, progress)
     if len(new_files) > 0:
-        new_fileset = data_manager.create_fileset(user, output_fileset_name)
-        for f in new_files:
-            data_manager.create_file(f.path, new_fileset)
+        data_manager.create_fileset_from_files(new_files, output_fileset_name, user)
     else:
         LOG.warning(f'New fileset is empty')
     delete_task_progress(name, task_progress_id)

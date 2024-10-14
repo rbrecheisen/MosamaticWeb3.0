@@ -1,6 +1,9 @@
+import os
+
 from django.shortcuts import render
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseForbidden, HttpRequest
+from django.http import HttpResponse, HttpResponseForbidden, HttpRequest, Http404
 from wsgiref.util import FileWrapper
 
 from ..data.fileuploadprocessor import FileUploadProcessor
@@ -13,7 +16,7 @@ def filesets(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         fileset_name = request.POST.get('fileset_name', None)
         file_paths, file_names = FileUploadProcessor().process_upload(request)
-        manager.create_fileset_from_files(file_paths, file_names, fileset_name, request.user)
+        manager.create_fileset_from_file_paths_and_names(file_paths, file_names, fileset_name, request.user)
     return render(request, 'filesets.html', context={'filesets': manager.get_filesets(request.user)})
 
 

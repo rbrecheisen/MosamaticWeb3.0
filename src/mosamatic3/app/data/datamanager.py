@@ -32,8 +32,16 @@ class DataManager:
             fs_name = 'fileset-{}'.format(timestamp)
         fileset = FileSetModel.objects.create(name=fs_name, owner=user) # fileset.path is set in post_save() for FileSetModel
         return fileset
+    
+    def create_fileset_from_files(self, files: List[FileModel], fileset_name: str, user: User) -> FileSetModel:
+        file_paths = []
+        file_names = []
+        for i in range(len(files)):
+            file_paths.append(files[i].path)
+            file_names.append(files[i].name)
+        return self.create_fileset_from_file_paths_and_names(file_paths, file_names, fileset_name, user)
         
-    def create_fileset_from_files(self, file_paths: List[str], file_names: List[str], fileset_name: str, user: User) -> FileSetModel:
+    def create_fileset_from_file_paths_and_names(self, file_paths: List[str], file_names: List[str], fileset_name: str, user: User) -> FileSetModel:
         if len(file_paths) == 0 or len(file_names) == 0:
             return None
         fileset = self.create_fileset(user, fileset_name)
