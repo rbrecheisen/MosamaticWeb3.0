@@ -53,7 +53,9 @@ def filterdicomtask(task_progress_id: str, fileset_id: str, output_fileset_name:
         progress = int(((step + 1) / (nr_steps)) * 100)
         set_task_progress(name, task_progress_id, progress)
     if len(new_files) > 0:
-        data_manager.create_fileset_from_files(new_files, output_fileset_name, user)
+        new_fileset = data_manager.create_fileset(user, output_fileset_name)
+        for f in new_files:
+            data_manager.create_file(f.path, new_fileset)
     else:
         LOG.warning(f'New fileset is empty')
     delete_task_progress(name, task_progress_id)
