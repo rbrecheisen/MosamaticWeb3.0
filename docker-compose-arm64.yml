@@ -26,7 +26,7 @@ services:
     platform: linux/arm64
     container_name: mosamatic3_nginx
     ports:
-      - "8000:8000"
+      - 8000:8000
     volumes:
       - data:/data
     depends_on:
@@ -87,35 +87,35 @@ services:
       db:
         condition: service_healthy
 
-  dicomserver:
-    # build: 
-    #   context: ./dicomserver
-    #   dockerfile: Dockerfile
-    image: brecheisen/mosamatic3-dicomserver-arm64:latest
-    platform: linux/arm64
-    container_name: mosamatic3_dicomserver
-    ports:
-      - 105:104
-    environment:
-      - DOCKER=true
-      - PORT=105
-    volumes:
-      - data:/data/dicomstorage
+  # dicomserver:
+  #   # build: 
+  #   #   context: ./dicomserver
+  #   #   dockerfile: Dockerfile
+  #   image: brecheisen/mosamatic3-dicomserver-arm64:latest
+  #   platform: linux/arm64
+  #   container_name: mosamatic3_dicomserver
+  #   ports:
+  #     - 105:104
+  #   environment:
+  #     - DOCKER=true
+  #     - PORT=105
+  #   volumes:
+  #     - data:/data/dicomstorage
 
-  dicomserverclinical:
-    # build: 
-    #   context: ./dicomserverclinical
-    #   dockerfile: Dockerfile
-    image: brecheisen/mosamatic3-dicomserverclinical-arm64:latest
-    platform: linux/arm64
-    container_name: mosamatic3_dicomserverclinical
-    ports:
-      - 104:104
-    environment:
-      - DOCKER=true
-      - PORT=104
-    volumes:
-      - data:/data/dicomstorageclinical
+  # dicomserverclinical:
+  #   # build: 
+  #   #   context: ./dicomserverclinical
+  #   #   dockerfile: Dockerfile
+  #   image: brecheisen/mosamatic3-dicomserverclinical-arm64:latest
+  #   platform: linux/arm64
+  #   container_name: mosamatic3_dicomserverclinical
+  #   ports:
+  #     - 104:104
+  #   environment:
+  #     - DOCKER=true
+  #     - PORT=104
+  #   volumes:
+  #     - data:/data/dicomstorageclinical
 
 volumes:
   data:
