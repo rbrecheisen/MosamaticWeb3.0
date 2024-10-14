@@ -11,6 +11,7 @@ pynetdicom
 python-gdcm
 numpy==1.26.4
 scipy
+statsmodels
 pillow
 pandas
 openpyxl
