@@ -1,4 +1,5 @@
 import os
+import json
 import pendulum
 import uuid
 import pydicom.errors
@@ -51,6 +52,7 @@ def duration(seconds: int) -> str:
     return '{} hours, {} minutes, {} seconds'.format(h, m, s)
 
 
+# Tasks
 def get_task_progress(name: str, task_progress_id: str) -> int:
     progress = r.get(f'{name}.{task_progress_id}.progress')
     if progress:
@@ -64,6 +66,21 @@ def set_task_progress(name: str, task_progress_id: str, progress: int) -> None:
 
 def delete_task_progress(name: str, task_progress_id: str) -> None:
     r.delete(f'{name}.{task_progress_id}.progress')
+
+
+def get_task_status(name: str, task_status_id: str) -> dict:
+    status = r.get(f'{name}.{task_status_id}.status')
+    if status:
+        return json.loads(status)
+    return None
+
+
+def set_task_status(name: str, task_status_id: str, status_obj: dict) -> None:
+    r.set(f'{name}.{task_status_id}.status', json.dumps(status_obj))
+
+
+def delete_task_status(name: str, task_status_id: str) -> None:
+    r.delete(f'{name}.{task_status_id}.status')
 
 
 def is_dicom(f: str) -> bool:
