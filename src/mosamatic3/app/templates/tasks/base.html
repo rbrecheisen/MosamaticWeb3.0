@@ -50,21 +50,5 @@
                 .catch(error => console.error('Error:', error));
         }, 1000);
     }
-
-    // function checkTaskStatus(taskResultId, taskProgressId, baseUrl) {
-    //     const statusUrl = baseUrl + '?task_result_id=' + taskResultId + '&task_progress_id=' + taskProgressId;
-    //     const interval = setInterval(() => {
-    //         fetch(statusUrl, {method: 'GET', headers: {'Content-Type': 'application/json'}})
-    //             .then(response => response.json())
-    //             .then(data => {
-    //                 document.getElementById("task-progress").innerText = "Status: " + data.task_status + ", progress: " + data.progress; 
-    //                 if (data.task_status === 'completed' || data.task_status === 'failed') {
-    //                     document.getElementById("task-button").disabled = false;
-    //                     clearInterval(interval);
-    //                 }
-    //             })
-    //             .catch(error => console.error('Error:', error));
-    //     }, 1000);
-    // }
 </script>
 {% endblock %}

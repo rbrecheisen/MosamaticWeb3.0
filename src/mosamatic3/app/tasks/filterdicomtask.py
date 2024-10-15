@@ -3,7 +3,7 @@ import pydicom.errors
 
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
-from ..utils import set_task_progress, delete_task_progress, is_uuid, set_task_status, delete_task_status
+from ..utils import is_uuid, set_task_status
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
 from .taskexception import TaskException
@@ -34,10 +34,8 @@ def process_file(f, rows: int, cols: int, rows_equals: bool, cols_equals: bool) 
 
 
 @task()
-# def filterdicomtask(task_progress_id: str, fileset_id: str, output_fileset_name: str, user :User, rows: int, cols: int, rows_equals: bool, cols_equals: bool) -> bool:
 def filterdicomtask(task_status_id: str, fileset_id: str, output_fileset_name: str, user :User, rows: int, cols: int, rows_equals: bool, cols_equals: bool) -> bool:
     name = 'filterdicomtask'
-    # LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}, rows: {rows}, cols: {cols}, rows_equals: {rows_equals}, cols_equals: {cols_equals}')
     LOG.info(f'name: {name}, task_status_id: {task_status_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}, rows: {rows}, cols: {cols}, rows_equals: {rows_equals}, cols_equals: {cols_equals}')
     data_manager = DataManager()
     if not is_uuid(fileset_id):
@@ -46,7 +44,6 @@ def filterdicomtask(task_status_id: str, fileset_id: str, output_fileset_name: s
     files = data_manager.get_files(fileset)
     new_files = []
     nr_steps = len(files)
-    # set_task_progress(name, task_progress_id, 0)
     set_task_status(name, task_status_id, {'status': 'running', 'progress': 0})
     for step in range(nr_steps):
         LOG.info(f'filterdicomtask() processing file {files[step].path}...')
@@ -55,7 +52,6 @@ def filterdicomtask(task_status_id: str, fileset_id: str, output_fileset_name: s
         else:
             new_files.append(files[step])        
         progress = int(((step + 1) / (nr_steps)) * 100)
-        # set_task_progress(name, task_progress_id, progress)
         set_task_status(name, task_status_id, {'status': 'running', 'progress': progress})
         import time
         time.sleep(1)
@@ -65,7 +61,5 @@ def filterdicomtask(task_status_id: str, fileset_id: str, output_fileset_name: s
             data_manager.create_file(f.path, new_fileset)
     else:
         LOG.warning(f'New fileset is empty')
-    # delete_task_progress(name, task_progress_id)
-    # delete_task_status(name, task_status_id)
     set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
     return True
