@@ -39,7 +39,7 @@ def filterdicomtask(task_status_id: str, fileset_id: str, output_fileset_name: s
     LOG.info(f'name: {name}, task_status_id: {task_status_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}, rows: {rows}, cols: {cols}, rows_equals: {rows_equals}, cols_equals: {cols_equals}')
     data_manager = DataManager()
     if not is_uuid(fileset_id):
-        raise TaskException('musclefatsegmentationtask() fileset_id is not UUID')
+        raise TaskException('filterdicomtask() fileset_id is not UUID')
     fileset = data_manager.get_fileset(fileset_id)
     files = data_manager.get_files(fileset)
     new_files = []
@@ -60,6 +60,6 @@ def filterdicomtask(task_status_id: str, fileset_id: str, output_fileset_name: s
         for f in new_files:
             data_manager.create_file(f.path, new_fileset)
     else:
-        LOG.warning(f'New fileset is empty')
+        LOG.warning(f'filterdicomtask() new fileset is empty')
     set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
     return True
