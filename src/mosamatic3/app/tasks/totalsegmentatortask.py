@@ -5,7 +5,7 @@ from typing import List, Dict
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
 from .taskexception import TaskException
-from ..utils import set_task_progress, delete_task_progress, is_uuid
+from ..utils import set_task_progress, delete_task_progress, set_task_status, is_uuid
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
 from ..models import FileModel, FileSetModel
@@ -41,9 +41,9 @@ def run_totalsegmentator_on_series(series_instance_uid: str, series_files: List[
 
 
 @task()
-def totalsegmentatortask(task_progress_id: str, fileset_id: str, output_fileset_name: str, user :User, mask_name: str) -> bool:
+def totalsegmentatortask(task_status_id: str, fileset_id: str, output_fileset_name: str, user :User, mask_name: str) -> bool:
     name = 'totalsegmentatortask'
-    LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}, mask_name: {mask_name}')
+    LOG.info(f'name: {name}, task_status_id: {task_status_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}, mask_name: {mask_name}')
     data_manager = DataManager()
     try:
         if not is_uuid(fileset_id):
@@ -56,7 +56,7 @@ def totalsegmentatortask(task_progress_id: str, fileset_id: str, output_fileset_
         series_keys = list(series.keys())
         series_values = list(series.values())
         nr_steps = len(series_keys)
-        set_task_progress(name, task_progress_id, 0)
+        set_task_status(name, task_status_id, {'status': 'running', 'progress': 0})
         for step in range(len(series_keys)):
             series_instance_uid, series_files = series_keys[step], series_values[step]
             if len(series_files) > 0:
@@ -65,9 +65,10 @@ def totalsegmentatortask(task_progress_id: str, fileset_id: str, output_fileset_
             else:
                 raise TaskException(f'Empty series {series_instance_uid}')
             progress = int(((step + 1) / (nr_steps)) * 100)
-            set_task_progress(name, task_progress_id, progress)
-        delete_task_progress(name, task_progress_id)
+            set_task_status(name, task_status_id, {'status': 'running', 'progress': progress})
+        set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
         return True
     except TaskException as e:
         LOG.error(f'totalsegmentatortask() exception occurred while processing files ({e})')
+        set_task_status(name, task_status_id, {'status': 'failed', 'progress': -1})
         return False
