@@ -46,6 +46,7 @@ def filterdicomtask(task_progress_id: str, fileset_id: str, output_fileset_name:
     nr_steps = len(files)
     set_task_progress(name, task_progress_id, 0)
     for step in range(nr_steps):
+        LOG.info(f'filterdicomtask() processing file {files[step].path}...')
         if not process_file(files[step], rows, cols, rows_equals, cols_equals):
             continue
         else:

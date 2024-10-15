@@ -9,7 +9,7 @@ RUN apt-get update -y && \
     apt-get install -y libffi-dev && \
     apt-get install -y pigz dcm2niix && \
     mkdir -p /data/static && \
-    mkdir -p /data/datasets && \
+    mkdir -p /data/filesets && \
     mkdir -p /data/uploads/{0..9} && chmod 777 -R /data/uploads
 
 # Run these steps separately, otherwise the large RUN will execute always
