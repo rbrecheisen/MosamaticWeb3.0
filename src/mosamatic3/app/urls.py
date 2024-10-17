@@ -12,7 +12,6 @@ from .views.tasks.musclefatsegmentation import musclefatsegmentation
 from .views.tasks.bodycompositionmetrics import bodycompositionmetrics
 from .views.tasks.segmentationpng import segmentationpng
 from .views.tasks.totalsegmentator import totalsegmentator
-from .views.tasks.dicomstructure import dicomstructure
 
 
 urlpatterns = [
@@ -22,8 +21,6 @@ urlpatterns = [
     path('filesets/<str:fileset_id>', fileset),
     path('accounts/logout/', custom_logout, name='logout'),
     path('logs/', logs),
-
-    # Tasks
     path('tasks/', tasks),
     path('tasks/dummy/', dummy),
     path('tasks/dummyparams/', dummyparams),
@@ -33,5 +30,4 @@ urlpatterns = [
     path('tasks/bodycompositionmetrics/', bodycompositionmetrics),
     path('tasks/segmentationpng/', segmentationpng),
     path('tasks/totalsegmentator/', totalsegmentator),
-    path('tasks/dicomstructure/', dicomstructure),
 ]
