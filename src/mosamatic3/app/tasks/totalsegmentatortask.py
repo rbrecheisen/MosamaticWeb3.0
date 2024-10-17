@@ -14,14 +14,14 @@ LOG = LogManager()
 
 
 def find_series_in_fileset(fileset: FileSetModel, data_manager: DataManager) -> Dict[str, FileModel]:
-    scans = {}
+    series_list = {}
     files = data_manager.get_files(fileset)
     for f in files:
         p = pydicom.dcmread(f.path, stop_before_pixels=True)
-        if p.SeriesInstanceUID not in scans.keys():
-            scans[p.SeriesInstanceUID] = []
-        scans[p.SeriesInstanceUID].append(f)
-    return scans
+        if p.SeriesInstanceUID not in series_list.keys():
+            series_list[p.SeriesInstanceUID] = []
+        series_list[p.SeriesInstanceUID].append(f)
+    return series_list
 
 
 def run_totalsegmentator_on_series(series_instance_uid: str, series_files: List[FileModel], mask_name: str) -> bool:
@@ -52,13 +52,13 @@ def totalsegmentatortask(task_status_id: str, fileset_id: str, output_fileset_na
         if fileset is None:
             raise TaskException('totalsegmentatortask() fileset is None')
         # Search for CT series within the fileset files
-        series = find_series_in_fileset(fileset, data_manager)
-        series_keys = list(series.keys())
-        series_values = list(series.values())
-        nr_steps = len(series_keys)
+        series_list = find_series_in_fileset(fileset, data_manager)
+        series_list_keys = list(series_list.keys())
+        series_list_values = list(series_list.values())
+        nr_steps = len(series_list_keys)
         set_task_status(name, task_status_id, {'status': 'running', 'progress': 0})
-        for step in range(len(series_keys)):
-            series_instance_uid, series_files = series_keys[step], series_values[step]
+        for step in range(len(series_list_keys)):
+            series_instance_uid, series_files = series_list_keys[step], series_list_values[step]
             if len(series_files) > 0:
                 if not run_totalsegmentator_on_series(series_instance_uid, series_files, mask_name):
                     raise TaskException(f'Could not run Total Segmentator on series {series_instance_uid}')
