@@ -87,4 +87,10 @@ services:
 
 volumes:
   data:
+    name: mosamatic3_data
   postgres_data:
+    name: mosamatic3_postgres_data
+
+networks:
+  default:
+    name: mosamatic3
