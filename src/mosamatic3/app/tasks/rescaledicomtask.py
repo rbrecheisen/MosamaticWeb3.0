@@ -6,7 +6,7 @@ import numpy as np
 from scipy.ndimage import zoom
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
-from ..utils import set_task_progress, delete_task_progress, is_compressed, is_uuid
+from ..utils import set_task_progress, delete_task_progress, set_task_status, is_compressed, is_uuid
 from ..models import FileSetModel
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
@@ -47,9 +47,9 @@ def rescale_image(f, data_manager: DataManager, fileset: FileSetModel, target_si
 
 # https://chatgpt.com/c/66fa806e-1a08-800b-81dd-6fd260753341
 @task()
-def rescaledicomtask(task_progress_id: str, fileset_id: str, output_fileset_name: str, user: User, target_size: int=512) -> bool:
+def rescaledicomtask(task_status_id: str, fileset_id: str, output_fileset_name: str, user: User, target_size: int=512) -> bool:
     name = 'rescaledicomtask'
-    LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}, target_size: {target_size}')
+    LOG.info(f'name: {name}, task_status_id: {task_status_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}, target_size: {target_size}')
     data_manager = DataManager()
     if not is_uuid(fileset_id):
         raise TaskException('musclefatsegmentationtask() fileset_id is not UUID')
@@ -57,12 +57,12 @@ def rescaledicomtask(task_progress_id: str, fileset_id: str, output_fileset_name
     files = data_manager.get_files(fileset)
     new_fileset = data_manager.create_fileset(user, output_fileset_name)
     nr_steps = len(files)
-    set_task_progress(name, task_progress_id, 0)
+    set_task_status(name, task_status_id, {'status': 'running', 'progress': 0})
     for step in range(nr_steps):
         if rescale_image(files[step], data_manager, new_fileset, target_size):
             progress = int(((step + 1) / (nr_steps)) * 100)
-            set_task_progress(name, task_progress_id, progress)
+            set_task_status(name, task_status_id, {'status': 'running', 'progress': progress})
         else:
             LOG.warning(f'Could not rescale image {files[step].path}, skipping...')
-    delete_task_progress(name, task_progress_id)
+    set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
     return True

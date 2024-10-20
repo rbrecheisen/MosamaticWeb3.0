@@ -1,6 +1,9 @@
+import os
+
 from django.shortcuts import render
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseForbidden, HttpRequest
+from django.http import HttpResponse, HttpResponseForbidden, HttpRequest, Http404
 from wsgiref.util import FileWrapper
 
 from ..data.fileuploadprocessor import FileUploadProcessor

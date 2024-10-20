@@ -21,8 +21,6 @@ urlpatterns = [
     path('filesets/<str:fileset_id>', fileset),
     path('accounts/logout/', custom_logout, name='logout'),
     path('logs/', logs),
-
-    # Tasks
     path('tasks/', tasks),
     path('tasks/dummy/', dummy),
     path('tasks/dummyparams/', dummyparams),

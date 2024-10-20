@@ -8,7 +8,6 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 
 
-# General purpose objects
 class FileSetModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=1024, editable=True, null=False)
@@ -36,15 +35,6 @@ class FileModel(models.Model):
         return os.path.split(str(self.path))[1]
     
 
-# Tasks
-class TaskProgressModel(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    task_result_id = models.CharField(max_length=1024, unique=True, null=True)
-    status = models.CharField(max_length=16, unique=False, null=False, default='unknown')
-    progress = models.IntegerField(default=0)
-    
-
-# Logging
 class LogOutputModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     mode = models.CharField(max_length=8, editable=False, null=False, choices=[
@@ -59,9 +49,8 @@ class LogOutputModel(models.Model):
         return f'[{self.timestamp}] - [{self.mode}]: {self.message}'
 
 
-# Signals
 @receiver(models.signals.post_save, sender=FileSetModel)
-def dataset_post_save(sender, instance, **kwargs):
+def fileset_post_save(sender, instance, **kwargs):
     if not instance.path:
         instance.path = os.path.join(settings.MEDIA_ROOT, str(instance.id))
         os.makedirs(instance.path, exist_ok=False)
@@ -69,6 +58,6 @@ def dataset_post_save(sender, instance, **kwargs):
 
 
 @receiver(models.signals.post_delete, sender=FileSetModel)
-def dataset_post_delete(sender, instance, **kwargs):
+def fileset_post_delete(sender, instance, **kwargs):
     if os.path.isdir(instance.path):
         shutil.rmtree(instance.path)

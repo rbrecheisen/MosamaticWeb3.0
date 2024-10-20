@@ -99,6 +99,36 @@ services:
       db:
         condition: service_healthy
 
+  dicomserver:
+    build: 
+      context: ./dicomserver
+      dockerfile: Dockerfile
+    image: brecheisen/mosamatic3-dicomserver-arm64:latest
+    platform: linux/arm64
+    container_name: mosamatic3_dicomserver
+    ports:
+      - 105:104
+    environment:
+      - DOCKER=true
+      - PORT=105
+    volumes:
+      - data:/data/dicomstorage
+
+  dicomserverclinical:
+    build: 
+      context: ./dicomserverclinical
+      dockerfile: Dockerfile
+    image: brecheisen/mosamatic3-dicomserverclinical-arm64:latest
+    platform: linux/arm64
+    container_name: mosamatic3_dicomserverclinical
+    ports:
+      - 104:104
+    environment:
+      - DOCKER=true
+      - PORT=104
+    volumes:
+      - data:/data/dicomstorageclinical
+
 volumes:
   data:
     name: mosamatic3_data

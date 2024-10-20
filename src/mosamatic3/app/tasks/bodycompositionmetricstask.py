@@ -9,7 +9,7 @@ from typing import List, Dict, Union
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
 from .taskexception import TaskException
-from ..utils import set_task_progress, delete_task_progress, normalize_between, is_compressed, get_pixels_from_dicom_object, \
+from ..utils import set_task_progress, delete_task_progress, set_task_status, normalize_between, is_compressed, get_pixels_from_dicom_object, \
     calculate_area, calculate_index, calculate_mean_radiation_attenuation, create_name_with_timestamp, is_uuid
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
@@ -59,9 +59,9 @@ def output_metrics_to_string(output_metrics: Dict[str, float]) -> str:
 
 
 @task()
-def bodycompositionmetricstask(task_progress_id: str, fileset_id: str, segmentation_fileset_id: str, patient_heights_fileset_id: str, output_fileset_name: str, user :User) -> bool:
+def bodycompositionmetricstask(task_status_id: str, fileset_id: str, segmentation_fileset_id: str, patient_heights_fileset_id: str, output_fileset_name: str, user :User) -> bool:
     name = 'bodycompositionmetricstask'
-    LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, segmentation_fileset_id: {segmentation_fileset_id}, patient_heights_fileset_id: {patient_heights_fileset_id}, output_fileset_name: {output_fileset_name}')
+    LOG.info(f'name: {name}, task_status_id: {task_status_id}, fileset_id: {fileset_id}, segmentation_fileset_id: {segmentation_fileset_id}, patient_heights_fileset_id: {patient_heights_fileset_id}, output_fileset_name: {output_fileset_name}')
     data_manager = DataManager()
     try:
         if not is_uuid(fileset_id):
@@ -88,7 +88,7 @@ def bodycompositionmetricstask(task_progress_id: str, fileset_id: str, segmentat
         segmentation_files = data_manager.get_files(segmentation_fileset)
         nr_steps = len(files)
         output_metrics = {}
-        set_task_progress(name, task_progress_id, 0)
+        set_task_status(name, task_status_id, {'status': 'running', 'progress': 0})
         for step in range(nr_steps):
             dicom_file = files[step]
             segmentation_file = get_segmentation_file_for_dicom_file(segmentation_files, dicom_file)
@@ -125,7 +125,7 @@ def bodycompositionmetricstask(task_progress_id: str, fileset_id: str, segmentat
                 LOG.info(output_metrics_to_string(output_metrics[dicom_file]))
                 # Update progress
                 progress = int(((step + 1) / (nr_steps)) * 100)
-                set_task_progress(name, task_progress_id, progress)
+                set_task_status(name, task_status_id, {'status': 'running', 'progress': progress})
         # Create output fileset
         output_fileset = data_manager.create_fileset(user, output_fileset_name)
         first_key = next(iter(output_metrics))
@@ -140,8 +140,9 @@ def bodycompositionmetricstask(task_progress_id: str, fileset_id: str, segmentat
         df = pd.DataFrame(data=data)
         df.to_csv(csv_file_path, index=False)
         data_manager.create_file(csv_file_path, output_fileset)
-        delete_task_progress(name, task_progress_id)
+        set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
         return True
     except TaskException as e:
         LOG.error(f'bodycompositionmetricstask() exception occurred while processing files ({e})')
+        set_task_status(name, task_status_id, {'status': 'failed', 'progress': -1})
         return False

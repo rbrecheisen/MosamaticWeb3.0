@@ -14,7 +14,7 @@ scipy
 pillow
 pandas
 openpyxl
-tensorflow==2.15.0 # arm64 version
+tensorflow
 gunicorn
 pendulum
 redis

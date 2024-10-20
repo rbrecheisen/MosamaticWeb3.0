@@ -8,7 +8,7 @@ from typing import List, Dict, Union
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
 from .taskexception import TaskException
-from ..utils import set_task_progress, delete_task_progress, is_compressed, get_pixels_from_dicom_object, \
+from ..utils import set_task_progress, delete_task_progress, set_task_status, is_compressed, get_pixels_from_dicom_object, \
     is_uuid, convert_numpy_array_to_png_image, AlbertaColorMap
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
@@ -54,9 +54,9 @@ def output_metrics_to_string(output_metrics: Dict[str, float]) -> str:
 
 
 @task()
-def segmentationpngtask(task_progress_id: str, segmentation_fileset_id: str, output_fileset_name: str, user :User) -> bool:
+def segmentationpngtask(task_status_id: str, segmentation_fileset_id: str, output_fileset_name: str, user :User) -> bool:
     name = 'segmentationpngtask'
-    LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, segmentation_fileset_id: {segmentation_fileset_id}, output_fileset_name: {output_fileset_name}')
+    LOG.info(f'name: {name}, task_status_id: {task_status_id}, segmentation_fileset_id: {segmentation_fileset_id}, output_fileset_name: {output_fileset_name}')
     data_manager = DataManager()
     try:
         if not is_uuid(segmentation_fileset_id):
@@ -66,7 +66,7 @@ def segmentationpngtask(task_progress_id: str, segmentation_fileset_id: str, out
             raise TaskException('segmentationpngtask() segmentation_fileset is None')
         segmentation_files = data_manager.get_files(segmentation_fileset)
         nr_steps = len(segmentation_files)
-        set_task_progress(name, task_progress_id, 0)
+        set_task_status(name, task_status_id, {'status': 'running', 'progress': 0})
         output_fileset = data_manager.create_fileset(user, output_fileset_name)
         for step in range(nr_steps):
             segmentation_file = segmentation_files[step]
@@ -81,9 +81,10 @@ def segmentationpngtask(task_progress_id: str, segmentation_fileset_id: str, out
             data_manager.create_file(png_file_path, output_fileset)
             LOG.info(f'{segmentation_file.path} created {png_file_name}')
             progress = int(((step + 1) / (nr_steps)) * 100)
-            set_task_progress(name, task_progress_id, progress)
-        delete_task_progress(name, task_progress_id)
+            set_task_status(name, task_status_id, {'status': 'running', 'progress': progress})
+        set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
         return True
     except TaskException as e:
         LOG.error(f'segmentationpngtask() exception occurred while processing files ({e})')
+        set_task_status(name, task_status_id, {'status': 'failed', 'progress': -1})
         return False

@@ -7,6 +7,9 @@ from django.http import HttpRequest
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+from ..data.logmanager import LogManager
+
+LOG = LogManager()
 
 
 class FileUploadProcessor:
@@ -18,6 +21,7 @@ class FileUploadProcessor:
         file_names = []
         files = request.POST.getlist('files.path') # Files parameter from NGINX
         if files is None or len(files) == 0:
+            LOG.info(f'File upload with Django directly')
             files = request.FILES.getlist('files') # Files parameter from Django without NGINX
             if files is None or len(files) == 0:
                 raise RuntimeError('File upload without files in either POST or FILES object')
@@ -39,4 +43,5 @@ class FileUploadProcessor:
         else:
             file_paths = files
             file_names = request.POST.getlist('files.name')
+            LOG.info(f'File upload with NGINX')
         return file_paths, file_names

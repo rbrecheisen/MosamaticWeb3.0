@@ -32,7 +32,7 @@ class DataManager:
             fs_name = 'fileset-{}'.format(timestamp)
         fileset = FileSetModel.objects.create(name=fs_name, owner=user) # fileset.path is set in post_save() for FileSetModel
         return fileset
-        
+    
     def create_fileset_from_files(self, file_paths: List[str], file_names: List[str], fileset_name: str, user: User) -> FileSetModel:
         if len(file_paths) == 0 or len(file_names) == 0:
             return None

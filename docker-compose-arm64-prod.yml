@@ -21,7 +21,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   nginx:
-    build: ./nginx # No need for arm64 Dockerfile
+    # build: ./nginx
     image: brecheisen/mosamatic3-nginx-arm64:latest
     platform: linux/arm64
     container_name: mosamatic3_nginx
@@ -42,9 +42,7 @@ services:
       - 6379:6379
 
   huey:
-    build:
-      context: .
-      dockerfile: Dockerfile-arm64
+    # build: .
     image: brecheisen/mosamatic3-huey-arm64:latest
     platform: linux/arm64
     command: python manage.py run_huey
@@ -67,9 +65,7 @@ services:
       - web
       
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile-arm64
+    # build: .
     image: brecheisen/mosamatic3-web-arm64:latest
     platform: linux/arm64
     container_name: mosamatic3_web
@@ -91,42 +87,36 @@ services:
       db:
         condition: service_healthy
 
-  dicomserver:
-    build: 
-      context: ./dicomserver
-      dockerfile: Dockerfile
-    image: brecheisen/mosamatic3-dicomserver-arm64:latest
-    platform: linux/arm64
-    container_name: mosamatic3_dicomserver
-    ports:
-      - 105:104
-    environment:
-      - DOCKER=true
-      - PORT=105
-    volumes:
-      - data:/data/dicomstorage
+  # dicomserver:
+  #   # build: 
+  #   #   context: ./dicomserver
+  #   #   dockerfile: Dockerfile
+  #   image: brecheisen/mosamatic3-dicomserver-arm64:latest
+  #   platform: linux/arm64
+  #   container_name: mosamatic3_dicomserver
+  #   ports:
+  #     - 105:104
+  #   environment:
+  #     - DOCKER=true
+  #     - PORT=105
+  #   volumes:
+  #     - data:/data/dicomstorage
 
-  dicomserverclinical:
-    build: 
-      context: ./dicomserverclinical
-      dockerfile: Dockerfile
-    image: brecheisen/mosamatic3-dicomserverclinical-arm64:latest
-    platform: linux/arm64
-    container_name: mosamatic3_dicomserverclinical
-    ports:
-      - 104:104
-    environment:
-      - DOCKER=true
-      - PORT=104
-    volumes:
-      - data:/data/dicomstorageclinical
+  # dicomserverclinical:
+  #   # build: 
+  #   #   context: ./dicomserverclinical
+  #   #   dockerfile: Dockerfile
+  #   image: brecheisen/mosamatic3-dicomserverclinical-arm64:latest
+  #   platform: linux/arm64
+  #   container_name: mosamatic3_dicomserverclinical
+  #   ports:
+  #     - 104:104
+  #   environment:
+  #     - DOCKER=true
+  #     - PORT=104
+  #   volumes:
+  #     - data:/data/dicomstorageclinical
 
 volumes:
   data:
-    name: mosamatic3_data
   postgres_data:
-    name: mosamatic3_postgres_data
-
-networks:
-  default:
-    name: mosamatic3

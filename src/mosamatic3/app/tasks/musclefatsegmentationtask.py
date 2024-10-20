@@ -10,7 +10,7 @@ from huey.contrib.djhuey import task
 from django.conf import settings
 from django.contrib.auth.models import User
 from .taskexception import TaskException
-from ..utils import set_task_progress, delete_task_progress, normalize_between, is_compressed, \
+from ..utils import set_task_progress, delete_task_progress, set_task_status, normalize_between, is_compressed, \
     get_pixels_from_dicom_object, convert_labels_to_157, is_uuid
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
@@ -90,9 +90,9 @@ def process_file(f: FileModel, output_fileset_path: str, model, contour_model, p
 
 
 @task()
-def musclefatsegmentationtask(task_progress_id: str, fileset_id: str, model_fileset_id: str, output_fileset_name: str, user :User) -> bool:
+def musclefatsegmentationtask(task_status_id: str, fileset_id: str, model_fileset_id: str, output_fileset_name: str, user :User) -> bool:
     name = 'musclefatsegmentationtask'
-    LOG.info(f'name: {name}, task_progress_id: {task_progress_id}, fileset_id: {fileset_id}, model_fileset_id: {model_fileset_id}, output_fileset_name: {output_fileset_name}')
+    LOG.info(f'name: {name}, task_status_id: {task_status_id}, fileset_id: {fileset_id}, model_fileset_id: {model_fileset_id}, output_fileset_name: {output_fileset_name}')
     data_manager = DataManager()
     try:
         if not is_uuid(fileset_id):
@@ -114,7 +114,7 @@ def musclefatsegmentationtask(task_progress_id: str, fileset_id: str, model_file
         if model is None or parameters is None:
             raise TaskException('musclefatsegmentationtask() model or parameters are None')
         if model and parameters:
-            set_task_progress(name, task_progress_id, 0)
+            set_task_status(name, task_status_id, {'status': 'running', 'progress': 0})
             for step in range(nr_steps):
                 segmentation_file_path = process_file(files[step], output_fileset.path, model, contour_model, parameters) # skipping "mode=argmax"
                 if segmentation_file_path:
@@ -123,13 +123,14 @@ def musclefatsegmentationtask(task_progress_id: str, fileset_id: str, model_file
                 else:
                     LOG.warning(f'musclefatsegmentationtask() could not process file {files[step].path}')
                 progress = int(((step + 1) / (nr_steps)) * 100)
-                set_task_progress(name, task_progress_id, progress)
+                set_task_status(name, task_status_id, {'status': 'running', 'progress': progress})
         else:
             LOG.error(f'musclefatsegmentationtask() model and/or parameters are None')
         for f in segmentation_file_paths:
             data_manager.create_file(f, output_fileset)
-        delete_task_progress(name, task_progress_id)
+        set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
         return True
     except TaskException as e:
         LOG.error(f'musclefatsegmentation() exception occurred while processing files ({e})')
+        set_task_status(name, task_status_id, {'status': 'failed', 'progress': -1})
         return False
