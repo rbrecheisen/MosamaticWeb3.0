@@ -1,3 +1,4 @@
+#!/bin/bash
 export PASSWORD=$(cat $HOME/dockerhubpassword.txt)
 docker logout
 docker login --username brecheisen --password "${PASSWORD}"
