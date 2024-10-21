@@ -64,6 +64,9 @@ def process_file(f: FileModel, output_fileset_path: str, model, contour_model, p
         p = pydicom.dcmread(f.path)
         if is_compressed(p):
             p.decompress()
+        if p.Rows != 512 or p.Columns != 512:
+            LOG.warning(f'musclefatsegmentationtask.process_file() wrong dimensions: {p.Rows} x {p.Columns} (should be 512 x 512)')
+            return None
         img1 = get_pixels_from_dicom_object(p, normalize=True)
         if contour_model:
             mask = predict_contour(contour_model, img1, parameters)

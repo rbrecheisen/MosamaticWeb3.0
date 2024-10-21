@@ -85,4 +85,6 @@ class DataManager:
         with ZipFile(zip_file_path, 'w') as zip_obj:
             for f in files:
                 zip_obj.write(f.path, arcname=basename(f.path))
+                if f.png_path: # Also add any PNG image for this file
+                    zip_obj.write(f.png_path, arcname=basename(f.png_path))
         return zip_file_path

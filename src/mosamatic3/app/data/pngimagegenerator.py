@@ -1,7 +1,7 @@
 import os
 import numpy as np
 
-from ..utils import is_dicom, convert_dicom_to_numpy_array, convert_numpy_array_to_png_image
+from ..utils import is_dicom, convert_dicom_to_numpy_array, convert_numpy_array_to_png_image, AlbertaColorMap
 
 
 class PngImageGenerator:
@@ -17,7 +17,7 @@ class PngImageGenerator:
         elif file_path.endswith('.npy'):
             pixels = np.load(file_path)
             if len(pixels.shape) == 2:
-                png_path = convert_numpy_array_to_png_image(pixels, output_dir_path, png_file_name=png_file_name)
+                png_path = convert_numpy_array_to_png_image(pixels, output_dir_path, color_map=AlbertaColorMap(), png_file_name=png_file_name)
         else:
             pass
         return png_path
