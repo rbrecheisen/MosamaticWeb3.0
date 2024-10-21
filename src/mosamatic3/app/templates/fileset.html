@@ -46,6 +46,8 @@
                                     <a href="{{ f.path }}">{{ f.name }}</a>
                                 {% elif f.name|endswith:"json" %}
                                     <a href="{{ f.path }}">{{ f.name }}</a>
+                                {% elif f.name|endswith:"csv" %}
+                                    <a href="{{ f.path }}">{{ f.name }}</a>
                                 {% else %}
                                     {{ f.name }}
                                 {% endif %}
