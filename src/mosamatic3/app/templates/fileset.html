@@ -40,6 +40,8 @@
                             <li class="list-group-item">
                                 {% if f.name|endswith:"png" %}
                                     <a href="{{ f.path }}">{{ f.name }}</a>
+                                {% elif f.png_path %}
+                                    <a href="{{ f.png_path }}">{{ f.name }}</a>
                                 {% elif f.name|endswith:"txt" %}
                                     <a href="{{ f.path }}">{{ f.name }}</a>
                                 {% elif f.name|endswith:"json" %}

@@ -29,6 +29,7 @@ class FileModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=256, editable=False, null=False)
     path = models.CharField(max_length=2048, editable=False, null=False, unique=False) # unique=False because multiple filesets may refer to same file
+    png_path = models.CharField(max_length=2048, editable=False, null=True, unique=False, default=None)
     fileset = models.ForeignKey(FileSetModel, on_delete=models.CASCADE)
 
     def __str__(self):

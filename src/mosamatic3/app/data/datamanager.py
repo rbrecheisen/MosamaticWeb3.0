@@ -10,18 +10,19 @@ from django.utils import timezone
 from django.db.models import Q
 
 from ..models import FileModel, FileSetModel
+from .pngimagegenerator import PngImageGenerator
 
 
 class DataManager:
     def __init__(self):
         pass
 
-    # Filesets and files
-
     @staticmethod
     def create_file(path, fileset: FileSetModel) -> FileModel:
+        generator = PngImageGenerator()
+        png_path = generator.run(path) # Return None if no PNG creation possible for this file type
         return FileModel.objects.create(
-            name=os.path.split(path)[1], path=path, fileset=fileset)
+            name=os.path.split(path)[1], path=path, png_path=png_path, fileset=fileset)
     
     @staticmethod
     def create_fileset(user: User, name: str=None) -> FileSetModel:
