@@ -1,0 +1,10 @@
+D:\SoftwareDevelopment\GitHub\MosamaticWeb3.0\arm64
+D:\SoftwareDevelopment\GitHub\MosamaticWeb3.0\intel
+D:\SoftwareDevelopment\GitHub\MosamaticWeb3.0\nginx
+D:\SoftwareDevelopment\GitHub\MosamaticWeb3.0\src
+D:\SoftwareDevelopment\GitHub\MosamaticWeb3.0\docker-entrypoint.sh
+D:\SoftwareDevelopment\GitHub\MosamaticWeb3.0\Dockerfile
+D:\SoftwareDevelopment\GitHub\MosamaticWeb3.0\Dockerfile-arm64
+D:\SoftwareDevelopment\GitHub\MosamaticWeb3.0\nvidia-public-key.txt
+D:\SoftwareDevelopment\GitHub\MosamaticWeb3.0\requirements-docker.txt
+D:\SoftwareDevelopment\GitHub\MosamaticWeb3.0\requirements-docker-arm64.txt
