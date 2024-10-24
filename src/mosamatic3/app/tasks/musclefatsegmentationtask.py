@@ -135,8 +135,11 @@ def musclefatsegmentationtask(task_status_id: str, fileset_id: str, model_filese
             LOG.error(f'musclefatsegmentationtask() model and/or parameters are None')
         # for f in segmentation_file_paths:
         for i in range(len(segmentation_file_paths)):
-            data_manager.create_file(segmentation_file_paths[i], output_fileset)
             data_manager.create_file(segmentation_png_file_paths[i], output_png_fileset)
+            f = data_manager.create_file(segmentation_file_paths[i], output_fileset)
+            # Also set png_path of File object so we can create <a href=""> item in the fileset.html page
+            f.png_path = segmentation_png_file_paths[i]
+            f.save()
         set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
         return True
     except TaskException as e:

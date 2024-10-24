@@ -8,6 +8,7 @@ from wsgiref.util import FileWrapper
 
 from ..data.fileuploadprocessor import FileUploadProcessor
 from ..data.datamanager import DataManager
+from ..data.pngimagegenerator import PngImageGenerator
 
 
 @login_required
@@ -16,7 +17,12 @@ def filesets(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         fileset_name = request.POST.get('fileset_name', None)
         file_paths, file_names = FileUploadProcessor().process_upload(request)
-        manager.create_fileset_from_files(file_paths, file_names, fileset_name, request.user)
+        fs = manager.create_fileset_from_uploaded_files(file_paths, file_names, fileset_name, request.user)
+        generator = PngImageGenerator()
+        for f in manager.get_files(fs):
+            png_path = generator.run(f.path)
+            f.png_path = png_path
+            f.save()
     return render(request, 'filesets.html', context={'filesets': manager.get_filesets(request.user)})
 
 

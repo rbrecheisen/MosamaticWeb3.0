@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.db.models import Q
 
 from ..models import FileModel, FileSetModel
-# from .pngimagegenerator import PngImageGenerator
+from .pngimagegenerator import PngImageGenerator
 
 
 class DataManager:
@@ -36,7 +36,7 @@ class DataManager:
         fileset = FileSetModel.objects.create(name=fs_name, owner=user) # fileset.path is set in post_save() for FileSetModel
         return fileset
     
-    def create_fileset_from_files(self, file_paths: List[str], file_names: List[str], fileset_name: str, user: User) -> FileSetModel:
+    def create_fileset_from_uploaded_files(self, file_paths: List[str], file_names: List[str], fileset_name: str, user: User) -> FileSetModel:
         if len(file_paths) == 0 or len(file_names) == 0:
             return None
         fileset = self.create_fileset(user, fileset_name)
