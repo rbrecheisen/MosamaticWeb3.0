@@ -6,7 +6,7 @@ from .views.tasks.tasks import tasks
 from .views.logs import logs
 from .views.tasks.dummy import dummy
 from .views.tasks.dummyparams import dummyparams
-from .views.tasks.filterdicom import filterdicom
+from .views.tasks.checkdicom import checkdicom
 from .views.tasks.rescaledicom import rescaledicom
 from .views.tasks.musclefatsegmentation import musclefatsegmentation
 from .views.tasks.bodycompositionmetrics import bodycompositionmetrics
@@ -24,7 +24,7 @@ urlpatterns = [
     path('tasks/', tasks),
     path('tasks/dummy/', dummy),
     path('tasks/dummyparams/', dummyparams),
-    path('tasks/filterdicom/', filterdicom),
+    path('tasks/checkdicom/', checkdicom),
     path('tasks/rescaledicom/', rescaledicom),
     path('tasks/musclefatsegmentation/', musclefatsegmentation),
     path('tasks/bodycompositionmetrics/', bodycompositionmetrics),

@@ -22,10 +22,6 @@
                         <p><a href="/filesets/{{ fileset.id }}?action=download">Download dataset</a></p>
                         <p><a href="/filesets/{{ fileset.id }}?action=delete">Delete</a></p>
                     {%  endif %}
-                    {%  if user == fileset.owner %}
-                        <p><a href="/filesets/{{ fileset.id }}?action=make-public">Make public for other users</a></p>
-                        <p><a href="/filesets/{{ fileset.id }}?action=make-private">Make private</a></p>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -40,9 +36,13 @@
                             <li class="list-group-item">
                                 {% if f.name|endswith:"png" %}
                                     <a href="{{ f.path }}">{{ f.name }}</a>
+                                {% elif f.png_path %}
+                                    <a href="{{ f.png_path }}">{{ f.name }}</a>
                                 {% elif f.name|endswith:"txt" %}
                                     <a href="{{ f.path }}">{{ f.name }}</a>
                                 {% elif f.name|endswith:"json" %}
+                                    <a href="{{ f.path }}">{{ f.name }}</a>
+                                {% elif f.name|endswith:"csv" %}
                                     <a href="{{ f.path }}">{{ f.name }}</a>
                                 {% else %}
                                     {{ f.name }}
