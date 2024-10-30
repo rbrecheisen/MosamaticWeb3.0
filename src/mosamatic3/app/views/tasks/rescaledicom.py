@@ -17,10 +17,7 @@ def rescaledicom(request):
         fileset_id = request.POST.get('fileset_id', None)
         if fileset_id:
             output_fileset_name = request.POST.get('output_fileset_name', None)
-            target_size = request.POST.get('target_size', 512)
-            if target_size:
-                target_size = int(target_size)
-            return task_manager.run_task_and_get_response(rescaledicomtask, fileset_id, output_fileset_name, request.user, target_size)
+            return task_manager.run_task_and_get_response(rescaledicomtask, fileset_id, output_fileset_name, request.user, 512)
         else:
             LOG.warning(f'views.tasks.rescaledicom: no fileset ID selected')
             pass

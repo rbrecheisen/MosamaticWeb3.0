@@ -5,8 +5,10 @@ from django.contrib.auth.decorators import login_required
 
 from ...tasks.dummytask import dummytask
 from ...tasks.taskmanager import TaskManager
+from ...data.datamanager import DataManager
+from ...data.logmanager import LogManager
 
-LOG = logging.getLogger('mosamatic3')
+LOG = LogManager()
 
 
 @login_required
@@ -20,4 +22,6 @@ def dummy(request):
             return response
     else:
         pass
-    return render(request, 'tasks/dummy.html')
+    data_manager = DataManager()
+    task = data_manager.get_task_by_name('dummytask')
+    return render(request, task.html_page, context={'task': task})

@@ -1,8 +1,12 @@
 import uuid
 
-from django.http import JsonResponse, HttpRequest, HttpResponse
-from huey.contrib.djhuey import HUEY
-from ..utils import get_task_progress, get_task_status, delete_task_status
+from django.http import HttpRequest
+from django.http import JsonResponse, HttpRequest
+
+from ..utils import get_task_status, delete_task_status
+from ..data.logmanager import LogManager
+
+LOG = LogManager()
 
 
 class TaskManager:

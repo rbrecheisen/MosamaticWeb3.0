@@ -13,6 +13,7 @@ LOG = LogManager()
 def bodycompositionmetrics(request):
     data_manager = DataManager()
     task_manager = TaskManager()
+    task = data_manager.get_task_by_name('bodycompositionmetricstask')
     if request.method == 'POST':
         fileset_id = request.POST.get('fileset_id', None)
         if fileset_id:
@@ -33,4 +34,4 @@ def bodycompositionmetrics(request):
     else:
         pass
     filesets = data_manager.get_filesets(request.user)
-    return render(request, 'tasks/bodycompositionmetrics.html', context={'filesets': filesets})
+    return render(request, f'{task.html_page}', context={'filesets': filesets, 'task': task})

@@ -48,6 +48,18 @@ class LogOutputModel(models.Model):
 
     def __str__(self):
         return f'[{self.timestamp}] - [{self.mode}]: {self.message}'
+    
+
+class TaskModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    name = models.CharField(max_length=256, editable=False, null=False)
+    display_name = models.CharField(max_length=256, editable=False, null=False)
+    description = models.TextField(null=False)
+    hmtl_page = models.CharField(max_length=512, editable=False, null=False)
+    url_pattern = models.CharField(max_length=1024, editable=False, null=False)
+
+    def __str__(self):
+        return f'[{self.name}] {self.url_pattern}'
 
 
 @receiver(models.signals.post_save, sender=FileSetModel)

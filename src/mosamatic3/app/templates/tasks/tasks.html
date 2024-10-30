@@ -7,18 +7,31 @@
             <div class="card" style="margin-top: 10px;">
                 <div class="card-header">Tasks</div>
                 <div class="card-body">
+                    <form action="/tasks/" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <label for="files">Select task plugin ZIP file:</label>
+                        <input type="file" id="files" name="files"/><br>
+                        <br>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
                     <table class="table">
                         <tr>
                             <th>Task</th>
                             <th>Description</th>    
                         </tr>
-                        <tr>
+                        {% for task in tasks %}
+                            <tr>
+                                <td><a href="{{ task.url_pattern }}">{{ task.display_name }}</a></td>
+                                <td>{{ task.description }}</td>
+                            </tr>
+                        {% endfor %}
+                        <!-- <tr>
                             <td><a href="/tasks/checkdicom/">Check DICOM</a></td>
                             <td>Checks if DICOM images are 512 x 512 pixels</td>
                         </tr>
                         <tr>
-                            <td><a href="/tasks/rescaledicom/">Rescale DICOM</a></td>
-                            <td>Rescales non-square DICOM images to a square image of a given size (default: 512)</td>
+                            <td><a href="/tasks/rescaledicom/">Rescale DICOM to 512 x 512</a></td>
+                            <td>Rescales DICOM images that are not 512 x 512</td>
                         </tr>
                         <tr>
                             <td><a href="/tasks/musclefatsegmentation/">Muscle and fat segmentation L3</a></td>
@@ -27,7 +40,7 @@
                         <tr>
                             <td><a href="/tasks/bodycompositionmetrics/">Body composition metrics</a></td>
                             <td>Calculates body composition metrics from muscle and fat annotations at L3 level</td>
-                        </tr>
+                        </tr> -->
                         <!-- PNG images are automatically generated for each segmentation
                         <tr>
                             <td><a href="/tasks/segmentationpng/">Segmentation PNG</a></td>

@@ -9,8 +9,8 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db.models import Q
 
-from ..models import FileModel, FileSetModel
-from .pngimagegenerator import PngImageGenerator
+from ..models import FileModel, FileSetModel, TaskModel
+# from .pngimagegenerator import PngImageGenerator
 
 
 class DataManager:
@@ -90,3 +90,12 @@ class DataManager:
                 if f.png_path: # Also add any PNG image for this file
                     zip_obj.write(f.png_path, arcname=basename(f.png_path))
         return zip_file_path
+    
+    def get_tasks(self) -> List[TaskModel]:
+        return TaskModel.objects.all()
+
+    def get_task(self, task_id: str) -> TaskModel:
+        return TaskModel.objects.get(pk=task_id)
+    
+    def get_task_by_name(self, task_name: str) -> TaskModel:
+        return TaskModel.objects.filter(name=task_name).first()

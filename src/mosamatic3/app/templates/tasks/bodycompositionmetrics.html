@@ -4,31 +4,31 @@
     <div class="col-sm-10">
         <div class="card" style="margin-top: 10px;">
             <div class="card-header">
-                <b>Body composition metrics</b><br>
-                <i>This task calculates body composition metrics from L3 images and corresponding muscle and fat segmentations</i>
+                <b>{{ task.display_name }}</b><br>
+                <i>{{ task.description }}</i>
             </div>
             <div class="card-body">
-                <form action="/tasks/bodycompositionmetrics/" method="post" id="my-form">
+                <form action="{{ task.url_pattern }}" method="post" id="my-form">
                     {% csrf_token %}
-                    <input type="hidden" name="baseUrl" value="/tasks/bodycompositionmetrics/">
+                    <input type="hidden" name="baseUrl" value="{{ task.url_pattern }}">
                     <select class="form-select" name="fileset_id">
                         <option selected>Select L3 images</option>
                         {% for fileset in filesets %}
-                        <option value="{{ fileset.id }}">{{ fileset.name }}</option>
+                            <option value="{{ fileset.id }}">{{ fileset.name }}</option>
                         {% endfor %}
                     </select>
                     <br>
                     <select class="form-select" name="segmentation_fileset_id">
                         <option selected>Select segmentation files</option>
                         {% for fileset in filesets %}
-                        <option value="{{ fileset.id }}">{{ fileset.name }}</option>
+                            <option value="{{ fileset.id }}">{{ fileset.name }}</option>
                         {% endfor %}
                     </select>
                     <br>
                     <select class="form-select" name="patient_heights_fileset_id">
                         <option selected>Select patient heights file (.csv)</option>
                         {% for fileset in filesets %}
-                        <option value="{{ fileset.id }}">{{ fileset.name }}</option>
+                            <option value="{{ fileset.id }}">{{ fileset.name }}</option>
                         {% endfor %}
                     </select>
                     <br>
