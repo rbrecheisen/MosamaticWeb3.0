@@ -15,7 +15,8 @@ class DummyTask(Task):
             display_name='Dummy Task', 
             description='This is a dummy task',
             html_page='tasks/dummy.html',
-            url_pattern='/tasks/dummy/'
+            url_pattern='/tasks/dummy/',
+            visible=False,
         )
 
     def run(self, task_status_id: str) -> bool:

@@ -21,7 +21,8 @@ class TotalSegmentatorTask(Task):
             display_name='Total Segmentator task',
             description='This task runs Total Segmentator on a single CT or MRI scan',
             html_page='tasks/totalsegmentator.html',
-            url_pattern='tasks/totalsegmentator/',
+            url_pattern='/tasks/totalsegmentator/',
+            visible=False,
         )
 
     @staticmethod

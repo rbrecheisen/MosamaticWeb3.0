@@ -16,14 +16,16 @@
                     </form>
                     <table class="table">
                         <tr>
-                            <th>Task</th>
+                            <th style="width: 300px;">Task</th>
                             <th>Description</th>    
                         </tr>
                         {% for task in tasks %}
-                            <tr>
-                                <td><a href="{{ task.url_pattern }}">{{ task.display_name }}</a></td>
-                                <td>{{ task.description }}</td>
-                            </tr>
+                            {% if task.visible %}
+                                <tr>
+                                    <td><a href="{{ task.url_pattern }}">{{ task.display_name }}</a></td>
+                                    <td>{{ task.description }}</td>
+                                </tr>
+                            {% endif %}
                         {% endfor %}
                         <!-- <tr>
                             <td><a href="/tasks/checkdicom/">Check DICOM</a></td>

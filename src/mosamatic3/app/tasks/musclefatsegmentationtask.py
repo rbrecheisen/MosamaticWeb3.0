@@ -28,7 +28,7 @@ class MuscleFatSegmentationTask(Task):
             display_name='Muscle and fat segmentation',
             description='This task runs muscle and fat segmentation on DICOM images acquired at the 3rd lumbar vertebral level (L3). It requires an input fileset with L3 images as well as a fileset containing the AI model files. PNG images of each segmentation are automatically created',
             html_page='tasks/musclefatsegmentation.html',
-            url_pattern='tasks/musclefatsegmentation/',
+            url_pattern='/tasks/musclefatsegmentation/',
         )
 
     @staticmethod

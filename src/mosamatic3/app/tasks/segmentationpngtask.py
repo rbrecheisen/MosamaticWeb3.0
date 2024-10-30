@@ -25,7 +25,8 @@ class SegmentationPngTask(Task):
             display_name='Segmentation PNG task',
             description='This task generates PNG images of segmentation files',
             html_page='tasks/segmentationpng.html',
-            url_pattern='tasks/segmentationpng/',
+            url_pattern='/tasks/segmentationpng/',
+            visible=False,
         )
 
     @staticmethod

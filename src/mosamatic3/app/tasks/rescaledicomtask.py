@@ -23,7 +23,7 @@ class RescaleDicomTask(Task):
             display_name='Rescale DICOM to 512 x 512',
             description='This task rescales DICOM images to 512 x 512 such that they can be analysed by the Mosamatic AI model. If images are rectangular (columns unequal rows) the images will first be zero-padded along the short dimension to obtain a larger but square image. Then the image will be scaled back to 512 x 512 and its pixel spacing updated to reflect the changes',
             html_page='tasks/rescaledicom.html',
-            url_pattern='tasks/rescaledicom/',
+            url_pattern='/tasks/rescaledicom/',
         )
 
     @staticmethod

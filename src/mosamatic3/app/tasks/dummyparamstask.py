@@ -12,7 +12,8 @@ class DummyParamsTask(Task):
             display_name='Dummy parameter task',
             description='This is a dummy task with parameters',
             html_page='tasks/dummyparams.html',
-            url_pattern='tasks/dummyparams/',
+            url_pattern='/tasks/dummyparams/',
+            visible=False,
         )
 
     def run(self, task_status_id: str, some_param: str) -> bool:

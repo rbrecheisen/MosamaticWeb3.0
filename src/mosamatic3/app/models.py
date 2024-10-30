@@ -57,6 +57,7 @@ class TaskModel(models.Model):
     description = models.TextField(null=False)
     hmtl_page = models.CharField(max_length=512, editable=False, null=False)
     url_pattern = models.CharField(max_length=1024, editable=False, null=False)
+    visible = models.BooleanField(default=True)
 
     def __str__(self):
         return f'[{self.name}] {self.url_pattern}'
