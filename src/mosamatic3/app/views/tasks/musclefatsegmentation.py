@@ -23,9 +23,9 @@ def musclefatsegmentation(request):
                 output_fileset_name = request.POST.get('output_fileset_name', None)
                 return task_manager.run_task_and_get_response(musclefatsegmentationtask, fileset_id, model_fileset_id, output_fileset_name, request.user)
             else:
-                LOG.warning(f'views.tasks.musclefatsegmentation: no model fileset ID selected')
+                LOG.warning(f'no model fileset ID selected')
         else:
-            LOG.warning(f'views.tasks.musclefatsegmentation: no fileset ID selected')
+            LOG.warning(f'no fileset ID selected')
     elif request.method == 'GET':
         response = task_manager.get_response('musclefatsegmentationtask', request)
         if response:
@@ -33,4 +33,5 @@ def musclefatsegmentation(request):
     else:
         pass
     filesets = data_manager.get_filesets(request.user)
-    return render(request, 'tasks/musclefatsegmentation.html', context={'filesets': filesets})
+    task = data_manager.get_task_by_name('musclefatsegmentationtask')
+    return render(request, 'tasks/musclefatsegmentation.html', context={'filesets': filesets, 'task': task})

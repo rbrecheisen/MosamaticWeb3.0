@@ -4,13 +4,13 @@
     <div class="col-sm-10">
         <div class="card" style="margin-top: 10px;">
             <div class="card-header">
-                <b>Dummy with parameters</b><br>
-                <i>This is a dummy task with a single parameter</i>
+                <b>{{ task.display_name }}</b><br>
+                <i>{{ task.description }}</i>
             </div>
             <div class="card-body">
-                <form action="/tasks/dummyparams/" method="post" id="my-form">
+                <form action="{{ task.url_pattern }}" method="post" id="my-form">
                     {% csrf_token %}
-                    <input type="hidden" name="baseUrl" value="/tasks/dummyparams/">
+                    <input type="hidden" name="baseUrl" value="{{ task.url_pattern }}">
                     <input type="hidden" name="some_param" value="some_param_value">
                     <button id="task-button" class="btn btn-primary">Execute task</button>
                 </form>                    

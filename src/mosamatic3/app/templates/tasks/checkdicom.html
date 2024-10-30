@@ -4,17 +4,17 @@
     <div class="col-sm-10">
         <div class="card" style="margin-top: 10px;">
             <div class="card-header">
-                <b>Check DICOM</b><br>
-                <i>This task checks whether DICOM images are 512 x 512 pixels.</i>
+                <b>{{ task.display_name }}</b><br>
+                <i>{{ task.description }}</i>
             </div>
             <div class="card-body">
-                <form action="/tasks/checkdicom/" method="post" id="my-form">
+                <form action="{{ task.url_pattern }}" method="post" id="my-form">
                     {% csrf_token %}
-                    <input type="hidden" name="baseUrl" value="/tasks/checkdicom/">
+                    <input type="hidden" name="baseUrl" value="{{ task.url_pattern }}">
                     <select class="form-select" name="fileset_id">
                         <option selected>Select fileset</option>
                         {% for fileset in filesets %}
-                        <option value="{{ fileset.id }}">{{ fileset.name }}</option>
+                            <option value="{{ fileset.id }}">{{ fileset.name }}</option>
                         {% endfor %}
                     </select>
                     <br>

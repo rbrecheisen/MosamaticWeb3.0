@@ -4,13 +4,13 @@
     <div class="col-sm-10">
         <div class="card" style="margin-top: 10px;">
             <div class="card-header">
-                <b>Segmentation PNG</b><br>
-                <i>This task generates PNG images of segmentation files</i>
+                <b>{{ task.display_name }}</b><br>
+                <i>{{ task.description }}</i>
             </div>
             <div class="card-body">
-                <form action="/tasks/segmentationpng/" method="post" id="my-form">
+                <form action="{{ task.url_pattern }}" method="post" id="my-form">
                     {% csrf_token %}
-                    <input type="hidden" name="baseUrl" value="/tasks/segmentationpng/">
+                    <input type="hidden" name="baseUrl" value="{{ task.url_pattern }}">
                     <select class="form-select" name="segmentation_fileset_id">
                         <option selected>Select segmentation files</option>
                         {% for fileset in filesets %}

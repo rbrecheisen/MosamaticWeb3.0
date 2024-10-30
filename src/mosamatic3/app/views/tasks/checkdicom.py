@@ -19,7 +19,7 @@ def checkdicom(request):
             output_fileset_name = request.POST.get('output_fileset_name', None)
             return task_manager.run_task_and_get_response(checkdicomtask, fileset_id, output_fileset_name, request.user)
         else:
-            LOG.warning(f'views.tasks.checkdicom: no fileset ID in POST request')
+            LOG.warning(f'no fileset ID in POST request')
             pass
     elif request.method == 'GET':
         response = task_manager.get_response('checkdicomtask', request)
@@ -28,4 +28,5 @@ def checkdicom(request):
     else:
         pass
     filesets = data_manager.get_filesets(request.user)
-    return render(request, 'tasks/checkdicom.html', context={'filesets': filesets})
+    task = data_manager.get_task_by_name('checkdicomtask')
+    return render(request, 'tasks/checkdicom.html', context={'filesets': filesets, 'task': task})

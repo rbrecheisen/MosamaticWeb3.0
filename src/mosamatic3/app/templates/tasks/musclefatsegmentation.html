@@ -4,13 +4,13 @@
     <div class="col-sm-10">
         <div class="card" style="margin-top: 10px;">
             <div class="card-header">
-                <b>Muscle and fat segmentation L3</b><br>
-                <i>This task runs muscle and fat segmentation on DICOM images acquired at the 3rd lumbar vertebral level (L3). It requires an input fileset with L3 images as well as a fileset containing the AI model files. PNG images of each segmentation are automatically created.</i>
+                <b>{{ task.display_name }}</b><br>
+                <i>{{ task.description }}</i>
             </div>
             <div class="card-body">
-                <form action="/tasks/musclefatsegmentation/" method="post" id="my-form">
+                <form action="{{ task.url_pattern }}" method="post" id="my-form">
                     {% csrf_token %}
-                    <input type="hidden" name="baseUrl" value="/tasks/musclefatsegmentation/">
+                    <input type="hidden" name="baseUrl" value="{{ task.url_pattern }}">
                     <select class="form-select" name="fileset_id">
                         <option selected>Select L3 images</option>
                         {% for fileset in filesets %}

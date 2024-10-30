@@ -4,13 +4,13 @@
     <div class="col-sm-10">
         <div class="card" style="margin-top: 10px;">
             <div class="card-header">
-                <b>Total Segmentator</b><br>
-                <i>This task runs Total Segmentator on a single CT or MRI scan</i>
+                <b>{{ task.display_name }}</b><br>
+                <i>{{ task.description }}</i>
             </div>
             <div class="card-body">
-                <form action="/tasks/totalsegmentator/" method="post" id="my-form">
+                <form action="{{ task.url_pattern }}" method="post" id="my-form">
                     {% csrf_token %}
-                    <input type="hidden" name="baseUrl" value="/tasks/totalsegmentator/">
+                    <input type="hidden" name="baseUrl" value="{{ task.url_pattern }}">
                     <select class="form-select" name="fileset_id">
                         <option selected>Select fileset with CT or MRI scans</option>
                         {% for fileset in filesets %}

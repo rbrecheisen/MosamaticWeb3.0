@@ -4,14 +4,13 @@
     <div class="col-sm-10">
         <div class="card" style="margin-top: 10px;">
             <div class="card-header">
-                <b>Rescale DICOM to 512 x 512</b><br>
-                <i>This task rescales DICOM images to 512 x 512 such that they can be analysed by the Mosamatic AI model. If images are rectangular (columns unequal rows) the images will first be zero-padded along the short dimension 
-                    to obtain a larger but square image. Then the image will be scaled back to 512 x 512 and its pixel spacing updated to reflect the changes</i>
+                <b>{{ task.display_name }}</b><br>
+                <i>{{ task.description }}</i>
             </div>
             <div class="card-body">
-                <form action="/tasks/rescaledicom/" method="post" id="my-form">
+                <form action="{{ task.url_pattern }}" method="post" id="my-form">
                     {% csrf_token %}
-                    <input type="hidden" name="baseUrl" value="/tasks/rescaledicom/">
+                    <input type="hidden" name="baseUrl" value="{{ task.url_pattern }}">
                     <select class="form-select" name="fileset_id">
                         <option selected>Select fileset</option>
                         {% for fileset in filesets %}
