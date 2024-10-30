@@ -3,6 +3,11 @@ import pydicom.errors
 
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
+from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse
+from django.contrib.auth.decorators import login_required
+
+from .taskmanager import TaskManager
 from ..utils import is_uuid, set_task_status
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
@@ -64,7 +69,29 @@ class CheckDicomTask(Task):
                 data_manager.create_file(f.path, wrong_fileset)
         set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
         return True
-
+    
+    @staticmethod
+    @login_required
+    def view(request: HttpRequest) -> HttpResponse:
+        data_manager = DataManager()
+        task_manager = TaskManager()
+        if request.method == 'POST':
+            fileset_id = request.POST.get('fileset_id', None)
+            if fileset_id:
+                output_fileset_name = request.POST.get('output_fileset_name', None)
+                return task_manager.run_task_and_get_response(checkdicomtask, fileset_id, output_fileset_name, request.user)
+            else:
+                LOG.warning(f'no fileset ID in POST request')
+                pass
+        elif request.method == 'GET':
+            response = task_manager.get_response('checkdicomtask', request)
+            if response:
+                return response
+        else:
+            pass
+        filesets = data_manager.get_filesets(request.user)
+        task = data_manager.get_task_by_name('checkdicomtask')
+        return render(request, task.html_page, context={'filesets': filesets, 'task': task})
 
 @task()
 def checkdicomtask(task_status_id: str, fileset_id: str, output_fileset_name: str, user :User) -> bool:

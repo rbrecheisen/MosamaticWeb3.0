@@ -1,8 +1,14 @@
 import time
 
+from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse
+from django.contrib.auth.decorators import login_required
 from huey.contrib.djhuey import task
-from ..utils import set_task_progress, delete_task_progress, set_task_status
+
+from ..utils import set_task_status
 from .task import Task
+from .taskmanager import TaskManager
+from ..data.datamanager import DataManager
 
 
 class DummyParamsTask(Task):
@@ -27,6 +33,23 @@ class DummyParamsTask(Task):
             set_task_status(name, task_status_id, {'status': 'running', 'progress': progress})
         set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
         return True
+    
+    @staticmethod
+    @login_required
+    def view(request: HttpRequest) -> HttpResponse:
+        manager = TaskManager()
+        if request.method == 'POST':
+            some_param = request.POST.get('some_param', None)
+            return manager.run_task_and_get_response(dummyparamstask, some_param)
+        elif request.method == 'GET':
+            response = manager.get_response('dummyparamstask', request)
+            if response:
+                return response
+        else:
+            pass
+        data_manager = DataManager()
+        task = data_manager.get_task_by_name('dummyparamstask')
+        return render(request, 'tasks/dummyparams.html', context={'task': task})        
 
 
 @task()

@@ -55,7 +55,7 @@ class TaskModel(models.Model):
     name = models.CharField(max_length=256, editable=False, null=False)
     display_name = models.CharField(max_length=256, editable=False, null=False)
     description = models.TextField(null=False)
-    hmtl_page = models.CharField(max_length=512, editable=False, null=False)
+    html_page = models.CharField(max_length=512, editable=False, null=False)
     url_pattern = models.CharField(max_length=1024, editable=False, null=False)
     visible = models.BooleanField(default=True)
 

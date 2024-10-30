@@ -8,7 +8,12 @@ import pandas as pd
 from typing import List, Dict, Union
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
+from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse
+from django.contrib.auth.decorators import login_required
+
 from .taskexception import TaskException
+from .taskmanager import TaskManager
 from ..utils import set_task_status, is_compressed, get_pixels_from_dicom_object, \
     calculate_area, calculate_index, calculate_mean_radiation_attenuation, create_name_with_timestamp, is_uuid
 from ..data.datamanager import DataManager
@@ -155,6 +160,35 @@ class BodyCompositionMetricsTask(Task):
             LOG.error(f'exception occurred while processing files ({e})')
             set_task_status(self.name, task_status_id, {'status': 'failed', 'progress': -1})
             return False
+    
+    @staticmethod
+    @login_required
+    def view(request: HttpRequest) -> HttpResponse:
+        data_manager = DataManager()
+        task_manager = TaskManager()
+        task = data_manager.get_task_by_name('bodycompositionmetricstask')
+        if request.method == 'POST':
+            fileset_id = request.POST.get('fileset_id', None)
+            if fileset_id:
+                segmentation_fileset_id = request.POST.get('segmentation_fileset_id', None)
+                if segmentation_fileset_id:
+                    output_fileset_name = request.POST.get('output_fileset_name', None)
+                    patient_heights_fileset_id = request.POST.get('patient_heights_fileset_id', None)
+                    return task_manager.run_task_and_get_response(
+                        bodycompositionmetricstask, fileset_id, segmentation_fileset_id, patient_heights_fileset_id, output_fileset_name, request.user)
+                else:
+                    LOG.warning(f'no model fileset ID selected')
+            else:
+                LOG.warning(f'no fileset ID selected')
+        elif request.method == 'GET':
+            response = task_manager.get_response('bodycompositionmetricstask', request)
+            if response:
+                return response
+        else:
+            pass
+        filesets = data_manager.get_filesets(request.user)
+        return render(request, f'{task.html_page}', context={'filesets': filesets, 'task': task})
+
 
 @task()
 def bodycompositionmetricstask(task_status_id: str, fileset_id: str, segmentation_fileset_id: str, patient_heights_fileset_id: str, output_fileset_name: str, user :User) -> bool:

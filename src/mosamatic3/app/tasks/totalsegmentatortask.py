@@ -4,11 +4,16 @@ import pydicom.errors
 from typing import List, Dict
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
+from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse
+from django.contrib.auth.decorators import login_required
 from .taskexception import TaskException
+
 from ..utils import set_task_status, is_uuid
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
 from .task import Task
+from .taskmanager import TaskManager
 from ..models import FileModel, FileSetModel
 
 LOG = LogManager()
@@ -83,6 +88,30 @@ class TotalSegmentatorTask(Task):
             LOG.error(f'exception occurred while processing files ({e})')
             set_task_status(name, task_status_id, {'status': 'failed', 'progress': -1})
             return False
+        
+    @staticmethod
+    @login_required
+    def view(request: HttpRequest) -> HttpResponse:
+        data_manager = DataManager()
+        task_manager = TaskManager()
+        if request.method == 'POST':
+            fileset_id = request.POST.get('fileset_id', None)
+            if fileset_id:
+                mask_name = request.POST.get('mask_name', None)
+                output_fileset_name = request.POST.get('output_fileset_name', None)
+                return task_manager.run_task_and_get_response(
+                    totalsegmentatortask, fileset_id, output_fileset_name, request.user, mask_name)
+            else:
+                LOG.warning(f'no segmentation fileset ID selected')
+        elif request.method == 'GET':
+            response = task_manager.get_response('totalsegmentatortask', request)
+            if response:
+                return response
+        else:
+            pass
+        filesets = data_manager.get_filesets(request.user)
+        task = data_manager.get_task_by_name('totalsegmentatortask')
+        return render(request, task.hmtl_page, context={'filesets': filesets, 'task': task})
 
 
 @task()

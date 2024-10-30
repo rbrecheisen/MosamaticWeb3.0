@@ -6,12 +6,17 @@ import numpy as np
 from scipy.ndimage import zoom
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
+from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse
+from django.contrib.auth.decorators import login_required
+
 from ..utils import set_task_status, is_compressed, is_uuid
 from ..models import FileSetModel
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
 from .taskexception import TaskException
 from .task import Task
+from .taskmanager import TaskManager
 
 LOG = LogManager()
 
@@ -75,7 +80,30 @@ class RescaleDicomTask(Task):
                 LOG.warning(f'Could not rescale image {files[step].path}, skipping...')
         set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
         return True
-
+    
+    @staticmethod
+    @login_required
+    def view(request: HttpRequest) -> HttpResponse:
+        data_manager = DataManager()
+        task_manager = TaskManager()
+        if request.method == 'POST':
+            fileset_id = request.POST.get('fileset_id', None)
+            if fileset_id:
+                output_fileset_name = request.POST.get('output_fileset_name', None)
+                return task_manager.run_task_and_get_response(rescaledicomtask, fileset_id, output_fileset_name, request.user, 512)
+            else:
+                LOG.warning(f'no fileset ID selected')
+                pass
+        elif request.method == 'GET':
+            response = task_manager.get_response('rescaledicomtask', request)
+            if response:
+                return response
+        else:
+            pass
+        filesets = data_manager.get_filesets(request.user)
+        task = data_manager.get_task_by_name('rescaledicomtask')
+        return render(request, task.hmtl_page, context={'filesets': filesets, 'task': task})
+    
 
 # https://chatgpt.com/c/66fa806e-1a08-800b-81dd-6fd260753341
 @task()

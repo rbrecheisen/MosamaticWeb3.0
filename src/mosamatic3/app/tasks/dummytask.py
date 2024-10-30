@@ -1,8 +1,14 @@
 import time
 
 from huey.contrib.djhuey import task
+from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse
+from django.contrib.auth.decorators import login_required
+
 from ..utils import set_task_status
 from ..data.logmanager import LogManager
+from ..data.datamanager import DataManager
+from .taskmanager import TaskManager
 from .task import Task
 
 LOG = LogManager()
@@ -34,6 +40,22 @@ class DummyTask(Task):
             set_task_status(self.name, task_status_id, {'status': 'running', 'progress': progress})
         set_task_status(self.name, task_status_id, {'status': 'completed', 'progress': 100})
         return True
+    
+    @staticmethod
+    @login_required
+    def view(request: HttpRequest) -> HttpResponse:
+        manager = TaskManager()
+        if request.method == 'POST':
+            return manager.run_task_and_get_response(dummytask)
+        elif request.method == 'GET':
+            response = manager.get_response('dummytask', request)
+            if response:
+                return response
+        else:
+            pass
+        data_manager = DataManager()
+        task = data_manager.get_task_by_name('dummytask')
+        return render(request, task.html_page, context={'task': task})        
 
 
 @task()
