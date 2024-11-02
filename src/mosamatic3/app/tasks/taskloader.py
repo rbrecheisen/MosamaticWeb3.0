@@ -5,9 +5,6 @@ import inspect
 from typing import List
 
 from .task import Task
-from ..data.logmanager import LogManager
-
-LOG = LogManager()
 
 
 class TaskLoader:
@@ -20,7 +17,6 @@ class TaskLoader:
                 module = importlib.import_module(module_name, package='app.tasks')
                 for _, cls in inspect.getmembers(module, inspect.isclass):
                     if issubclass(cls, Task) and cls is not Task:
-                        LOG.info(f'Loading task {f_name}...')
                         tasks.append(cls())
         tasks.sort(key=lambda task: task.display_name)
         return tasks
