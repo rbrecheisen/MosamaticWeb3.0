@@ -49,7 +49,7 @@ class DummyParamsTask(Task):
             pass
         data_manager = DataManager()
         task = data_manager.get_task_by_name('dummyparamstask')
-        return render(request, 'tasks/dummyparams.html', context={'task': task})        
+        return render(request, task.html_page, context={'task': task})        
 
 
 @task()

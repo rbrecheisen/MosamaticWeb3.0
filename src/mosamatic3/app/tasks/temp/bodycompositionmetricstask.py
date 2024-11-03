@@ -187,7 +187,7 @@ class BodyCompositionMetricsTask(Task):
         else:
             pass
         filesets = data_manager.get_filesets(request.user)
-        return render(request, f'{task.html_page}', context={'filesets': filesets, 'task': task})
+        return render(request, task.html_page, context={'filesets': filesets, 'task': task})
 
 
 @task()

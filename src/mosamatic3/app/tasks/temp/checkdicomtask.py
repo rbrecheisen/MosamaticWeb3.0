@@ -93,6 +93,7 @@ class CheckDicomTask(Task):
         task = data_manager.get_task_by_name('checkdicomtask')
         return render(request, task.html_page, context={'filesets': filesets, 'task': task})
 
+
 @task()
 def checkdicomtask(task_status_id: str, fileset_id: str, output_fileset_name: str, user :User) -> bool:
     return CheckDicomTask().run(task_status_id, fileset_id, output_fileset_name, user)
