@@ -1,10 +1,15 @@
+import os
+import shutil
+
 from huey.contrib.djhuey import task
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.core.management import call_command
 
 from .task import Task
 from .taskmanager import TaskManager
+from .taskloader import TaskLoader
 from .taskexception import TaskException
 from ..utils import is_uuid, set_task_status
 from ..data.logmanager import LogManager
@@ -36,14 +41,19 @@ class TaskInstallerTask(Task):
         set_task_status(name, task_status_id, {'status': 'running', 'progress': 0})
         for step in range(nr_steps):
 
-            ########################
-            # COPY FILES AND ALSO CREATE NEW TASK MODEL!!!!!!!
-            # When everything is finished, set .installed = True
-            ########################
             LOG.info(f'Installing file {files[step].path}...')
-
+            if files[step].path.endswith('task.py'):
+                target_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.path.split(files[step].path)[1])
+                if os.path.isfile(target_file):
+                    os.remove(target_file)
+                shutil.move(files[step].path, target_file)
+                
             progress = int(((step + 1) / (nr_steps)) * 100)
             set_task_status(name, task_status_id, {'status': 'running', 'progress': progress})
+        # Reload all tasks
+        LOG.info('Reloading tasks...')
+        TaskLoader().run()
+        call_command('create_tasks')
         set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
         return True
 
