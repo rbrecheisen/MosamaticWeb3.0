@@ -21,7 +21,7 @@ class TaskInstallerTask(Task):
             description='Installs new task from a previously uploaded file set',
             html_page='tasks/taskinstallertask.html',
             url_pattern='/tasks/taskinstallertask',
-            visible=True,
+            visible=True, installed=True,
         )
 
     def run(self, task_status_id: str, fileset_id: str) -> bool:
@@ -38,6 +38,7 @@ class TaskInstallerTask(Task):
 
             ########################
             # COPY FILES AND ALSO CREATE NEW TASK MODEL!!!!!!!
+            # When everything is finished, set .installed = True
             ########################
             LOG.info(f'Installing file {files[step].path}...')
 

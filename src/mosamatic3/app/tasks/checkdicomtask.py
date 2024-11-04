@@ -25,7 +25,8 @@ class CheckDicomTask(Task):
             description='This task checks whether DICOM images are 512 x 512 pixels',
             html_page='tasks/checkdicomtask.html',
             url_pattern='/tasks/checkdicomtask',
-        )
+            visible=True, installed=False,
+)
 
     @staticmethod
     def process_file(f) -> bool:

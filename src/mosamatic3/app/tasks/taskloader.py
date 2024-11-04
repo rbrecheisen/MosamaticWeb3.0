@@ -26,9 +26,5 @@ class TaskLoader:
                 task = self.load_task(module_name)
                 if task:
                     tasks.append(task)
-                # module = importlib.import_module(module_name, package='app.tasks')
-                # for _, cls in inspect.getmembers(module, inspect.isclass):
-                #     if issubclass(cls, Task) and cls is not Task:
-                #         tasks.append(cls())
         tasks.sort(key=lambda task: task.display_name)
         return tasks
