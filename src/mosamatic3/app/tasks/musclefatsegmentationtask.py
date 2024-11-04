@@ -185,7 +185,7 @@ class MuscleFatSegmentationTask(Task):
             pass
         filesets = data_manager.get_filesets(request.user)
         task = data_manager.get_task_by_name('musclefatsegmentationtask')
-        return render(request, task.hmtl_page, context={'filesets': filesets, 'task': task})
+        return render(request, task.html_page, context={'filesets': filesets, 'task': task})
 
 @task()
 def musclefatsegmentationtask(task_status_id: str, fileset_id: str, model_fileset_id: str, output_fileset_name: str, user :User) -> bool:

@@ -102,7 +102,7 @@ class RescaleDicomTask(Task):
             pass
         filesets = data_manager.get_filesets(request.user)
         task = data_manager.get_task_by_name('rescaledicomtask')
-        return render(request, task.hmtl_page, context={'filesets': filesets, 'task': task})
+        return render(request, task.html_page, context={'filesets': filesets, 'task': task})
     
 
 # https://chatgpt.com/c/66fa806e-1a08-800b-81dd-6fd260753341
