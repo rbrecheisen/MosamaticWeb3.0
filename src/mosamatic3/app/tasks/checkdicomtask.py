@@ -23,8 +23,8 @@ class CheckDicomTask(Task):
             name='checkdicomtask',
             display_name='Check DICOM task',
             description='This task checks whether DICOM images are 512 x 512 pixels',
-            html_page='tasks/checkdicom.html',
-            url_pattern='/tasks/checkdicom/',
+            html_page='tasks/checkdicomtask.html',
+            url_pattern='/tasks/checkdicomtask',
         )
 
     @staticmethod

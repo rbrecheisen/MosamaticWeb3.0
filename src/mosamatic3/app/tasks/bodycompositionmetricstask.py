@@ -34,8 +34,8 @@ class BodyCompositionMetricsTask(Task):
             name='bodycompositionmetricstask',
             display_name='Body composition metrics',
             description='This task calculates body composition metrics from L3 images and corresponding muscle and fat segmentations',
-            html_page='tasks/bodycompositionmetrics.html',
-            url_pattern='/tasks/bodycompositionmetrics/',
+            html_page='tasks/bodycompositionmetricstask.html',
+            url_pattern='/tasks/bodycompositionmetricstask',
         )
 
     @staticmethod
