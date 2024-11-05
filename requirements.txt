@@ -16,6 +16,8 @@ pillow
 pandas
 openpyxl
 tensorflow
+torch
+torchvision
 gunicorn
 pendulum
 redis
