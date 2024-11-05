@@ -46,6 +46,8 @@ class TaskInstallerTask(Task):
                 target_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.path.split(files[step].path)[1])
                 if os.path.isfile(target_file):
                     os.remove(target_file)
+                # Task files are now copied to this directory but perhaps they should be loadable from anywhere?
+                # This will allow them to remain associated with a fileset.
                 shutil.move(files[step].path, target_file)
                 
             progress = int(((step + 1) / (nr_steps)) * 100)
