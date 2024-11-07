@@ -1,6 +1,7 @@
 import os
 import shutil
 
+from pathlib import Path
 from huey.contrib.djhuey import task
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
@@ -43,12 +44,25 @@ class TaskInstallerTask(Task):
 
             LOG.info(f'Installing file {files[step].path}...')
             if files[step].path.endswith('task.py'):
-                target_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.path.split(files[step].path)[1])
+                # Copy task.py file to current directory
+                task_dir = os.path.dirname(os.path.abspath(__file__))
+                target_file = os.path.join(task_dir, os.path.split(files[step].path)[1])
                 if os.path.isfile(target_file):
-                    os.remove(target_file)
-                # Task files are now copied to this directory but perhaps they should be loadable from anywhere?
-                # This will allow them to remain associated with a fileset.
+                    LOG.warning(f'Task file {files[step].path} already exists')
+                    break
                 shutil.move(files[step].path, target_file)
+
+            elif files[step].path.endswith('task.html'):
+                # Copy task.html file to templates directory
+                d = Path(os.path.dirname(os.path.abspath(__file__)))
+                template_dir = os.path.join(str(d.parent), 'templates', 'tasks')
+                target_file = os.path.join(template_dir, os.path.split(files[step].path)[1])
+                if os.path.isfile(target_file):
+                    LOG.warning(f'Task HTML file {files[step].path} already exists')
+                    break
+                shutil.move(files[step].path, target_file)
+            else:
+                pass
                 
             progress = int(((step + 1) / (nr_steps)) * 100)
             set_task_status(name, task_status_id, {'status': 'running', 'progress': progress})
