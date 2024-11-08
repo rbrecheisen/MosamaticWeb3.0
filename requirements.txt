@@ -21,3 +21,5 @@ torchvision
 gunicorn
 pendulum
 redis
+
+emailchecker
