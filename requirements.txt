@@ -16,8 +16,8 @@ pillow
 pandas
 openpyxl
 tensorflow
-torch
-torchvision
+# torch         # installed via URL
+# torchvision
 gunicorn
 pendulum
 redis

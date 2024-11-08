@@ -12,11 +12,21 @@
                     {% csrf_token %}
                     <input type="hidden" name="baseUrl" value="{{ task.url_pattern }}">
                     <select class="form-select" name="fileset_id">
-                        <option selected>Select fileset</option>
+                        <option selected>Select L3 images</option>
                         {% for fileset in filesets %}
-                            <option value="{{ fileset.id }}">{{ fileset.name }}</option>
+                        <option value="{{ fileset.id }}">{{ fileset.name }}</option>
                         {% endfor %}
                     </select>
+                    <br>
+                    <select class="form-select" name="model_fileset_id">
+                        <option selected>Select AI model files</option>
+                        {% for fileset in filesets %}
+                        <option value="{{ fileset.id }}">{{ fileset.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <label for="output_fileset_name" class="form-label">Output fileset name (optional)</label>
+                    <input type="text" class="form-control" id="output_fileset_name" name="output_fileset_name" placeholder="Enter new name">
                     <br>
                     <button id="task-button" class="btn btn-primary">Execute task</button>
                 </form>                    

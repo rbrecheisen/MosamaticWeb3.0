@@ -15,8 +15,8 @@ pillow
 pandas
 openpyxl
 tensorflow
-torch
-torchvision
+# torch         # installed via URL in docker-entrypoint.sh
+# torchvision
 gunicorn
 pendulum
 redis

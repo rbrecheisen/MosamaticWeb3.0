@@ -11,8 +11,8 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 COPY requirements-arm64-docker.txt /requirements.txt
-RUN pip install --upgrade pip setuptools wheel && \
-    pip install -r /requirements.txt --verbose
+RUN pip install --upgrade pip setuptools wheel && pip install -r /requirements.txt --verbose
+RUN pip install torch==2.3.1+cu121 torchvision==0.18.1+cu121 -f https://download.pytorch.org/whl/torch_stable.html
 
 RUN mkdir -p /data/static && \
     mkdir -p /data/datasets && \
