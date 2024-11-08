@@ -10,20 +10,39 @@
 
 # FROM pytorch/pytorch:2.4.1-cuda11.8-cudnn9-runtime
 # FROM nvidia/cuda:12.2.0-cudnn8-devel-ubuntu20.04
-FROM nvcr.io/nvidia/pytorch:22.08-py3
+# FROM nvcr.io/nvidia/pytorch:22.08-py3
+# FROM nvidia/cuda:12.5.1-cudnn-devel-ubuntu20.04
+# FROM nvidia/cuda:12.1.0-devel-ubi8
+# FROM nvidia/cuda:12.1.0-devel-ubuntu20.04
+# FROM nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
+# FROM nvidia/cuda:12.4.1-cudnn-devel-ubuntu20.04
+FROM nvcr.io/nvidia/pytorch:23.01-py3
 
-RUN apt-get update -y && apt-get install -y vim curl gpg
-RUN curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
-    && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
-    sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
-    tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+# RUN apt-get update -y && apt-get install -y vim curl gpg
+# RUN curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+#     && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
+#     sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+#     tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 
-RUN apt-get update -y && apt-get install -y nvidia-container-toolkit
+# RUN apt-get update -y && apt-get install -y nvidia-container-toolkit
+
+# RUN apt-get update && apt-get install -y python3 python3-pip
+
+# RUN apt-get update && \
+#     apt-get install -y python3.8 python3.8-distutils curl nvidia-container-toolkit nvidia-container-runtime && \
+#     curl -sS https://bootstrap.pypa.io/get-pip.py | python3.8
+
+# # RUN ln -s /usr/bin/python3.8 /usr/bin/python3
+# RUN rm -f /usr/bin/python3 && ln -s /usr/bin/python3.8 /usr/bin/python3
+# RUN rm -f /usr/bin/pip3 && ln -s /usr/local/bin/pip /usr/bin/pip3
+# RUN pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+
+RUN pip install --upgrade pip && pip install -U torch torchvision
 
 WORKDIR /workspace
 
 COPY test.py /workspace/test.py
 
-# CMD ["python", "/workspace/test.py"]
+# CMD ["python3", "/workspace/test.py"]
 # CMD ["nvcc", "--version"]
-CMD ["nvidia-smi"]
+# CMD ["nvidia-smi"]
