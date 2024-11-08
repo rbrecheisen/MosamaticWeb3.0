@@ -15,8 +15,8 @@ pillow
 pandas
 openpyxl
 tensorflow==2.15.0 # arm64 version
-# torch         # installed via URL
-# torchvision
+torch
+torchvision
 gunicorn
 pendulum
 redis
