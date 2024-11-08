@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Copy plugins to their respective locations
-
-# Install additional requirements from each plugin's requirements.txt file
-
 python manage.py makemigrations
 python manage.py migrate
 python manage.py create_admin_user
