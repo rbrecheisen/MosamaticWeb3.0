@@ -10,9 +10,9 @@ LOG = LogManager()
 
 
 class TaskManager:
-    def run_task_and_get_response(self, task_func, *args) -> JsonResponse:
+    def run_task_and_get_response(self, task_func, task_parameters) -> JsonResponse:
         task_status_id = str(uuid.uuid4())
-        task_result = task_func(task_status_id, *args)
+        task_result = task_func(task_status_id, task_parameters)
         return JsonResponse({'task_result_id': task_result.id, 'task_status_id': task_status_id, 'task_status': None, 'progress': 0})
     
     def get_response(self, task_name: str, request: HttpRequest) -> JsonResponse:

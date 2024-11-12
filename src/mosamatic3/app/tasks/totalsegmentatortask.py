@@ -3,17 +3,12 @@ import pydicom.errors
 
 from typing import List, Dict
 from huey.contrib.djhuey import task
-from django.contrib.auth.models import User
-from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse
-from django.contrib.auth.decorators import login_required
 from .taskexception import TaskException
 
 from ..utils import set_task_status, is_uuid
 from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
 from .task import Task
-from .taskmanager import TaskManager
 from ..models import FileModel, FileSetModel
 
 LOG = LogManager()
@@ -27,6 +22,8 @@ class TotalSegmentatorTask(Task):
             description='This task runs Total Segmentator on a single CT or MRI scan',
             html_page='tasks/totalsegmentator.html',
             url_pattern='/tasks/totalsegmentator/',
+            task_func=totalsegmentatortask,
+            parameter_names=['fileset_id', 'mask_name', 'output_fileset_name'],
             visible=False,
         )
 
@@ -57,7 +54,7 @@ class TotalSegmentatorTask(Task):
         LOG.info(f'Running Total Segmentator on series {series_instance_uid} with {len(series_files)} scan files...')
         return True
     
-    def run(self, task_status_id: str, fileset_id: str, output_fileset_name: str, user :User, mask_name: str) -> bool:
+    def run(self, task_status_id: str, fileset_id: str, output_fileset_name: str, mask_name: str) -> bool:
         name = self.name
         LOG.info(f'name: {name}, task_status_id: {task_status_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}, mask_name: {mask_name}')
         data_manager = DataManager()
@@ -89,31 +86,12 @@ class TotalSegmentatorTask(Task):
             set_task_status(name, task_status_id, {'status': 'failed', 'progress': -1})
             return False
         
-    @staticmethod
-    @login_required
-    def view(request: HttpRequest) -> HttpResponse:
-        data_manager = DataManager()
-        task_manager = TaskManager()
-        if request.method == 'POST':
-            fileset_id = request.POST.get('fileset_id', None)
-            if fileset_id:
-                mask_name = request.POST.get('mask_name', None)
-                output_fileset_name = request.POST.get('output_fileset_name', None)
-                return task_manager.run_task_and_get_response(
-                    totalsegmentatortask, fileset_id, output_fileset_name, request.user, mask_name)
-            else:
-                LOG.warning(f'no segmentation fileset ID selected')
-        elif request.method == 'GET':
-            response = task_manager.get_response('totalsegmentatortask', request)
-            if response:
-                return response
-        else:
-            pass
-        filesets = data_manager.get_filesets(request.user)
-        task = data_manager.get_task_by_name('totalsegmentatortask')
-        return render(request, task.hmtl_page, context={'filesets': filesets, 'task': task})
-
 
 @task()
-def totalsegmentatortask(task_status_id: str, fileset_id: str, output_fileset_name: str, user :User, mask_name: str) -> bool:
-    return TotalSegmentatorTask().run(task_status_id, fileset_id, output_fileset_name, user, mask_name)
+def totalsegmentatortask(task_status_id: str, task_parameters: Dict[str, str]) -> bool:
+    return TotalSegmentatorTask().run(
+        task_status_id, 
+        task_parameters['fileset_id'], 
+        task_parameters['output_fileset_name'], 
+        task_parameters['mask_name'],
+    )

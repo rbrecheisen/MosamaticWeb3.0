@@ -2,17 +2,12 @@ import os
 import torch
 import pydicom
 import pydicom.errors
-import zipfile
 import json
 import numpy as np
 
-from typing import List, Any
+from typing import List, Any, Dict
 from huey.contrib.djhuey import task
-from django.conf import settings
 from django.contrib.auth.models import User
-from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse
-from django.contrib.auth.decorators import login_required
 
 from .taskexception import TaskException
 from ..utils import set_task_status, normalize_between, is_compressed, \
@@ -21,7 +16,6 @@ from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
 from ..data.pngimagegenerator import PngImageGenerator
 from .task import Task
-from .taskmanager import TaskManager
 from ..models import FileModel
 
 LOG = LogManager()
@@ -35,7 +29,9 @@ class MuscleFatSegmentationPyTorchTask(Task):
             description='This task runs muscle and fat segmentation on DICOM images acquired at the 3rd lumbar vertebral level (L3).',
             html_page='tasks/musclefatsegmentationpytorchtask.html',
             url_pattern='/tasks/musclefatsegmentationpytorchtask',
-            visible=True, installed=False,
+            task_func=musclefatsegmentationpytorchtask,
+            parameter_names=['fileset_id', 'model_fileset_id', 'output_fileset_name'],
+            visible=True,
         )
 
     @staticmethod
@@ -132,7 +128,7 @@ class MuscleFatSegmentationPyTorchTask(Task):
             if model is None or parameters is None:
                 raise TaskException('model or parameters are None')
             if model and parameters:
-                set_task_status(name, task_status_id, {'status': 'running', 'progress': 0})
+                set_task_status(self.name, task_status_id, {'status': 'running', 'progress': 0})
                 for step in range(nr_steps):
                     segmentation_file_path, segmentation_png_file_path = self.process_file(files[step], output_fileset.path, model, contour_model, parameters) # skipping "mode=argmax"
                     if segmentation_file_path:
@@ -142,7 +138,7 @@ class MuscleFatSegmentationPyTorchTask(Task):
                     else:
                         LOG.warning(f'could not process file {files[step].path}')
                     progress = int(((step + 1) / (nr_steps)) * 100)
-                    set_task_status(name, task_status_id, {'status': 'running', 'progress': progress})
+                    set_task_status(self.name, task_status_id, {'status': 'running', 'progress': progress})
             else:
                 LOG.error(f'model and/or parameters are None')
             # for f in segmentation_file_paths:
@@ -152,39 +148,20 @@ class MuscleFatSegmentationPyTorchTask(Task):
                 # Also set png_path of File object so we can create <a href=""> item in the fileset.html page
                 f.png_path = segmentation_png_file_paths[i]
                 f.save()
-            set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
+            set_task_status(self.name, task_status_id, {'status': 'completed', 'progress': 100})
             return True
         except TaskException as e:
             LOG.error(f'exception occurred while processing files ({e})')
-            set_task_status(name, task_status_id, {'status': 'failed', 'progress': -1})
+            set_task_status(self.name, task_status_id, {'status': 'failed', 'progress': -1})
             return False
         
-    @staticmethod
-    @login_required
-    def view(request: HttpRequest) -> HttpResponse:
-        data_manager = DataManager()
-        task_manager = TaskManager()
-        if request.method == 'POST':
-            fileset_id = request.POST.get('fileset_id', None)
-            if fileset_id:
-                model_fileset_id = request.POST.get('model_fileset_id', None)
-                if model_fileset_id:
-                    output_fileset_name = request.POST.get('output_fileset_name', None)
-                    return task_manager.run_task_and_get_response(musclefatsegmentationpytorchtask, fileset_id, model_fileset_id, output_fileset_name, request.user)
-                else:
-                    LOG.warning(f'no model fileset ID selected')
-            else:
-                LOG.warning(f'no fileset ID selected')
-        elif request.method == 'GET':
-            response = task_manager.get_response('musclefatsegmentationpytorchtask', request)
-            if response:
-                return response
-        else:
-            pass
-        filesets = data_manager.get_filesets(request.user)
-        task = data_manager.get_task_by_name('musclefatsegmentationpytorchtask')
-        return render(request, task.html_page, context={'filesets': filesets, 'task': task})
 
 @task()
-def musclefatsegmentationpytorchtask(task_status_id: str, fileset_id: str, model_fileset_id: str, output_fileset_name: str, user :User) -> bool:
-    return MuscleFatSegmentationPyTorchTask().run(task_status_id, fileset_id, model_fileset_id, output_fileset_name, user)
+def musclefatsegmentationpytorchtask(task_status_id: str, task_parameters: Dict[str, str]) -> bool:
+    return MuscleFatSegmentationPyTorchTask().run(
+        task_status_id, 
+        task_parameters['fileset_id'], 
+        task_parameters['model_fileset_id'], 
+        task_parameters['output_fileset_name'], 
+        task_parameters['user']
+    )

@@ -14,7 +14,7 @@ class Command(BaseCommand):
             if task_model is None:
                 TaskModel.objects.create(
                     name=task.name, display_name=task.display_name, description=task.description, html_page=task.html_page, 
-                    url_pattern=task.url_pattern, visible=task.visible, installed=task.installed)
+                    url_pattern=task.url_pattern, visible=task.visible)
                 message = f'Task {task.name} successfully created'
                 self.stdout.write(self.style.SUCCESS(message))
             else:
@@ -24,7 +24,6 @@ class Command(BaseCommand):
                 task_model.html_page = task.html_page
                 task_model.url_pattern = task.url_pattern
                 task_model.visible = task.visible
-                task_model.installed = task.installed
                 task_model.save()
                 message = f'Task {task.name} updated'
                 self.stdout.write(self.style.SUCCESS(message))

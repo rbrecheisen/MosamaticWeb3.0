@@ -3,12 +3,10 @@ import pydicom
 import pydicom.errors
 import numpy as np
 
+from typing import Dict
 from scipy.ndimage import zoom
 from huey.contrib.djhuey import task
 from django.contrib.auth.models import User
-from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse
-from django.contrib.auth.decorators import login_required
 
 from ..utils import set_task_status, is_compressed, is_uuid
 from ..models import FileSetModel
@@ -16,7 +14,6 @@ from ..data.datamanager import DataManager
 from ..data.logmanager import LogManager
 from .taskexception import TaskException
 from .task import Task
-from .taskmanager import TaskManager
 
 LOG = LogManager()
 
@@ -29,7 +26,9 @@ class RescaleDicomTask(Task):
             description='This task rescales DICOM images to 512 x 512 such that they can be analysed by the Mosamatic AI model. If images are rectangular (columns unequal rows) the images will first be zero-padded along the short dimension to obtain a larger but square image. Then the image will be scaled back to 512 x 512 and its pixel spacing updated to reflect the changes',
             html_page='tasks/rescaledicomtask.html',
             url_pattern='/tasks/rescaledicomtask',
-            visible=True, installed=False,
+            task_func=rescaledicomtask,
+            parameter_names=['fileset_id', 'output_fileset_name'],
+            visible=True,
         )
 
     @staticmethod
@@ -62,9 +61,9 @@ class RescaleDicomTask(Task):
         except pydicom.errors.InvalidDicomError:
             return False
         
-    def run(self, task_status_id: str, fileset_id: str, output_fileset_name: str, user: User, target_size: int=512) -> bool:
+    def run(self, task_status_id: str, fileset_id: str, output_fileset_name: str, user: User) -> bool:
         name = self.name
-        LOG.info(f'name: {name}, task_status_id: {task_status_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}, target_size: {target_size}')
+        LOG.info(f'name: {name}, task_status_id: {task_status_id}, fileset_id: {fileset_id}, output_fileset_name: {output_fileset_name}')
         data_manager = DataManager()
         if not is_uuid(fileset_id):
             raise TaskException('fileset_id is not UUID')
@@ -74,7 +73,7 @@ class RescaleDicomTask(Task):
         nr_steps = len(files)
         set_task_status(name, task_status_id, {'status': 'running', 'progress': 0})
         for step in range(nr_steps):
-            if self.rescale_image(files[step], data_manager, new_fileset, target_size):
+            if self.rescale_image(files[step], data_manager, new_fileset, 512):
                 progress = int(((step + 1) / (nr_steps)) * 100)
                 set_task_status(name, task_status_id, {'status': 'running', 'progress': progress})
             else:
@@ -82,31 +81,12 @@ class RescaleDicomTask(Task):
         set_task_status(name, task_status_id, {'status': 'completed', 'progress': 100})
         return True
     
-    @staticmethod
-    @login_required
-    def view(request: HttpRequest) -> HttpResponse:
-        data_manager = DataManager()
-        task_manager = TaskManager()
-        if request.method == 'POST':
-            fileset_id = request.POST.get('fileset_id', None)
-            if fileset_id:
-                output_fileset_name = request.POST.get('output_fileset_name', None)
-                return task_manager.run_task_and_get_response(rescaledicomtask, fileset_id, output_fileset_name, request.user, 512)
-            else:
-                LOG.warning(f'no fileset ID selected')
-                pass
-        elif request.method == 'GET':
-            response = task_manager.get_response('rescaledicomtask', request)
-            if response:
-                return response
-        else:
-            pass
-        filesets = data_manager.get_filesets(request.user)
-        task = data_manager.get_task_by_name('rescaledicomtask')
-        return render(request, task.html_page, context={'filesets': filesets, 'task': task})
-    
 
-# https://chatgpt.com/c/66fa806e-1a08-800b-81dd-6fd260753341
 @task()
-def rescaledicomtask(task_status_id: str, fileset_id: str, output_fileset_name: str, user: User, target_size: int=512) -> bool:
-    return RescaleDicomTask().run(task_status_id, fileset_id, output_fileset_name, user, target_size)
+def rescaledicomtask(task_status_id: str, task_parameters: Dict[str, str]) -> bool:
+    return RescaleDicomTask().run(
+        task_status_id, 
+        task_parameters['fileset_id'], 
+        task_parameters['output_fileset_name'], 
+        task_parameters['user'],
+    )
