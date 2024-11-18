@@ -1,4 +1,4 @@
-@echo off
-call shutdown.bat
+#!/bin/bash
+./shutdown-latest.sh
 docker-compose build --no-cache
 docker system prune -f

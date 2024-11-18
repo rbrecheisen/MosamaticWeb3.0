@@ -1,5 +1,5 @@
 #!/bin/bash
-./shutdown.sh
+./shutdown-latest.sh
 export PASSWORD=$(cat $HOME/dockerhubpassword.txt)
 docker logout
 docker login --username brecheisen --password "${PASSWORD}"
