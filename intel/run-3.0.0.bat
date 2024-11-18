@@ -8,9 +8,10 @@ if exist "shutdown-3.0.0.bat" (
 
 @rem Check if docker-compose.yml available. If not, download it
 if not exist "docker-compose-3.0.0.yml" (
-    set "COMPOSE_FILE_URL=https://raw.githubusercontent.com/your-repo/your-project/main/docker-compose.yml"
-    powershell -Command "Invoke-WebRequest -Uri %COMPOSE_FILE_URL% -OutFile 'docker-compose-3.0.0.yml'"
+    echo "Downloading docker-compose.yml..."
+    powershell -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/rbrecheisen/MosamaticWeb3.0/refs/heads/main/intel/docker-compose-3.0.0.yml?token=GHSAT0AAAAAACXVUKOOL7RATQ7XBG7S7UB4ZZ3H7LA' -OutFile 'docker-compose-3.0.0.yml'"
 )
 
 @rem Run application
-docker-compose -f docker-compose-3.0.0.yml up -d && docker-compose logs -f web huey
+docker-compose -f docker-compose-3.0.0.yml up -d 
+docker-compose -f docker-compose-3.0.0.yml logs -f web huey
