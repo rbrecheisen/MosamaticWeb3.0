@@ -20,7 +20,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   nginx:
-    # build: ./nginx
+    build: ../../../../nginx
     image: brecheisen/mosamatic3-nginx-intel-gpu:latest
     platform: linux/amd64
     container_name: mosamatic3_nginx
@@ -40,7 +40,7 @@ services:
       - 6379:6379
 
   huey:
-    # build: .
+    build: ../../../../.
     image: brecheisen/mosamatic3-huey-intel-gpu:latest
     platform: linux/amd64
     command: python manage.py run_huey
@@ -69,7 +69,7 @@ services:
       - web
       
   web:
-    # build: .
+    build: ../../../../.
     image: brecheisen/mosamatic3-web-intel-gpu:latest
     platform: linux/amd64
     container_name: mosamatic3_web
@@ -99,7 +99,7 @@ services:
 
   # dicomserver:
   #   build: 
-  #     context: ./dicomserver
+  #     context: ../../../../dicomserver
   #     dockerfile: Dockerfile
   #   image: brecheisen/mosamatic3-dicomserver-intel-gpu:latest
   #   platform: linux/amd64
@@ -114,7 +114,7 @@ services:
 
   # dicomserverclinical:
   #   # build: 
-  #   #   context: ./dicomserverclinical
+  #   #   context: ../../../../dicomserverclinical
   #   #   dockerfile: Dockerfile
   #   image: brecheisen/mosamatic3-dicomserverclinical-intel-gpu:latest
   #   platform: linux/amd64

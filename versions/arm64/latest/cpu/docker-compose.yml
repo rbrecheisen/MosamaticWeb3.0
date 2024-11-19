@@ -21,7 +21,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   nginx:
-    build: ../nginx
+    build: ../../..../nginx
     image: brecheisen/mosamatic3-nginx-arm64-cpu:latest
     platform: linux/arm64
     container_name: mosamatic3_nginx
@@ -42,7 +42,7 @@ services:
       - 6379:6379
 
   huey:
-    build: ..
+    build: ../../..../.
     image: brecheisen/mosamatic3-huey-arm64-cpu:latest
     platform: linux/arm64
     command: python manage.py run_huey
@@ -65,7 +65,7 @@ services:
       - web
       
   web:
-    build: ..
+    build: ../../..../.
     image: brecheisen/mosamatic3-web-arm64-cpu:latest
     platform: linux/arm64
     container_name: mosamatic3_web
