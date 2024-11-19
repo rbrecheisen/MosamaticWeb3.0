@@ -31,7 +31,7 @@ class MuscleFatSegmentationPyTorchTask(Task):
             url_pattern='/tasks/musclefatsegmentationpytorchtask',
             task_func=musclefatsegmentationpytorchtask,
             parameter_names=['fileset_id', 'model_fileset_id', 'output_fileset_name'],
-            visible=True,
+            visible=False,
         )
 
     @staticmethod
