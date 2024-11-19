@@ -57,6 +57,7 @@ services:
       - ADMIN_USER=admin
       - ADMIN_PASSWORD=admin
       - SECRET_KEY=1234
+      - VERSION=intel-cpu:latest
     volumes:
       - data:/data
     depends_on:
@@ -79,6 +80,7 @@ services:
       - ADMIN_USER=admin
       - ADMIN_PASSWORD=admin
       - SECRET_KEY=1234
+      - VERSION=intel-cpu:latest
     volumes:
       - data:/data
     depends_on:

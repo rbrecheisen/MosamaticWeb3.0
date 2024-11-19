@@ -21,6 +21,8 @@ ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'admin')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', '1234')
 
+VERSION = os.getenv('VERSION', '3.x.x')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -77,6 +79,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'app.context_processors.version',
             ],
         },
     },

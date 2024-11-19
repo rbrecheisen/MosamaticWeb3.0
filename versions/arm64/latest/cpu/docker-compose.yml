@@ -59,6 +59,7 @@ services:
       - ADMIN_USER=admin
       - ADMIN_PASSWORD=admin
       - SECRET_KEY=1234
+      - VERSION=arm64-cpu:3.0.0
     volumes:
       - data:/data
     depends_on:
@@ -81,6 +82,7 @@ services:
       - ADMIN_USER=admin
       - ADMIN_PASSWORD=admin
       - SECRET_KEY=1234
+      - VERSION=arm64-cpu:3.0.0
     volumes:
       - data:/data
     depends_on:
