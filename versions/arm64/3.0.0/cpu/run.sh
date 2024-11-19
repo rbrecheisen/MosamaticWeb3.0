@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ ! -f "shutdown.bat" ]]; then
+if [[ ! -f "shutdown.sh" ]]; then
     echo "Downloading shutdown.sh..."
     curl -o "shutdown.sh" "https://raw.githubusercontent.com/rbrecheisen/MosamaticWeb3.0/refs/heads/main/versions/arm64/3.0.0/cpu/shutdown.sh"
     chmod +x ./shutdown.sh
