@@ -1,2 +1,2 @@
-call shutdown-latest.bat
+call shutdown.bat
 docker-compose up -d db redis

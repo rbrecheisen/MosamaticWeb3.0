@@ -1,3 +1,3 @@
 #!/bin/bash
-./shutdown-latest.sh
+./shutdown.sh
 docker-compose up -d db redis
