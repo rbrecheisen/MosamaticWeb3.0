@@ -21,8 +21,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   nginx:
-    build: ./nginx
-    image: brecheisen/mosamatic3-nginx-arm64:latest
+    build: ../nginx
+    image: brecheisen/mosamatic3-nginx-arm64-gpu:latest
     platform: linux/arm64
     container_name: mosamatic3_nginx
     ports:
@@ -42,7 +42,7 @@ services:
       - 6379:6379
 
   huey:
-    build: .
+    build: ..
     image: brecheisen/mosamatic3-huey-arm64-gpu:latest
     platform: linux/arm64
     command: python manage.py run_huey
@@ -71,9 +71,9 @@ services:
       - web
       
   web:
-    build: .
+    build: ..
     image: brecheisen/mosamatic3-web-arm64-gpu:latest
-    platform: linux/amd64
+    platform: linux/arm64
     container_name: mosamatic3_web
     environment:
       - DATA_DIR=/data
@@ -99,35 +99,31 @@ services:
       db:
         condition: service_healthy
 
-  dicomserver:
-    # build: 
-    #   context: ./dicomserver
-    #   dockerfile: Dockerfile
-    image: brecheisen/mosamatic3-dicomserver-arm64:latest
-    platform: linux/arm64
-    container_name: mosamatic3_dicomserver
-    ports:
-      - 105:104
-    environment:
-      - DOCKER=true
-      - PORT=105
-    volumes:
-      - data:/data/dicomstorage
+  # dicomserver:
+  #   build: ../dicomserver
+  #   image: brecheisen/mosamatic3-dicomserver-arm64-gpu:latest
+  #   platform: linux/arm64
+  #   container_name: mosamatic3_dicomserver
+  #   ports:
+  #     - 105:104
+  #   environment:
+  #     - DOCKER=true
+  #     - PORT=105
+  #   volumes:
+  #     - data:/data/dicomstorage
 
-  dicomserverclinical:
-    # build: 
-    #   context: ./dicomserverclinical
-    #   dockerfile: Dockerfile
-    image: brecheisen/mosamatic3-dicomserverclinical-arm64:latest
-    platform: linux/arm64
-    container_name: mosamatic3_dicomserverclinical
-    ports:
-      - 104:104
-    environment:
-      - DOCKER=true
-      - PORT=104
-    volumes:
-      - data:/data/dicomstorageclinical
+  # dicomserverclinical:
+  #   build: ../dicomserver
+  #   image: brecheisen/mosamatic3-dicomserverclinical-arm64-gpu:latest
+  #   platform: linux/arm64
+  #   container_name: mosamatic3_dicomserverclinical
+  #   ports:
+  #     - 104:104
+  #   environment:
+  #     - DOCKER=true
+  #     - PORT=104
+  #   volumes:
+  #     - data:/data/dicomstorageclinical
 
 volumes:
   data:
