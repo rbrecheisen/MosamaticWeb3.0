@@ -21,7 +21,7 @@ services:
 
   nginx:
     build: ../nginx
-    image: brecheisen/mosamatic3-nginx-amd64:latest
+    image: brecheisen/mosamatic3-nginx-intel-cpu:latest
     platform: linux/amd64
     container_name: mosamatic3_nginx
     ports:
@@ -41,7 +41,7 @@ services:
 
   huey:
     build: ..
-    image: brecheisen/mosamatic3-huey-amd64:latest
+    image: brecheisen/mosamatic3-huey-intel-cpu:latest
     platform: linux/amd64
     command: python manage.py run_huey
     container_name: mosamatic3_huey
@@ -64,7 +64,7 @@ services:
       
   web:
     build: ..
-    image: brecheisen/mosamatic3-web-amd64:latest
+    image: brecheisen/mosamatic3-web-intel-cpu:latest
     platform: linux/amd64
     container_name: mosamatic3_web
     environment:
@@ -87,7 +87,7 @@ services:
 
   # dicomserver:
   #   # build: ../dicomserver 
-  #   image: brecheisen/mosamatic3-dicomserver-amd64:latest
+  #   image: brecheisen/mosamatic3-dicomserver-intel-cpu:latest
   #   platform: linux/amd64
   #   container_name: mosamatic3_dicomserver
   #   ports:
@@ -100,7 +100,7 @@ services:
 
   # dicomserverclinical:
   #   # build: ../dicomserverclinical
-  #   image: brecheisen/mosamatic3-dicomserverclinical-amd64:latest
+  #   image: brecheisen/mosamatic3-dicomserverclinical-intel-cpu:latest
   #   platform: linux/amd64
   #   container_name: mosamatic3_dicomserverclinical
   #   ports:
