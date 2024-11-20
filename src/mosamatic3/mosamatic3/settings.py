@@ -22,6 +22,7 @@ ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'admin')
 SECRET_KEY = os.getenv('SECRET_KEY', '1234')
 
 VERSION = os.getenv('VERSION', '3.x.x')
+print(f'settings.VERSION: {VERSION}')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
