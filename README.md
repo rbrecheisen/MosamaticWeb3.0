@@ -17,3 +17,10 @@ A web-based tool for analyzing medical images and calculating body composition (
     - Full-spine muscle and fat segmentation (semi 3D)
     - Volume measurements for muscle and fat (along spinal column)
     - Mean, median and standard deviation of mean HU (radiation attenuation) along spinal column for muscle, SAT and VAT
+
+# TensorFlow to PyTorch migration
+- Start with the original Dockerfile and let it extend from "nvcr.io/nvidia/pytorch:23.01-py3" instead of TensorFlow.
+- Remove TensorFlow from the requirements.txt
+- Disable TensorFlow task for muscle and fat segmentation
+- Enabled PyTorch task
+- Test
