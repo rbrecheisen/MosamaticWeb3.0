@@ -21,8 +21,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   nginx:
-    build: ../../../../nginx
-    image: brecheisen/mosamatic3-nginx-arm64-gpu:latest
+    # build: ../../../../nginx
+    image: brecheisen/mosamatic3-nginx-arm64-gpu:3.0.0
     platform: linux/arm64
     container_name: mosamatic3_nginx
     ports:
@@ -42,10 +42,10 @@ services:
       - 6379:6379
 
   huey:
-    build: 
-      context: ../../../../.
-      dockerfile: Dockerfile-arm64
-    image: brecheisen/mosamatic3-huey-arm64-gpu:latest
+    # build: 
+    #   context: ../../../../.
+    #   dockerfile: Dockerfile-arm64
+    image: brecheisen/mosamatic3-huey-arm64-gpu:3.0.0
     platform: linux/arm64
     command: python manage.py run_huey
     container_name: mosamatic3_huey
@@ -61,7 +61,7 @@ services:
       - ADMIN_USER=admin
       - ADMIN_PASSWORD=admin
       - SECRET_KEY=1234
-      - VERSION=arm64-gpu:latest
+      - VERSION=arm64-gpu:3.0.0
     volumes:
       - data:/data
     deploy:
@@ -74,10 +74,10 @@ services:
       - web
       
   web:
-    build: 
-      context: ../../../../.
-      dockerfile: Dockerfile-arm64
-    image: brecheisen/mosamatic3-web-arm64-gpu:latest
+    # build: 
+    #   context: ../../../../.
+    #   dockerfile: Dockerfile-arm64
+    image: brecheisen/mosamatic3-web-arm64-gpu:3.0.0
     platform: linux/arm64
     container_name: mosamatic3_web
     environment:
@@ -92,7 +92,7 @@ services:
       - ADMIN_USER=admin
       - ADMIN_PASSWORD=admin
       - SECRET_KEY=1234
-      - VERSION=arm64-gpu:latest
+      - VERSION=arm64-gpu:3.0.0
     volumes:
       - data:/data
     deploy:

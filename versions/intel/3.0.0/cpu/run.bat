@@ -10,7 +10,7 @@ if not exist "shutdown.bat" (
 @rem Check if docker-compose.yml available. If not, download it
 if not exist "docker-compose.yml" (
     echo "Downloading docker-compose.yml..."
-    powershell -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/rbrecheisen/MosamaticWeb3.0/refs/heads/main/versions/intel/3.0.0/cpu/docker-compose.yml' -OutFile 'docker-compose.yml'"
+    powershell -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/rbrecheisen/MosamaticWeb3.0/refs/heads/main/versions/intel/3.0.0/cpu/docker-compose-prod.yml' -OutFile 'docker-compose.yml'"
 )
 
 @rem Run application

@@ -19,7 +19,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # versions/intel/3.0.0/cpu
   nginx:
     build: ../../../../nginx
     image: brecheisen/mosamatic3-nginx-intel-cpu:3.0.0
