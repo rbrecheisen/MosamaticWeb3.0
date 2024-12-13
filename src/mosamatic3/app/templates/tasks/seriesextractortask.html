@@ -1,0 +1,41 @@
+{% extends "./base.html" %}
+{% block task %}
+<div class="row">
+    <div class="col-sm-10">
+        <div class="card" style="margin-top: 10px;">
+            <div class="card-header">
+                <b>{{ task.display_name }}</b><br>
+                <i>{{ task.description }}</i>
+            </div>
+            <div class="card-body">
+                <form action="{{ task.url_pattern }}" method="post" id="my-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="baseUrl" value="{{ task.url_pattern }}">
+                    <select class="form-select" name="fileset_id">
+                        <option selected>Select fileset</option>
+                        {% for fileset in filesets %}
+                            <option value="{{ fileset.id }}">{{ fileset.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <label for="image_type" class="form-label">Image type</label>
+                    <select class="form-select" id="image_type" name="image_type">
+                        <option selected>Select modality</option>
+                        <option value="CT">CT</option>
+                        <option value="IN_PHASE">Dixon MR (in-phase)</option>
+                        <option value="OPP_PHASE">Dixon MR (opposite-phase)</option>
+                        <option value="WATER">Dixon MR (water)</option>
+                        <option value="ADC">DWI (ADC)</option>
+                        <option value="CALC_BVALUE">DWI (B-value)</option>
+                    </select>
+                    <br>
+                    <label for="output_fileset_name_prefix" class="form-label">Output fileset name prefix</label>
+                    <input type="text" class="form-control" id="output_fileset_name_prefix" name="output_fileset_name_prefix" placeholder="Enter prefix">
+                    <br>
+                    <button id="task-button" class="btn btn-primary">Execute task</button>
+                </form>                    
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
