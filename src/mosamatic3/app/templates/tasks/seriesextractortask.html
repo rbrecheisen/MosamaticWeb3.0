@@ -20,7 +20,7 @@
                     <br>
                     <label for="image_type" class="form-label">Image type</label>
                     <select class="form-select" id="image_type" name="image_type">
-                        <option selected>Select modality</option>
+                        <option selected>Select image type</option>
                         <option value="CT">CT</option>
                         <option value="IN_PHASE">Dixon MR (in-phase)</option>
                         <option value="OPP_PHASE">Dixon MR (opposite-phase)</option>
@@ -28,9 +28,6 @@
                         <option value="ADC">DWI (ADC)</option>
                         <option value="CALC_BVALUE">DWI (B-value)</option>
                     </select>
-                    <br>
-                    <label for="output_fileset_name_prefix" class="form-label">Output fileset name prefix</label>
-                    <input type="text" class="form-control" id="output_fileset_name_prefix" name="output_fileset_name_prefix" placeholder="Enter prefix">
                     <br>
                     <button id="task-button" class="btn btn-primary">Execute task</button>
                 </form>                    

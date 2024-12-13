@@ -17,11 +17,11 @@ def filesets(request: HttpRequest) -> HttpResponse:
         fileset_name = request.POST.get('fileset_name', None)
         file_paths, file_names = FileUploadProcessor().process_upload(request)
         fs = manager.create_fileset_from_uploaded_files(file_paths, file_names, fileset_name, request.user)
-        generator = PngImageGenerator()
-        for f in manager.get_files(fs):
-            png_path = generator.run(f.path)
-            f.png_path = png_path
-            f.save()
+        # generator = PngImageGenerator()
+        # for f in manager.get_files(fs):
+        #     png_path = generator.run(f.path)
+        #     f.png_path = png_path
+        #     f.save()
     return render(request, 'filesets.html', context={'filesets': manager.get_filesets(request.user)})
 
 
