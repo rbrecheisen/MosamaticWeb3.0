@@ -28,7 +28,7 @@ class SegmentationPngTask(Task):
             url_pattern='/tasks/segmentationpng/',
             task_func=segmentationpngtask,
             parameter_names=['segmentation_fileset_id', 'output_fileset_name'],
-            visible=False,
+            visible=True,
         )
 
     @staticmethod

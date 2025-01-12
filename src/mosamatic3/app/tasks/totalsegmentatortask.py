@@ -24,7 +24,7 @@ class TotalSegmentatorTask(Task):
             url_pattern='/tasks/totalsegmentator/',
             task_func=totalsegmentatortask,
             parameter_names=['fileset_id', 'mask_name', 'output_fileset_name'],
-            visible=False,
+            visible=True,
         )
 
     @staticmethod
