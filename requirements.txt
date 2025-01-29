@@ -18,6 +18,7 @@ openpyxl
 tensorflow
 torch
 torchvision
+opencv-python
 gunicorn
 pendulum
 redis

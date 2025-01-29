@@ -1,8 +1,10 @@
 import os
+import sys
 import torch
 import pydicom
 import pydicom.errors
 import json
+import cv2
 import numpy as np
 
 from typing import List, Any, Dict
@@ -56,11 +58,14 @@ class MuscleFatSegmentationPyTorchTask(Task):
     def predict_contour(contour_model, source_image, parameters) -> np.array:
         ct = np.copy(source_image)
         ct = normalize_between(ct, parameters['min_bound_contour'], parameters['max_bound_contour'])
-        img2 = np.expand_dims(ct, 0)
-        img2 = np.expand_dims(img2, -1)
-        img2_tensor = torch.tensor(img2, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to('cpu')
+        # img2 = np.expand_dims(ct, 0)
+        # img2 = np.expand_dims(img2, -1)
+        target_shape = (512, 512)  
+        ct_resized = cv2.resize(ct, target_shape, interpolation=cv2.INTER_LINEAR)
+        ct_resized_tensor = torch.tensor(ct_resized, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to('cpu')
         with torch.no_grad():
-            pred = contour_model(img2_tensor).cpu().numpy()
+            pred = contour_model(ct_resized_tensor).cpu().numpy()
+            # pred = contour_model(source_image).cpu().numpy()
         # pred = contour_model.predict([img2])
         pred_squeeze = np.squeeze(pred)
         pred_max = pred_squeeze.argmax(axis=-1)
@@ -76,20 +81,35 @@ class MuscleFatSegmentationPyTorchTask(Task):
                 LOG.warning(f'wrong dimensions: {p.Rows} x {p.Columns} (should be 512 x 512)')
                 return None
             img1 = get_pixels_from_dicom_object(p, normalize=True)
-            # img1_tensor = torch.tensor(img1, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to('cpu')
+            # img1 = normalize_between(img1, parameters['min_bound_contour'], parameters['max_bound_contour'])
+            # target_shape = (512, 512)  
+            # img1_resized = cv2.resize(img1, target_shape, interpolation=cv2.INTER_LINEAR)
+            # img1_resized_tensor = torch.tensor(img1_resized, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to('cpu')
             if contour_model:
+                # mask = self.predict_contour(contour_model, img1_resized_tensor, parameters)
                 mask = self.predict_contour(contour_model, img1, parameters)
-                img1 = normalize_between(img1, parameters['min_bound'], parameters['max_bound'])
-                img1 = img1 * mask
-            else:
-                img1 = normalize_between(img1, parameters['min_bound'], parameters['max_bound'])
-            img1 = img1.astype(np.float32)
-            img2 = np.expand_dims(img1, 0)
-            img2 = np.expand_dims(img2, -1)
-            img2_tensor = torch.tensor(img2, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to('cpu')
-            with torch.no_grad():
-                pred = model(img2_tensor).cpu().numpy()
+                print(mask.shape)
+                print(img1.shape)
+                # print(img1_resized.shape)
+                img1_resized = img1_resized * mask
+            # img1_tensor = torch.tensor(img1, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to('cpu')
+            # if contour_model:
+            #     mask = self.predict_contour(contour_model, img1, parameters)
+            #     target_shape = (512, 512)  
+            #     ct_resized = cv2.resize(ct, target_shape, interpolation=cv2.INTER_LINEAR)
+            #     ct_resized_tensor = torch.tensor(ct_resized, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to('cpu')
+            #     # img1 = normalize_between(img1, parameters['min_bound'], parameters['max_bound'])
+            #     img1 = img1 * mask
+            # else:
+            #     img1 = normalize_between(img1, parameters['min_bound'], parameters['max_bound'])
+            # img1 = img1.astype(np.float32)
+            # img2 = np.expand_dims(img1, 0)
+            # img2 = np.expand_dims(img2, -1)
+            # img2_tensor = torch.tensor(img2, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to('cpu')
+            # with torch.no_grad():
+            #     pred = model(img2_tensor).cpu().numpy()
             # pred = model.predict([img2])
+
             pred_squeeze = np.squeeze(pred)
             segmentation_file_path = None
             if mode == 'argmax':
