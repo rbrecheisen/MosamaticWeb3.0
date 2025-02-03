@@ -56,19 +56,15 @@ class MuscleFatSegmentationPyTorchTask(Task):
     
     @staticmethod
     def predict_contour(contour_model, source_image, parameters) -> np.array:
+        print(f"source_image: {source_image.shape}")
         ct = np.copy(source_image)
         ct = normalize_between(ct, parameters['min_bound_contour'], parameters['max_bound_contour'])
-        # img2 = np.expand_dims(ct, 0)
-        # img2 = np.expand_dims(img2, -1)
         target_shape = (512, 512)  
         ct_resized = cv2.resize(ct, target_shape, interpolation=cv2.INTER_LINEAR)
         ct_resized_tensor = torch.tensor(ct_resized, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to('cpu')
         with torch.no_grad():
             pred = contour_model(ct_resized_tensor).cpu().numpy()
-            # pred = contour_model(source_image).cpu().numpy()
-        # pred = contour_model.predict([img2])
-        pred_squeeze = np.squeeze(pred)
-        pred_max = pred_squeeze.argmax(axis=-1)
+        pred_max = pred.argmax(axis=1)
         mask = np.uint8(pred_max)
         return mask
 
@@ -81,39 +77,18 @@ class MuscleFatSegmentationPyTorchTask(Task):
                 LOG.warning(f'wrong dimensions: {p.Rows} x {p.Columns} (should be 512 x 512)')
                 return None
             img1 = get_pixels_from_dicom_object(p, normalize=True)
-            # img1 = normalize_between(img1, parameters['min_bound_contour'], parameters['max_bound_contour'])
-            # target_shape = (512, 512)  
-            # img1_resized = cv2.resize(img1, target_shape, interpolation=cv2.INTER_LINEAR)
-            # img1_resized_tensor = torch.tensor(img1_resized, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to('cpu')
             if contour_model:
-                # mask = self.predict_contour(contour_model, img1_resized_tensor, parameters)
                 mask = self.predict_contour(contour_model, img1, parameters)
-                print(mask.shape)
-                print(img1.shape)
-                # print(img1_resized.shape)
-                img1_resized = img1_resized * mask
-            # img1_tensor = torch.tensor(img1, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to('cpu')
-            # if contour_model:
-            #     mask = self.predict_contour(contour_model, img1, parameters)
-            #     target_shape = (512, 512)  
-            #     ct_resized = cv2.resize(ct, target_shape, interpolation=cv2.INTER_LINEAR)
-            #     ct_resized_tensor = torch.tensor(ct_resized, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to('cpu')
-            #     # img1 = normalize_between(img1, parameters['min_bound'], parameters['max_bound'])
-            #     img1 = img1 * mask
-            # else:
-            #     img1 = normalize_between(img1, parameters['min_bound'], parameters['max_bound'])
-            # img1 = img1.astype(np.float32)
-            # img2 = np.expand_dims(img1, 0)
-            # img2 = np.expand_dims(img2, -1)
-            # img2_tensor = torch.tensor(img2, dtype=torch.float32).unsqueeze(0).unsqueeze(0).to('cpu')
-            # with torch.no_grad():
-            #     pred = model(img2_tensor).cpu().numpy()
-            # pred = model.predict([img2])
-
+                img1 = normalize_between(img1, parameters['min_bound'], parameters['max_bound'])
+                img1 = img1 * mask
+            img1 = img1.astype(np.float32)
+            img1_tensor = torch.tensor(img1, dtype=torch.float32).unsqueeze(0).to('cpu')
+            with torch.no_grad():
+                pred = model(img1_tensor).cpu().numpy()
             pred_squeeze = np.squeeze(pred)
             segmentation_file_path = None
             if mode == 'argmax':
-                pred_max = pred_squeeze.argmax(axis=-1)
+                pred_max = pred_squeeze.argmax(axis=0)
                 pred_max = convert_labels_to_157(pred_max)
                 segmentation_file_path = os.path.join(output_fileset_path, f'{f.name}.seg.npy')
                 np.save(segmentation_file_path, pred_max)
@@ -161,7 +136,6 @@ class MuscleFatSegmentationPyTorchTask(Task):
                     set_task_status(self.name, task_status_id, {'status': 'running', 'progress': progress})
             else:
                 LOG.error(f'model and/or parameters are None')
-            # for f in segmentation_file_paths:
             for i in range(len(segmentation_file_paths)):
                 data_manager.create_file(segmentation_png_file_paths[i], output_png_fileset)
                 f = data_manager.create_file(segmentation_file_paths[i], output_fileset)
